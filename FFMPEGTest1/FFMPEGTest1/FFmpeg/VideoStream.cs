@@ -121,24 +121,25 @@ namespace FFMPEGTest1.FFmpeg
             _vStream = fmtCtx->streams[_vidx];
             _vPara = _vStream->codecpar;
             _vCodec = ffmpeg.avcodec_find_decoder(_vPara->codec_id);
-            _vCtx = ffmpeg.avcodec_alloc_context3(_vCodec);
-            ffmpeg.avcodec_parameters_to_context(_vCtx, _vPara);
-            ffmpeg.avcodec_open2(_vCtx, _vCodec, null);
+            vCtx = ffmpeg.avcodec_alloc_context3(_vCodec);
+            ffmpeg.avcodec_parameters_to_context(vCtx, _vPara);
+            ffmpeg.avcodec_open2(vCtx, _vCodec, null);
 
             var aFrame = _aFrame;
             var aCtx = _aCtx;
             _aStream = fmtCtx->streams[_aidx];
             _aPara = _aStream->codecpar;
             _aCodec = ffmpeg.avcodec_find_decoder(_aPara->codec_id);
-            _aCtx = ffmpeg.avcodec_alloc_context3(_aCodec);
-            ffmpeg.avcodec_parameters_to_context(_aCtx, _aPara);
-            ffmpeg.avcodec_open2(_aCtx, _aCodec, null);
+            aCtx = ffmpeg.avcodec_alloc_context3(_aCodec);
+            ffmpeg.avcodec_parameters_to_context(aCtx, _aPara);
+            ffmpeg.avcodec_open2(aCtx, _aCodec, null);
 
             // 루프를 돌며 패킷을 모두 읽는다.
             int vcount = 0, acount = 0;
+            int cnt = 0;
             while (ffmpeg.av_read_frame(fmtCtx, &packet) == 0)
             {
-                if (_packet.stream_index == _vidx)
+                if (packet.stream_index == _vidx)
                 {
                     ffmpeg.avcodec_send_packet(vCtx, &packet);
                     ffmpeg.avcodec_receive_frame(vCtx, &vFrame);
@@ -147,17 +148,17 @@ namespace FFMPEGTest1.FFmpeg
                         Debug.WriteLine(string.Format("Video format : {0}({1} x {2}).",
                             vFrame.format, vFrame.width, vFrame.height));
                     }
-                    Debug.WriteLine(string.Format("V{0}\t(pts={1}\t,size={2}\t) : ", vcount++, vFrame.pts, vFrame.pkt_size));
+                    Debug.Write(string.Format("V{0,3}(pts={1,3},size={2,5}) : ", vcount++, vFrame.pts, vFrame.pkt_size));
                     for (uint i = 0; i < 3; i++)
                     {
-                        Debug.WriteLine(vFrame.linesize[i]);
+                        Debug.Write(vFrame.linesize[i] + " ");
                     }
                     arDump(vFrame.data[0], 4);
                     arDump(vFrame.data[1], 2);
                     arDump(vFrame.data[2], 2);
                 }
 
-                if (_packet.stream_index == _aidx)
+                if (packet.stream_index == _aidx)
                 {
                     ffmpeg.avcodec_send_packet(aCtx, &packet);
                     ffmpeg.avcodec_receive_frame(aCtx, &aFrame);
@@ -166,13 +167,14 @@ namespace FFMPEGTest1.FFmpeg
                         Debug.WriteLine(string.Format("Audio format : {0}({1} x {2}).",
                             aFrame.format, aFrame.channels, aFrame.sample_rate));
                     }
-                    Debug.WriteLine(string.Format("A{0}\t(pts={1}\t,size={2}\t) : ", acount++, aFrame.pts, aFrame.pkt_size));
+                    Debug.Write(string.Format("A{0,3}(pts={1,3},size={2,5}) : ", acount++, aFrame.pts, aFrame.pkt_size));
                     arDump(aFrame.extended_data, 16);
                 }
 
                 ffmpeg.av_packet_unref(&packet);
-                
-                if (Console.ReadKey().KeyChar == 27) break;
+                Debug.WriteLine("");
+                if (cnt == 1000) break;
+                cnt++;
             }
 
             // 메모리 해제
@@ -188,7 +190,7 @@ namespace FFMPEGTest1.FFmpeg
         {
             for (int i = 0; i < length; i++)
             {
-                Debug.WriteLine(*((char*)array + i));
+                Debug.Write(string.Format("{0,5}",*((byte*)array + i)));
             }
         }
 
