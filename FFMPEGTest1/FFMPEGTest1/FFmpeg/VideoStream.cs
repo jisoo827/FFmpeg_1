@@ -117,22 +117,22 @@ namespace FFMPEGTest1.FFmpeg
             var packet = _packet;
 
             var vFrame = _vFrame;
-            var vCtx = _vCtx;
+            var vCtx = vCtx;
             _vStream = fmtCtx->streams[_vidx];
             _vPara = _vStream->codecpar;
             _vCodec = ffmpeg.avcodec_find_decoder(_vPara->codec_id);
-            _vCtx = ffmpeg.avcodec_alloc_context3(_vCodec);
-            ffmpeg.avcodec_parameters_to_context(_vCtx, _vPara);
-            ffmpeg.avcodec_open2(_vCtx, _vCodec, null);
+            vCtx = ffmpeg.avcodec_alloc_context3(_vCodec);
+            ffmpeg.avcodec_parameters_to_context(vCtx, _vPara);
+            ffmpeg.avcodec_open2(vCtx, _vCodec, null);
 
             var aFrame = _aFrame;
-            var aCtx = _aCtx;
+            var aCtx = aCtx;
             _aStream = fmtCtx->streams[_aidx];
             _aPara = _aStream->codecpar;
             _aCodec = ffmpeg.avcodec_find_decoder(_aPara->codec_id);
-            _aCtx = ffmpeg.avcodec_alloc_context3(_aCodec);
-            ffmpeg.avcodec_parameters_to_context(_aCtx, _aPara);
-            ffmpeg.avcodec_open2(_aCtx, _aCodec, null);
+            aCtx = ffmpeg.avcodec_alloc_context3(_aCodec);
+            ffmpeg.avcodec_parameters_to_context(aCtx, _aPara);
+            ffmpeg.avcodec_open2(aCtx, _aCodec, null);
 
             // 루프를 돌며 패킷을 모두 읽는다.
             int vcount = 0, acount = 0;
@@ -173,6 +173,7 @@ namespace FFMPEGTest1.FFmpeg
                 ffmpeg.av_packet_unref(&packet);
                 
                 if (Console.ReadKey().KeyChar == 27) break;
+            }
             }
 
             // 메모리 해제
