@@ -117,7 +117,7 @@ namespace FFMPEGTest1.FFmpeg
             var packet = _packet;
 
             var vFrame = _vFrame;
-            var vCtx = vCtx;
+            var vCtx = _vCtx;
             _vStream = fmtCtx->streams[_vidx];
             _vPara = _vStream->codecpar;
             _vCodec = ffmpeg.avcodec_find_decoder(_vPara->codec_id);
@@ -126,7 +126,7 @@ namespace FFMPEGTest1.FFmpeg
             ffmpeg.avcodec_open2(vCtx, _vCodec, null);
 
             var aFrame = _aFrame;
-            var aCtx = aCtx;
+            var aCtx = _aCtx;
             _aStream = fmtCtx->streams[_aidx];
             _aPara = _aStream->codecpar;
             _aCodec = ffmpeg.avcodec_find_decoder(_aPara->codec_id);
