@@ -107,7 +107,7 @@ namespace FFMPEGTest1.FFmpeg
         public int AVFormatTest4()
         {
             var fmtCtx = _fmtCtx;
-            int ret = ffmpeg.avformat_open_input(&fmtCtx, "E:\\_Works\\All of Me (Jon Schmidt) - The Piano Guys.mp4", null, null);
+            int ret = ffmpeg.avformat_open_input(&fmtCtx, "C:\\_Works\\쏘쓰\\All of Me (Jon Schmidt) - The Piano Guys.mp4", null, null);
             if (ret != 0) return -1;
             ffmpeg.avformat_find_stream_info(fmtCtx, null);
 
@@ -136,45 +136,59 @@ namespace FFMPEGTest1.FFmpeg
 
             // 루프를 돌며 패킷을 모두 읽는다.
             int vcount = 0, acount = 0;
+            int cnt = 0;
             while (ffmpeg.av_read_frame(fmtCtx, &packet) == 0)
             {
-                if (_packet.stream_index == _vidx)
+                if (packet.stream_index == _vidx)
                 {
-                    ffmpeg.avcodec_send_packet(vCtx, &packet);
-                    ffmpeg.avcodec_receive_frame(vCtx, &vFrame);
-                    if (vcount == 0)
+                    ret = ffmpeg.avcodec_send_packet(vCtx, &packet);
+                    if (ret != 0) { continue; }
+                    for (; ; )
                     {
-                        Debug.WriteLine(string.Format("Video format : {0}({1} x {2}).",
-                            vFrame.format, vFrame.width, vFrame.height));
+                        ret = ffmpeg.avcodec_receive_frame(vCtx, &vFrame);
+                        if (ret == ffmpeg.AVERROR(ffmpeg.EAGAIN)) break;
+                        if (vcount == 0)
+                        {
+                            Debug.WriteLine(string.Format("Video format : {0}({1} x {2}).",
+                                vFrame.format, vFrame.width, vFrame.height));
+                        }
+                        Debug.Write(string.Format("V{0,5}(pts={1,5},size={2,5}) : ", vcount++, vFrame.pts, vFrame.pkt_size));
+                        for (uint i = 0; i < 3; i++)
+                        {
+                            Debug.Write(vFrame.linesize[i] + " ");
+                        }
+                        arDump(vFrame.data[0], 4);
+                        arDump(vFrame.data[1], 2);
+                        arDump(vFrame.data[2], 2);
+                        
                     }
-                    Debug.WriteLine(string.Format("V{0}\t(pts={1}\t,size={2}\t) : ", vcount++, vFrame.pts, vFrame.pkt_size));
-                    for (uint i = 0; i < 3; i++)
-                    {
-                        Debug.WriteLine(vFrame.linesize[i]);
-                    }
-                    arDump(vFrame.data[0], 4);
-                    arDump(vFrame.data[1], 2);
-                    arDump(vFrame.data[2], 2);
+                   
                 }
 
-                if (_packet.stream_index == _aidx)
+                if (packet.stream_index == _aidx)
                 {
-                    ffmpeg.avcodec_send_packet(aCtx, &packet);
-                    ffmpeg.avcodec_receive_frame(aCtx, &aFrame);
-                    if (acount == 0)
+                    ret = ffmpeg.avcodec_send_packet(aCtx, &packet);
+                    if (ret != 0) { continue; }
+                    for (; ; )
                     {
-                        Debug.WriteLine(string.Format("Audio format : {0}({1} x {2}).",
-                            aFrame.format, aFrame.channels, aFrame.sample_rate));
+                        ret = ffmpeg.avcodec_receive_frame(aCtx, &aFrame);
+                        if (ret == ffmpeg.AVERROR(ffmpeg.EAGAIN)) break;
+                        if (acount == 0)
+                        {
+                            Debug.WriteLine(string.Format("Audio format : {0}({1} x {2}).",
+                                aFrame.format, aFrame.channels, aFrame.sample_rate));
+                        }
+                        Debug.Write(string.Format("A{0,5}(pts={1,5},size={2,5}) : ", acount++, aFrame.pts, aFrame.pkt_size));
+                        arDump(aFrame.extended_data, 16);
                     }
-                    Debug.WriteLine(string.Format("A{0}\t(pts={1}\t,size={2}\t) : ", acount++, aFrame.pts, aFrame.pkt_size));
-                    arDump(aFrame.extended_data, 16);
                 }
 
                 ffmpeg.av_packet_unref(&packet);
-                
-                if (Console.ReadKey().KeyChar == 27) break;
+                Debug.WriteLine("");
+                if (cnt == 1000) break;
+                cnt++;
             }
-            }
+            
 
             // 메모리 해제
             ffmpeg.av_frame_unref(&vFrame);
