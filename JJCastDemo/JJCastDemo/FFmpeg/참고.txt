@@ -1,0 +1,97 @@
+﻿*******************************************************
+ffmpeg -y ⓐ -i ⓑ -acodec ⓒ -ab ⓓ -ar ⓔ -ac ⓕ -b:a ⓖ -vcodec ⓗ -level ⓘ -b:v ⓙ
+-r ⓚ -s ⓛ -threads ⓜ -strict experimental ⓝ ⓞ
+
+ⓐ -y : 출력파일을 쓸 때 같은 이름의 파일이 있어도 확인없이 덮어쓰기를 하겠다는 의미.
+ⓑ -i <입력파일이름> : 변환할 원본 동영상 파일 이름을 지정.
+ⓒ -acodec <오디오코덱> : 오디오 코덱을 지정한다. 여기서는 aac 로 함.
+ⓓ -ab <숫자> : 오디오 비트레이트를 지정한다.
+ⓔ -ar <숫자> : 오디오 샘플링 레이트를 지정한다.
+ⓕ -ac <숫자> : 오디오 채널을 지정한다.
+ⓖ -b:a <숫자> : 오디오 비트레이트를 지정한다.
+ⓗ -vcodec <비디오코덱> : 비디오 코덱을 지정한다. 여기서는 libx264 로 함. (H.264 코덱)
+ⓘ -level <숫자> : Baseline 값. 30이면, Baseline 3.0
+ⓙ -b:v <숫자> : 비디오 비트레이트를 지정한다.
+ⓚ -r <숫자> : 출력 동영상 프레임 레이트를 지정한다.
+ⓛ -s <숫자> : 화면 크기, 해상도를 지정한다. 원본 해상도보다 크게 할 경우 확대되서 나온다.
+프리셋처럼 미리 지정된 문자가 있어서 직접 해상도를 지정하지 않아도 된다.
+ex) vga – 640 x 480, sxga 1280 x 1024, wvga 852 x 480, hd720 – 1280 x 720 등
+ⓜ -threads <숫자> : 쓰레드수를 지정한다. 속도 향상을 위해 멀티쓰레드를 지정해줄 수 있다.
+반드시 CPU 코어 갯수와 일치시킬 필요는 없지만, 보통은 코어 갯수에
+맞춘다.
+ⓝ -strict experimental : 옵션의 엄격함을 느슨하게 풀어주는 옵션
+ⓞ <출력파일이름> : 변환하여 저장할 동영상 파일 이름을 지정한다.
+
+동영상 변환 옵션 예)
+
+ffmpeg -y -i 변환전동영상파일명.avi -acodec aac -ab 192k -ar 48000 -ac 2 -b:a 300k  -vcodec libx264 -level 30 -b:v 3000k -r 29.97 -s 1280:720 -threads 4 -strict -2 변환후동영상파일명.mp4
+
+
+출처: https://peche326.tistory.com/58 [복슝아]
+출처: https://peche326.tistory.com/58
+*******************************************************
+디바이스 목록 찾기
+ffmpeg -list_devices true -f dshow -i dummy
+
+화면녹화
+ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -i title="Jcobs - Chrome" -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p "output2.avi"
+ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -offset_x 180 -offset_y 200 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p "output.mp4"
+ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p "output.mp4"
+
+ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -s -offset_x 10 -offset_y 20 -i -show_region 1 -i desktop "output2.avi"
+
+ffmpeg -f gdigrab -framerate 30 -offset_x 10 -offset_y 20 -video_size 640x480 -show_region 1 -i desktop output2.mp4
+ffmpeg -f gdigrab -framerate 30 -offset_x 180 -offset_y  200 -video_size 720x405 -show_region 1 -i desktop -vcodec libx264 -r 30 -qscale 0.1 output4.avi
+ffmpeg -f gdigrab -framerate 30 -offset_x 180 -offset_y  200 -video_size 640x360 -show_region 1 -i desktop -r 30 -qscale 0.1 -f dshow -i audio="헤드셋 마이크(Corsair VOID Wireless Gaming Dongle)" output1.mp4
+ffmpeg -f gdigrab -framerate 6 -offset_x 180 -offset_y 200 -video_size 720x405 -i desktop -f dshow -i audio="헤드셋 마이크(Corsair VOID Wireless Gaming Dongle)" output1.mp4
+
+** webcam video 녹화.
+ffmpeg -f dshow -i video="Logitech HD Webcam C510" out.mp4
+
+ ** webcam video , audio(마이크) 녹화.
+ffmpeg -f dshow -i video="ABKO APC930 QHD WEBCAM" -f dshow -i audio="헤드셋 마이크(Corsair VOID Wireless Gaming Dongle)" -r 30 out2.mp4
+
+** 전체화면 녹화 , webcam 마이크 소리 녹화
+ffmpeg -f dshow -i video="screen-capture-recorder" -f dshow -i audio="헤드셋 마이크(Corsair VOID Wireless Gaming Dongle)" -r 30 out3.mp4
+
+** 전체화면 녹화 , 컴퓨터 사운드 녹화
+ffmpeg -f dshow -i video="screen-capture-recorder" -f dshow -i audio="virtual-audio-capturer" -r 30 out4.mp4
+
+- 전체화면 저장
+ffmpeg -f gdigrab -framerate 6 -i desktop out6.mp4
+
+- 시작점 (10,20) 부터 시작하여 vga 크기 (640x480) 만큼만 녹화하기.
+ffmpeg -f gdigrab -framerate 6 -offset_x 10 -offset_y 20 -video_size vga -i desktop out7.mp4
+
+- 시작점 (100,200) 부터 시작하여 svga 크기 (800x600) 만큼만 녹화하기.
+ffmpeg -f gdigrab -framerate 6 -offset_x 100 -offset_y 200 -video_size svga -i desktop out8.mp4
+
+- 윈도우 title 이  "Calculator" 인 화면만 녹화하기.
+ffmpeg -f gdigrab -framerate 6 -i title=Calculator out9.mp4
+
+- 시작점 (100,200) 부터 시작하여 svga 크기 (800x600) 만큼만 녹화  + "마이크(HD Webcam C510)"  이용한 audio 녹화
+ffmpeg -f gdigrab -framerate 6 -offset_x 10 -offset_y 20 -video_size svga -i desktop -f dshow -i audio="헤드셋 마이크(Corsair VOID Wireless Gaming Dongle)" out10.mp4
+
+- 시작점 (100,200) 부터 시작하여 svga 크기 (800x600) 만큼만 녹화  + 컴퓨터 사운드 녹화
+ffmpeg -f gdigrab -framerate 6 -offset_x 100 -offset_y 200 -video_size svga -i desktop -f dshow -i audio="virtual-audio-capturer" out11.mp4
+
+- 시작점 (100,200) 부터 시작하여 720x405 (youtube) 크기 만큼만 녹화  + 컴퓨터 사운드 녹화
+ffmpeg -f gdigrab -framerate 6 -offset_x 100 -offset_y 200 -video_size 720x405 -i desktop -f dshow -i audio="헤드셋 마이크(Corsair VOID Wireless Gaming Dongle)" output1.mp4
+
+------ffmpeg -i output1.avi -sameq -vcodec mpeg4 output1.mp4
+
+동영상 컨버트
+ffmpeg -i output1.avi -strict -2 output.mp4
+ffmpeg -i output_merge2.avi -strict -2 output_merge2.mp4
+
+동영상 병합
+ffmpeg -i output2.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp1.ts && -i output.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp2.ts && -i "concat:temp1.ts|temp2.ts" -c copy -bsf:a aac_adtstoasc output_merge.avi
+
+ffmpeg -i output2.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp1.ts &&  -i output.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp2.ts  &&  -i "concat:temp1.ts|temp2.ts" -c copy -bsf:a aac_adtstoasc output_merge.avi
+
+ffmpeg -i output2.avi -c copy -bsf:v mpeg4_unpack_bframes temp1.ts 
+ffmpeg  -i output.avi -c copy -bsf:v h264_mp4toannexb temp2.ts 
+ffmpeg  -i "concat:temp1.ts|temp2.ts" -c copy -bsf:a h264_mp4toannexb output_merge.avi
+
+ffmpeg -f concat -i mergeVideo.txt -c copy output_merge4.avi
+ffmpeg -f concat -i mergeVideo.txt -c copy output_merge.mp4
