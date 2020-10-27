@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using FFmpeg.AutoGen;
 
@@ -66,11 +66,12 @@ namespace FFMPEGTest1.FFmpeg
         /// 코덱 정보 조사
         /// </summary>
         /// <returns></returns>
-        public int AVFormatTest3()
+        public int[] AVFormatTest3(string url)
         {
+            int[] rtnval = new int[2];
             var fmtCtx = _fmtCtx;
-            int ret = ffmpeg.avformat_open_input(&fmtCtx, "E:\\_Works\\All of Me (Jon Schmidt) - The Piano Guys.mp4", null, null);
-            if (ret != 0) return -1;
+            int ret = ffmpeg.avformat_open_input(&fmtCtx, url, null, null);
+            if (ret != 0) return rtnval;
             ffmpeg.avformat_find_stream_info(fmtCtx, null);
 
             _vidx = ffmpeg.av_find_best_stream(fmtCtx, AVMediaType.AVMEDIA_TYPE_VIDEO, -1, -1, null, 0);
@@ -86,8 +87,10 @@ namespace FFMPEGTest1.FFmpeg
             Debug.WriteLine("색상 포맷 = " + _vPara->format);
             Debug.WriteLine("코덱 = " + _vPara->codec_id);
             Debug.WriteLine("--------------------------------");
-
-            _aStream = fmtCtx->streams[_aidx];
+            rtnval[0] = _vPara->width;
+            rtnval[1] = _vPara->height; 
+            return rtnval;
+            /*_aStream = fmtCtx->streams[_aidx];
             Debug.WriteLine("프레임 개수 = " + _aStream->nb_frames);
             Debug.WriteLine("타임 베이스 = " + _aStream->time_base.num + " / " + _aStream->time_base.den);
             _aPara = _aStream->codecpar;
@@ -97,7 +100,7 @@ namespace FFMPEGTest1.FFmpeg
             Debug.WriteLine("샘플 레이트 = " + _aPara->sample_rate);
 
             ffmpeg.avformat_close_input(&fmtCtx);
-            return 0;
+            return 0;*/
         }
 
         /// <summary>
@@ -107,7 +110,7 @@ namespace FFMPEGTest1.FFmpeg
         public int AVFormatTest4()
         {
             var fmtCtx = _fmtCtx;
-            int ret = ffmpeg.avformat_open_input(&fmtCtx, "C:\\_Works\\쏘쓰\\All of Me (Jon Schmidt) - The Piano Guys.mp4", null, null);
+            int ret = ffmpeg.avformat_open_input(&fmtCtx, "C:\\Users\\jisu827\\output.avi", null, null);
             if (ret != 0) return -1;
             ffmpeg.avformat_find_stream_info(fmtCtx, null);
 
@@ -203,7 +206,7 @@ namespace FFMPEGTest1.FFmpeg
         {
             for (int i = 0; i < length; i++)
             {
-                Debug.WriteLine(*((char*)array + i));
+                Debug.Write(string.Format("{0,3:X2}",((byte*)array + i) == null ? 0 : *((byte*)array + i)));
             }
         }
 
