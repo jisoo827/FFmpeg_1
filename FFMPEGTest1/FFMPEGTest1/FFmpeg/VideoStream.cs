@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using FFmpeg.AutoGen;
 
@@ -66,11 +66,12 @@ namespace FFMPEGTest1.FFmpeg
         /// 코덱 정보 조사
         /// </summary>
         /// <returns></returns>
-        public int AVFormatTest3()
+        public int[] AVFormatTest3(string url)
         {
+            int[] rtnval = new int[2];
             var fmtCtx = _fmtCtx;
-            int ret = ffmpeg.avformat_open_input(&fmtCtx, "E:\\_Works\\All of Me (Jon Schmidt) - The Piano Guys.mp4", null, null);
-            if (ret != 0) return -1;
+            int ret = ffmpeg.avformat_open_input(&fmtCtx, url, null, null);
+            if (ret != 0) return rtnval;
             ffmpeg.avformat_find_stream_info(fmtCtx, null);
 
             _vidx = ffmpeg.av_find_best_stream(fmtCtx, AVMediaType.AVMEDIA_TYPE_VIDEO, -1, -1, null, 0);
@@ -86,8 +87,10 @@ namespace FFMPEGTest1.FFmpeg
             Debug.WriteLine("색상 포맷 = " + _vPara->format);
             Debug.WriteLine("코덱 = " + _vPara->codec_id);
             Debug.WriteLine("--------------------------------");
-
-            _aStream = fmtCtx->streams[_aidx];
+            rtnval[0] = _vPara->width;
+            rtnval[1] = _vPara->height; 
+            return rtnval;
+            /*_aStream = fmtCtx->streams[_aidx];
             Debug.WriteLine("프레임 개수 = " + _aStream->nb_frames);
             Debug.WriteLine("타임 베이스 = " + _aStream->time_base.num + " / " + _aStream->time_base.den);
             _aPara = _aStream->codecpar;
@@ -97,7 +100,7 @@ namespace FFMPEGTest1.FFmpeg
             Debug.WriteLine("샘플 레이트 = " + _aPara->sample_rate);
 
             ffmpeg.avformat_close_input(&fmtCtx);
-            return 0;
+            return 0;*/
         }
 
         /// <summary>
@@ -107,7 +110,7 @@ namespace FFMPEGTest1.FFmpeg
         public int AVFormatTest4()
         {
             var fmtCtx = _fmtCtx;
-            int ret = ffmpeg.avformat_open_input(&fmtCtx, "E:\\_Works\\All of Me (Jon Schmidt) - The Piano Guys.mp4", null, null);
+            int ret = ffmpeg.avformat_open_input(&fmtCtx, "C:\\Users\\jisu827\\output.avi", null, null);
             if (ret != 0) return -1;
             ffmpeg.avformat_find_stream_info(fmtCtx, null);
 
@@ -141,34 +144,46 @@ namespace FFMPEGTest1.FFmpeg
             {
                 if (packet.stream_index == _vidx)
                 {
-                    ffmpeg.avcodec_send_packet(vCtx, &packet);
-                    ffmpeg.avcodec_receive_frame(vCtx, &vFrame);
-                    if (vcount == 0)
+                    ret = ffmpeg.avcodec_send_packet(vCtx, &packet);
+                    if (ret != 0) { continue; }
+                    for (; ; )
                     {
-                        Debug.WriteLine(string.Format("Video format : {0}({1} x {2}).",
-                            vFrame.format, vFrame.width, vFrame.height));
+                        ret = ffmpeg.avcodec_receive_frame(vCtx, &vFrame);
+                        if (ret == ffmpeg.AVERROR(ffmpeg.EAGAIN)) break;
+                        if (vcount == 0)
+                        {
+                            Debug.WriteLine(string.Format("Video format : {0}({1} x {2}).",
+                                vFrame.format, vFrame.width, vFrame.height));
+                        }
+                        Debug.Write(string.Format("V{0,5}(pts={1,5},size={2,5}) : ", vcount++, vFrame.pts, vFrame.pkt_size));
+                        for (uint i = 0; i < 3; i++)
+                        {
+                            Debug.Write(vFrame.linesize[i] + " ");
+                        }
+                        arDump(vFrame.data[0], 4);
+                        arDump(vFrame.data[1], 2);
+                        arDump(vFrame.data[2], 2);
+                        
                     }
-                    Debug.Write(string.Format("V{0,3}(pts={1,3},size={2,5}) : ", vcount++, vFrame.pts, vFrame.pkt_size));
-                    for (uint i = 0; i < 3; i++)
-                    {
-                        Debug.Write(vFrame.linesize[i] + " ");
-                    }
-                    arDump(vFrame.data[0], 4);
-                    arDump(vFrame.data[1], 2);
-                    arDump(vFrame.data[2], 2);
+                   
                 }
 
                 if (packet.stream_index == _aidx)
                 {
-                    ffmpeg.avcodec_send_packet(aCtx, &packet);
-                    ffmpeg.avcodec_receive_frame(aCtx, &aFrame);
-                    if (acount == 0)
+                    ret = ffmpeg.avcodec_send_packet(aCtx, &packet);
+                    if (ret != 0) { continue; }
+                    for (; ; )
                     {
-                        Debug.WriteLine(string.Format("Audio format : {0}({1} x {2}).",
-                            aFrame.format, aFrame.channels, aFrame.sample_rate));
+                        ret = ffmpeg.avcodec_receive_frame(aCtx, &aFrame);
+                        if (ret == ffmpeg.AVERROR(ffmpeg.EAGAIN)) break;
+                        if (acount == 0)
+                        {
+                            Debug.WriteLine(string.Format("Audio format : {0}({1} x {2}).",
+                                aFrame.format, aFrame.channels, aFrame.sample_rate));
+                        }
+                        Debug.Write(string.Format("A{0,5}(pts={1,5},size={2,5}) : ", acount++, aFrame.pts, aFrame.pkt_size));
+                        arDump(aFrame.extended_data, 16);
                     }
-                    Debug.Write(string.Format("A{0,3}(pts={1,3},size={2,5}) : ", acount++, aFrame.pts, aFrame.pkt_size));
-                    arDump(aFrame.extended_data, 16);
                 }
 
                 ffmpeg.av_packet_unref(&packet);
@@ -176,6 +191,7 @@ namespace FFMPEGTest1.FFmpeg
                 if (cnt == 1000) break;
                 cnt++;
             }
+            
 
             // 메모리 해제
             ffmpeg.av_frame_unref(&vFrame);
@@ -190,7 +206,7 @@ namespace FFMPEGTest1.FFmpeg
         {
             for (int i = 0; i < length; i++)
             {
-                Debug.Write(string.Format("{0,5}",*((byte*)array + i)));
+                Debug.Write(string.Format("{0,3:X2}",((byte*)array + i) == null ? 0 : *((byte*)array + i)));
             }
         }
 
