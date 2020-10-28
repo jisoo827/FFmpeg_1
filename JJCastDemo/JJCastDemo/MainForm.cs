@@ -28,7 +28,7 @@ namespace JJCastDemo
         int Key_Q = 81;
         Thread thread;
         ThreadStart ts;
-        string _FFMPEGPath = SystemInformation.ComputerName == "DESKTOP-2OGUI9T" ? @"E:\_Works\ffmpeg-4.3.1-win64-static\bin" : @"C:\Users\jisu827\Downloads\ffmpeg-4.3.1-win64-static\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe";
+        string _FFMPEGPath = SystemInformation.ComputerName == "DESKTOP-2OGUI9T" ? @"E:\_Works\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe" : @"C:\Users\jisu827\Downloads\ffmpeg-4.3.1-win64-static\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe";
 
         private bool activeThread;      //thread 활성화 유무
         bool isRecord = false;
@@ -52,7 +52,7 @@ namespace JJCastDemo
             Wmp_1.uiMode = "none";
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.stop();
-            List<Device> devicelist = dControl.GetDeviceList(process);
+            List<Device> devicelist = dControl.GetDeviceList();
             foreach(Device dv in devicelist)
             {
                 if (dv.device == "audio") Cmb_Mic.Items.Add(dv.name);
@@ -76,7 +76,7 @@ namespace JJCastDemo
 
         private void Btn_Record_Click(object sender, EventArgs e)
         {
-            dControl.PartialRecord(this.DesktopLocation, Wmp_1.Location, process);
+            dControl.PartialRecord(this.DesktopLocation, Wmp_1.Location, process, Cmb_Mic.Text.Trim(), Cmb_Monitor.Text.Trim());
         }
 
         private void Btn_Play_Click(object sender, EventArgs e)
@@ -112,7 +112,15 @@ namespace JJCastDemo
         private void Btn_RecordStop_Click(object sender, EventArgs e)
         {
             dControl.StopRecord(process);
-            process.Kill();
+            try
+            {
+                process.Kill();
+            }
+            catch(System.InvalidOperationException ee)
+            {
+                return;
+            }
+            this.Refresh();
         }
 
         private void Btn_Merge_Click(object sender, EventArgs e)
@@ -124,6 +132,9 @@ namespace JJCastDemo
         {
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.play();
+            bool test = false;
+
+            if (test) dControl.OverLay();
         }
 
         #region WebCam Method
