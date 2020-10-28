@@ -39,7 +39,7 @@ ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 
 ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p "output.mp4"
 ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -offset_x 180 -offset_y 200 -video_size 720x404 -show_region 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p output11.mp4
 ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -s -offset_x 10 -offset_y 20 -i -show_region 1 -i desktop "output2.avi"
-ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -offset_x 180 -offset_y 200 -video_size 720x404 -show_region 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p "output03.mp4"
+ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -offset_x 180 -offset_y 200 -video_size 298x144 -show_region 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p "output_ovelay.mp4"
 
 ffmpeg -f gdigrab -framerate 30 -offset_x 10 -offset_y 20 -video_size 640x480 -show_region 1 -i desktop output2.avi
 ffmpeg -f gdigrab -framerate 30 -offset_x 180 -offset_y  200 -video_size 720x405 -show_region 1 -i desktop -vcodec libx264 -r 30 -qscale 0.1 output4.avi
@@ -97,6 +97,19 @@ ffmpeg  -i "concat:temp1.ts|temp2.ts" -c copy -bsf:a h264_mp4toannexb output_mer
 ffmpeg -f concat -i mergeVideo.txt -c copy output_merge4.avi
 ffmpeg -f concat -i mergeVideo.txt -c copy output_merge.mp4
 
+
+동영상 오버레이
+ffmpeg -i input.mp4 -i overlay.mp4 -filter_complex "[1:v]setpts=PTS+1/TB[a];[0:v][a]overlay=(W-w):(H-h):enable=gte(t\,1):eof_action=pass,format=yuv420p[out]" -map "[out]" -map 0:a? -c:v libx264 -crf 18 -c:a copy output_overlay2.mp4
+//이거안됨 - ffmpeg -i input.mp4 -i overlay.mp4 -filter_complex "[1:v]setpts=PTS-10/TB[a]; [0:v][a]overlay=enable=gte(t\,0):shortest=1[out]" -map [0] -map 120:a -c:v libx264 -crf 18 -pix_fmt yuv420p -c:a copy output_overlay.mp4
+ffmpeg -i input.mov -i overlay.mov \
+-filter_complex "[1:v]setpts=PTS-10/TB[a]; \
+                 [0:v][a]overlay=enable=gte(t\,5):shortest=1[out]" \
+-map [out] -map 0:a \
+-c:v libx264 -crf 18 -pix_fmt yuv420p \
+-c:a copy \
+output.mov
+ __> 오버레이 시작하고 싶은시간 : overlay=enable=gte(t\,5) : 5초에 오버레이 하겠다
+ __> [1:v]setpts=PTS+0/TB[a] .. 
 *****************************************************************************************
 
 -- 화면 녹화 (음성 없이)
