@@ -1,4 +1,4 @@
-﻿*******************************************************
+﻿`*******************************************************
 ffmpeg -y ⓐ -i ⓑ -acodec ⓒ -ab ⓓ -ar ⓔ -ac ⓕ -b:a ⓖ -vcodec ⓗ -level ⓘ -b:v ⓙ
 -r ⓚ -s ⓛ -threads ⓜ -strict experimental ⓝ ⓞ
 
@@ -87,19 +87,30 @@ ffmpeg -i output_merge2.avi -strict -2 output_merge2.mp4
 
 동영상 병합
 ffmpeg -i output2.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp1.ts && -i output.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp2.ts && -i "concat:temp1.ts|temp2.ts" -c copy -bsf:a aac_adtstoasc output_merge.avi
-
 ffmpeg -i output2.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp1.ts &&  -i output.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp2.ts  &&  -i "concat:temp1.ts|temp2.ts" -c copy -bsf:a aac_adtstoasc output_merge.avi
+ffmpeg -i AllOfMe.mp4 -c copy -bsf:v h264_mp4toannexb temp1.ts && ffmpeg  -i title_01_minecraft.mp4 -c copy -bsf:v h264_mp4toannexb temp2.ts && ffmpeg  -i "concat:temp1.ts|temp2.ts" -c copy -bsf:a h264_mp4toannexb output_merge.avi
 
-ffmpeg -i output2.avi -c copy -bsf:v mpeg4_unpack_bframes temp1.ts 
-ffmpeg  -i output.avi -c copy -bsf:v h264_mp4toannexb temp2.ts 
+/* 동영상 코덱같은것 안맞으면 밑에 다안됨
+ffmpeg -i AllOfMe.mp4 -c copy -bsf:v h264_mp4toannexb temp1.ts 
+ffmpeg  -i title_01_minecraft.mp4 -c copy -bsf:v h264_mp4toannexb temp2.ts 
 ffmpeg  -i "concat:temp1.ts|temp2.ts" -c copy -bsf:a h264_mp4toannexb output_merge.avi
 
+ffmpeg -i AllOfMe.mp4 -acodec aac -vcodec libx264 -r 60 -strict experimental AllOfMe2.mp4
+ffmpeg -i title_01_minecraft.mp4 -acodec aac -vcodec libx264 -r 60 -strict experimental title_01_minecraft2.mp4
+ffmpeg -i AllOfMe2.mp4 -c copy  temp1.ts 
+ffmpeg  -i title_01_minecraft2.mp4 -c copy  temp2.ts 
+ffmpeg  -i "concat:temp1.ts|temp2.ts" -c copy output_merge.avi
+ffmpeg  -i "concat:temp1.ts|temp2.ts" -c copy -bsf:v mpeg4_unpack_bframes output_merge.avi
+*/ 
 ffmpeg -f concat -i mergeVideo.txt -c copy output_merge4.avi
 ffmpeg -f concat -i mergeVideo.txt -c copy output_merge.mp4
 
+//요건 된다
+ffmpeg -y -i title_01_minecraft.mp4 -i AllOfMe.mp4 -filter_complex "[0:v]scale=640:360:force_original_aspect_ratio=decrease,pad=640:360:(ow-iw)/2:(oh-ih)/2[v0];  [v0][0:a][1:v][1:a]concat=n=2:v=1:a=1[v][a]" -map "[v]" -map "[a]" -c:v libx264 -c:a aac -vsync 2 -movflags  +faststart output.mp4
 
 동영상 오버레이
 ffmpeg -i input.mp4 -i overlay.mp4 -filter_complex "[1:v]setpts=PTS+1/TB[a];[0:v][a]overlay=(W-w):(H-h):enable=gte(t\,1):eof_action=pass,format=yuv420p[out]" -map "[out]" -map 0:a? -c:v libx264 -crf 18 -c:a copy output_overlay2.mp4
+ffmpeg -y -i base.mp4 -i 캠영상_test_1분_20201028_16_23_05.mp4 -filter_complex "[1:v]setpts=PTS+1/TB[a];[0:v][a]overlay=(W-w):(H-h):enable=gte(t\,1):eof_action=pass,format=yuv420p[out]" -map "[out]" -map 0:a? -c:v libx264 -crf 18 -c:a copy output_overlay4.mp4
 //이거안됨 - ffmpeg -i input.mp4 -i overlay.mp4 -filter_complex "[1:v]setpts=PTS-10/TB[a]; [0:v][a]overlay=enable=gte(t\,0):shortest=1[out]" -map [0] -map 120:a -c:v libx264 -crf 18 -pix_fmt yuv420p -c:a copy output_overlay.mp4
 ffmpeg -i input.mov -i overlay.mov \
 -filter_complex "[1:v]setpts=PTS-10/TB[a]; \

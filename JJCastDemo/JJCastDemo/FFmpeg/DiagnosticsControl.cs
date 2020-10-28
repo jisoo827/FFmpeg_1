@@ -159,8 +159,8 @@ namespace JJCastDemo.FFmpeg
             {
                 StreamWriter writer;
                 writer = File.CreateText("mergeVideo.txt");
-                writer.WriteLine("file output01.mp4");
-                writer.WriteLine("file output02.mp4");
+                writer.WriteLine("file title_01_minecraft.mp4");
+                writer.WriteLine("file All of Me (Jon Schmidt) - The Piano Guys.mp4");
                 writer.Close();
 
                 string filename = Path.GetTempFileName();
