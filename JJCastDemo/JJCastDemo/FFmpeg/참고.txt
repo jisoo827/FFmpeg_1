@@ -40,20 +40,24 @@ ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 
 ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -offset_x 180 -offset_y 200 -video_size 720x404 -show_region 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p output11.mp4
 ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -s -offset_x 10 -offset_y 20 -i -show_region 1 -i desktop "output2.avi"
 ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -offset_x 180 -offset_y 200 -video_size 298x144 -show_region 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p "output_ovelay.mp4"
+ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 -offset_x 341 -offset_y 355 -video_size 720x404 -show_region 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p -f dshow -i audio="헤드셋 마이크(Corsair VOID Wireless Gaming Dongle)" "output03.mp4"
+ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 -offset_x 341 -offset_y 355 -s hd720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p  "output03.mp4" -f dshow -i audio="마이크(2- USB Microphone)"
+ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 -offset_x 159 -offset_y 173 -s hd720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p "output03.mp4" -f dshow -i audio="마이크(2- USB Microphone)"
+
 
 ffmpeg -f gdigrab -framerate 30 -offset_x 10 -offset_y 20 -video_size 640x480 -show_region 1 -i desktop output2.avi
 ffmpeg -f gdigrab -framerate 30 -offset_x 180 -offset_y  200 -video_size 720x405 -show_region 1 -i desktop -vcodec libx264 -r 30 -qscale 0.1 output4.avi
-ffmpeg -f gdigrab -framerate 30 -offset_x 180 -offset_y  200 -video_size 640x360 -show_region 1 -i desktop -r 30 -qscale 0.1 -f dshow -i audio="헤드셋 마이크(Corsair VOID Wireless Gaming Dongle)" output1.mp4
-ffmpeg -f gdigrab -framerate 6 -offset_x 180 -offset_y 200 -video_size 720x405 -i desktop -f dshow -i audio="헤드셋 마이크(Corsair VOID Wireless Gaming Dongle)" output1.mp4
+ffmpeg -f gdigrab -framerate 30 -offset_x 180 -offset_y  200 -video_size 640x360 -show_region 1 -i desktop -r 30 -qscale 0.1 -f dshow -i audio="마이크(2- USB Microphone)" output1.mp4
+ffmpeg -f gdigrab -framerate 6 -offset_x 180 -offset_y 200 -video_size 720x405 -i desktop -f dshow -i audio="마이크(2- USB Microphone)" output1.mp4
 
 ** webcam video 녹화.
 ffmpeg -f dshow -i video="Logitech HD Webcam C510" out.mp4
 
  ** webcam video , audio(마이크) 녹화.
-ffmpeg -f dshow -i video="ABKO APC930 QHD WEBCAM" -f dshow -i audio="헤드셋 마이크(Corsair VOID Wireless Gaming Dongle)" -r 30 out2.mp4
+ffmpeg -f dshow -i video="ABKO APC930 QHD WEBCAM" -f dshow -i audio="마이크(2- USB Microphone)" -r 30 out2.mp4
 
 ** 전체화면 녹화 , webcam 마이크 소리 녹화
-ffmpeg -f dshow -i video="screen-capture-recorder" -f dshow -i audio="헤드셋 마이크(Corsair VOID Wireless Gaming Dongle)" -r 30 out3.mp4
+ffmpeg -f dshow -i video="screen-capture-recorder" -f dshow -i audio="마이크(2- USB Microphone)" -r 30 out3.mp4
 
 ** 전체화면 녹화 , 컴퓨터 사운드 녹화
 ffmpeg -f dshow -i video="screen-capture-recorder" -f dshow -i audio="virtual-audio-capturer" -r 30 out4.mp4
@@ -71,13 +75,13 @@ ffmpeg -f gdigrab -framerate 6 -offset_x 100 -offset_y 200 -video_size svga -i d
 ffmpeg -f gdigrab -framerate 6 -i title=Calculator out9.mp4
 
 - 시작점 (100,200) 부터 시작하여 svga 크기 (800x600) 만큼만 녹화  + "마이크(HD Webcam C510)"  이용한 audio 녹화
-ffmpeg -f gdigrab -framerate 6 -offset_x 10 -offset_y 20 -video_size svga -i desktop -f dshow -i audio="헤드셋 마이크(Corsair VOID Wireless Gaming Dongle)" out10.mp4
+ffmpeg -f gdigrab -framerate 6 -offset_x 10 -offset_y 20 -video_size svga -i desktop -f dshow -i audio="마이크(2- USB Microphone)" out10.mp4
 
 - 시작점 (100,200) 부터 시작하여 svga 크기 (800x600) 만큼만 녹화  + 컴퓨터 사운드 녹화
 ffmpeg -f gdigrab -framerate 6 -offset_x 100 -offset_y 200 -video_size svga -i desktop -f dshow -i audio="virtual-audio-capturer" out11.mp4
 
 - 시작점 (100,200) 부터 시작하여 720x405 (youtube) 크기 만큼만 녹화  + 컴퓨터 사운드 녹화
-ffmpeg -f gdigrab -framerate 6 -offset_x 100 -offset_y 200 -video_size 720x405 -i desktop -f dshow -i audio="헤드셋 마이크(Corsair VOID Wireless Gaming Dongle)" output1.mp4
+ffmpeg -f gdigrab -framerate 6 -offset_x 100 -offset_y 200 -video_size 720x405 -i desktop -f dshow -i audio="마이크(2- USB Microphone)" output1.mp4
 
 ------ffmpeg -i output1.avi -sameq -vcodec mpeg4 output1.mp4
 
@@ -87,8 +91,11 @@ ffmpeg -i output_merge2.avi -strict -2 output_merge2.mp4
 
 동영상 병합
 ffmpeg -i output2.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp1.ts && -i output.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp2.ts && -i "concat:temp1.ts|temp2.ts" -c copy -bsf:a aac_adtstoasc output_merge.avi
-
 ffmpeg -i output2.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp1.ts &&  -i output.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp2.ts  &&  -i "concat:temp1.ts|temp2.ts" -c copy -bsf:a aac_adtstoasc output_merge.avi
+ffmpeg -i output2.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp1.ts &&  -i output.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp2.ts  &&  -i "concat:temp1.ts|temp2.ts" -c copy -bsf:a aac_adtstoasc output_merge.avi
+
+ffmpeg -y -i title_01_10초_minecraft.mp4 -acodec aac -vcodec libx264 -s hd720  -r 60 -qscale 0.1 -strict experimental front.mp4 && ffmpeg -y -i output03_201028214922.mp4 -acodec aac -vcodec libx264 -s hd720  -r 60 -qscale 0.1 -strict experimental back.mp4 &&  ffmpeg -y -f concat -i mergeVideo.txt -c copy output_merge.mp4
+
 
 ffmpeg -i output2.avi -c copy -bsf:v mpeg4_unpack_bframes temp1.ts 
 ffmpeg  -i output.avi -c copy -bsf:v h264_mp4toannexb temp2.ts 
@@ -97,9 +104,10 @@ ffmpeg  -i "concat:temp1.ts|temp2.ts" -c copy -bsf:a h264_mp4toannexb output_mer
 ffmpeg -f concat -i mergeVideo.txt -c copy output_merge4.avi
 ffmpeg -f concat -i mergeVideo.txt -c copy output_merge.mp4
 
-
 동영상 오버레이
 ffmpeg -i input.mp4 -i overlay.mp4 -filter_complex "[1:v]setpts=PTS+1/TB[a];[0:v][a]overlay=(W-w):(H-h):enable=gte(t\,1):eof_action=pass,format=yuv420p[out]" -map "[out]" -map 0:a? -c:v libx264 -crf 18 -c:a copy output_overlay2.mp4
+ffmpeg -y -i KakaoTalk_20201028_171304281.mp4 -i 캠영상_test_1분.mp4 -filter:v scale=720:-1 -filter_complex "[1:v]setpts=PTS+1/TB[a];[0:v][a]overlay=(W-w):(H-h):enable=gte(t\,1):eof_action=pass,format=yuv420p[out]" -map "[out]" -map 0:a? -c:v libx264 -crf 18 -c:a copy output_overlay3.mp4
+ffmpeg -y -i KakaoTalk_20201028_171304281.mp4 -i 캠영상_test_1분_width240.mp4 -filter_complex "[1:v]setpts=PTS+1/TB[a];[0:v][a]overlay=(W-w):(H-h):enable=gte(t\,1):eof_action=pass,format=yuv420p[out]" -map "[out]" -map 0:a? -c:v libx264 -crf 18 -c:a copy output_overlay2.mp4
 //이거안됨 - ffmpeg -i input.mp4 -i overlay.mp4 -filter_complex "[1:v]setpts=PTS-10/TB[a]; [0:v][a]overlay=enable=gte(t\,0):shortest=1[out]" -map [0] -map 120:a -c:v libx264 -crf 18 -pix_fmt yuv420p -c:a copy output_overlay.mp4
 ffmpeg -i input.mov -i overlay.mov \
 -filter_complex "[1:v]setpts=PTS-10/TB[a]; \
@@ -119,8 +127,8 @@ ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 
 ffmpeg -list_devices true -f dshow -i dummy
 
 -- 화면 녹화 (음성 녹음과 함께)
-ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p "D:\output.mp4" -f dshow -i audio="마이크(Synaptics SmartAudio HD)"
-ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -offset_x 0 -offset_y 0 -video_size 2256x1504 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p "C:\output.mp4" -f dshow -i audio="Microphone Array(Realtek High Definition Audio(SST))"
+ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p "output.mp4" -f dshow -i audio="마이크(Synaptics SmartAudio HD)"
+ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -offset_x 0 -offset_y 0 -video_size 720x405 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p "output.mp4" -f dshow -i audio="헤드셋 마이크(Corsair VOID Wireless Gaming Dongle)"
 
 
 -- 웹캠을 파일로 녹화하는 동시에 녹화중인 내용에 대한 비디오 미리 보여주기
