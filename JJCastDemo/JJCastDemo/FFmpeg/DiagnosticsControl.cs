@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace JJCastDemo.FFmpeg
 {
@@ -35,8 +36,8 @@ namespace JJCastDemo.FFmpeg
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GenerateConsoleCtrlEvent(CtrlTypes dwCtrlEvent, uint dwProcessGroupId);
 
-        string _FFMPEGPath = @"C:\Users\jisu827\Downloads\ffmpeg-4.3.1-win64-static\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe";
-        
+        string _FFMPEGPath = SystemInformation.ComputerName == "DESKTOP-2OGUI9T" ? @"E:\_Works\ffmpeg-4.3.1-win64-static\bin" : @"C:\Users\jisu827\Downloads\ffmpeg-4.3.1-win64-static\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe";
+
         /// <summary>
         /// Device List get
         /// </summary>

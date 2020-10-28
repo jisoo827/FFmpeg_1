@@ -28,7 +28,7 @@ namespace JJCastDemo
         int Key_Q = 81;
         Thread thread;
         ThreadStart ts;
-        string _FFMPEGPath = @"C:\Users\jisu827\Downloads\ffmpeg-4.3.1-win64-static\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe";
+        string _FFMPEGPath = SystemInformation.ComputerName == "DESKTOP-2OGUI9T" ? @"E:\_Works\ffmpeg-4.3.1-win64-static\bin" : @"C:\Users\jisu827\Downloads\ffmpeg-4.3.1-win64-static\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe";
 
         private bool activeThread;      //thread 활성화 유무
         bool isRecord = false;
