@@ -169,10 +169,16 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="FFmpeg\Plugin\" />
-  </ItemGroup>
-  <ItemGroup>
+    <Content Include="FFmpeg\Plugin\avcodec-58.dll" />
+    <Content Include="FFmpeg\Plugin\avdevice-58.dll" />
+    <Content Include="FFmpeg\Plugin\avfilter-7.dll" />
+    <Content Include="FFmpeg\Plugin\avformat-58.dll" />
+    <Content Include="FFmpeg\Plugin\avutil-56.dll" />
+    <Content Include="FFmpeg\Plugin\postproc-55.dll" />
+    <Content Include="FFmpeg\Plugin\swresample-3.dll" />
+    <Content Include="FFmpeg\Plugin\swscale-5.dll" />
     <Content Include="FFmpeg\참고.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

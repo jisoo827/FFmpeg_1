@@ -10,6 +10,7 @@ using JJCastDemo.FFmpeg.Decoder;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace JJCastDemo
 {
@@ -30,8 +31,8 @@ namespace JJCastDemo
         string _FFMPEGPath = @"C:\Users\jisu827\Downloads\ffmpeg-4.3.1-win64-static\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe";
 
         private bool activeThread;      //thread 활성화 유무
-
         bool isRecord = false;
+        DiagnosticsControl dControl = new DiagnosticsControl();
 
         public MainForm()
         {
@@ -50,37 +51,19 @@ namespace JJCastDemo
             Wmp_1.uiMode = "none";
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.stop();
+            List<Device> devicelist = dControl.GetDeviceList();
+            foreach(Device dv in devicelist)
+            {
+                if (dv.device == "audio") Cmb_Mic.Items.Add(dv.name);
+                else if (dv.device == "video") Cmb_Cam.Items.Add(dv.name);
+            }
 
-            Point point = this.DesktopLocation;
-            point.X += Wmp_1.Location.X;
-            point.Y += Wmp_1.Location.Y;
-            Process process = new Process();
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.FileName = _FFMPEGPath;
-            //process.StartInfo.Arguments = @"-y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p ""output.avi""";
-            process.StartInfo.Arguments = @"-f gdigrab -framerate 30 -offset_x " + point.X.ToString() + " -offset_y " + point.Y.ToString() + " -video_size 640x480 -show_region 1 -i desktop output1.avi";
 
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-            process.Start();
         }
 
         private void Btn_Record_Click(object sender, EventArgs e)
         {
-            Point point = this.DesktopLocation;
-            point.X += Wmp_1.Location.X;
-            point.Y += Wmp_1.Location.Y;
-            Process process = new Process();
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.FileName = _FFMPEGPath;
-            //process.StartInfo.Arguments = @"-y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p ""output.avi""";
-            process.StartInfo.Arguments = @"-f gdigrab -framerate 30 -offset_x " + point.X.ToString() + " -offset_y " + point.Y.ToString() + " -video_size 640x480 -show_region 1 -i desktop output1.avi";
-
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-            process.Start();
+            dControl.RecordPartial(this.DesktopLocation, Wmp_1.Location);
         }
 
         /*private void Btn_Play_Click(object sender, EventArgs e)
@@ -113,7 +96,7 @@ namespace JJCastDemo
 
         private void Btn_Play_Click(object sender, EventArgs e)
         {
-            int type = Cmb_VType.SelectedIndex;
+            int type = Cmb_Mic.SelectedIndex;
 
             if (type == 0)
             {
