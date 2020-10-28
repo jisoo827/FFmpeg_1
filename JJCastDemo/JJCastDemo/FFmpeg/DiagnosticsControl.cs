@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace JJCastDemo.FFmpeg
@@ -36,46 +37,6 @@ namespace JJCastDemo.FFmpeg
 
         string _FFMPEGPath = @"C:\Users\jisu827\Downloads\ffmpeg-4.3.1-win64-static\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe";
         
-        /// <summary>
-        /// 윈도우 부분 녹화
-        /// </summary>
-        /// <param name="desktopPoint"></param>
-        /// <param name="videoPoint"></param>
-        /// <returns></returns>
-        public int PartialRecord(Point desktopPoint, Point videoPoint, Process process)
-        {
-            try
-            {
-                Point point = desktopPoint;
-                point.X += videoPoint.X;
-                point.Y += videoPoint.Y;
-                ProcessStartInfo cmd = new ProcessStartInfo();
-                
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.FileName = _FFMPEGPath;
-                //process.StartInfo.Arguments = @"-y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p ""output.avi""";
-                process.StartInfo.Arguments = "-y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -offset_x " + point.X.ToString() + " -offset_y " + point.Y.ToString() + " -video_size 720x404 -show_region 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"output02.mp4\"";
-
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-                process.Start();
-
-                //string processOutput = null;
-                //while ((processOutput = process.StandardError.ReadLine()) != null)
-                //{
-                //    Debug.WriteLine(processOutput);
-                //}
-
-                //process.StandardInput.Close();
-            }
-            catch(Exception e)
-            {
-                return -1;
-            }
-            return 1;
-        }
-
         /// <summary>
         /// Device List get
         /// </summary>
@@ -113,6 +74,51 @@ namespace JJCastDemo.FFmpeg
             return rtnList;
         }
 
+        /// <summary>
+        /// 사용자 화면 부분 녹화
+        /// </summary>
+        /// <param name="desktopPoint"></param>
+        /// <param name="videoPoint"></param>
+        /// <returns></returns>
+        public int PartialRecord(Point desktopPoint, Point videoPoint, Process process)
+        {
+            try
+            {
+                Point point = desktopPoint;
+                point.X += videoPoint.X;
+                point.Y += videoPoint.Y;
+                ProcessStartInfo cmd = new ProcessStartInfo();
+                
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.FileName = _FFMPEGPath;
+                //process.StartInfo.Arguments = @"-y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p ""output.avi""";
+                process.StartInfo.Arguments = "-y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 -offset_x " + point.X.ToString() + " -offset_y " + point.Y.ToString() + " -video_size 720x404 -show_region 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"output03.mp4\"";
+
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.Start();
+
+                //string processOutput = null;
+                //while ((processOutput = process.StandardError.ReadLine()) != null)
+                //{
+                //    Debug.WriteLine(processOutput);
+                //}
+
+                //process.StandardInput.Close();
+            }
+            catch(Exception e)
+            {
+                return -1;
+            }
+            return 1;
+        }
+
+        /// <summary>
+        /// 사용자 화면 녹화 종료
+        /// </summary>
+        /// <param name="process"></param>
+        /// <returns></returns>
         public int StopRecord(Process process)
         {
             try
@@ -140,6 +146,41 @@ namespace JJCastDemo.FFmpeg
                 return -1;
             }
             return 0;
+        }
+
+        /// <summary>
+        /// 동영상 이어붙이기
+        /// </summary>
+        /// <param name="process"></param>
+        /// <returns></returns>
+        public int Merge(Process process)
+        {
+            try
+            {
+                StreamWriter writer;
+                writer = File.CreateText("mergeVideo.txt");
+                writer.WriteLine("file output01.mp4");
+                writer.WriteLine("file output02.mp4");
+                writer.Close();
+
+                string filename = Path.GetTempFileName();
+
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.FileName = _FFMPEGPath;
+                process.StartInfo.Arguments = @"-f concat -i mergeVideo.txt -c copy output_merge.mp4";
+
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.Start();
+                process.WaitForExit();
+                process.Close();
+            }
+            catch(Exception e)
+            {
+                return -1;
+            }
+            return 1;
         }
     }
     public class Device

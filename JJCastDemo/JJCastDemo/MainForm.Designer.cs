@@ -93,7 +93,6 @@
             this.Txt_URL.Name = "Txt_URL";
             this.Txt_URL.Size = new System.Drawing.Size(613, 21);
             this.Txt_URL.TabIndex = 4;
-            this.Txt_URL.Text = "C:\\_Works\\쏘쓰\\FFmpeg_1-main\\FFMPEGTest1\\FFMPEGTest1\\bin\\Debug\\\\output_merge.avi";
             // 
             // Cmb_Mic
             // 
@@ -166,7 +165,7 @@
             this.Btn_MergePlay.TabIndex = 1;
             this.Btn_MergePlay.Text = "합성 영상 재생";
             this.Btn_MergePlay.UseVisualStyleBackColor = true;
-            this.Btn_MergePlay.Click += new System.EventHandler(this.Btn_Merge_Click);
+            this.Btn_MergePlay.Click += new System.EventHandler(this.Btn_MergePlay_Click);
             // 
             // Btn_Chromakey
             // 

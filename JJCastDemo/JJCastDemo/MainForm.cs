@@ -62,6 +62,18 @@ namespace JJCastDemo
 
         }
 
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            //if (Cmb_VType.SelectedIndex == 1 && thread.IsAlive)
+            //{
+            //    activeThread = false;
+            //    thread.Join();
+            //}
+            //easyFFmpeg.DisposeFFmpeg();
+
+            Application.Exit();
+        }
+
         private void Btn_Record_Click(object sender, EventArgs e)
         {
             dControl.PartialRecord(this.DesktopLocation, Wmp_1.Location, process);
@@ -96,18 +108,6 @@ namespace JJCastDemo
         {
             Wmp_1.Ctlcontrols.stop();
         }
-
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            //if (Cmb_VType.SelectedIndex == 1 && thread.IsAlive)
-            //{
-            //    activeThread = false;
-            //    thread.Join();
-            //}
-            //easyFFmpeg.DisposeFFmpeg();
-
-            Application.Exit();
-        }     
         
         private void Btn_RecordStop_Click(object sender, EventArgs e)
         {
@@ -117,26 +117,13 @@ namespace JJCastDemo
 
         private void Btn_Merge_Click(object sender, EventArgs e)
         {
+            if(dControl.Merge(process) == 1) Txt_URL.Text = Application.StartupPath + "\\output_merge.mp4";
+        }
 
-            StreamWriter writer;
-            writer = File.CreateText(Application.StartupPath + "\\mergeVideo.txt");
-            writer.WriteLine("file output01.avi");
-            writer.WriteLine("file output02.avi");
-            writer.Close();
-
-            string filename = Path.GetTempFileName();
-
-            Process process = new Process();
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.FileName = _FFMPEGPath;
-            process.StartInfo.Arguments = @"-f concat -i mergeVideo.txt -c copy output_merge.avi";
-
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-            process.Start();
-
-            Txt_URL.Text = Application.StartupPath + "\\output_merge.avi";
+        private void Btn_MergePlay_Click(object sender, EventArgs e)
+        {
+            Wmp_1.URL = Txt_URL.Text;
+            Wmp_1.Ctlcontrols.play();
         }
 
         #region WebCam Method
@@ -172,8 +159,7 @@ namespace JJCastDemo
                 }
             }
         }
+
         #endregion
-
-
     }
 }
