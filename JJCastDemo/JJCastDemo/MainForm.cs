@@ -33,6 +33,7 @@ namespace JJCastDemo
         private bool activeThread;      //thread 활성화 유무
         bool isRecord = false;
         DiagnosticsControl dControl = new DiagnosticsControl();
+        Process process = new Process();
 
         public MainForm()
         {
@@ -51,7 +52,7 @@ namespace JJCastDemo
             Wmp_1.uiMode = "none";
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.stop();
-            List<Device> devicelist = dControl.GetDeviceList();
+            List<Device> devicelist = dControl.GetDeviceList(process);
             foreach(Device dv in devicelist)
             {
                 if (dv.device == "audio") Cmb_Mic.Items.Add(dv.name);
@@ -63,36 +64,8 @@ namespace JJCastDemo
 
         private void Btn_Record_Click(object sender, EventArgs e)
         {
-            dControl.RecordPartial(this.DesktopLocation, Wmp_1.Location);
+            dControl.PartialRecord(this.DesktopLocation, Wmp_1.Location, process);
         }
-
-        /*private void Btn_Play_Click(object sender, EventArgs e)
-        {
-            ////thread 시작 
-            //if (thread.ThreadState == ThreadState.Unstarted)
-            //{
-            //    thread.Start();
-            //}
-            string url = Txt_URL.Text;
-            int type = Cmb_VType.SelectedIndex;
-            if (type == 1)
-            {
-                //비디오 프레임 디코딩 thread 생성
-                ts = new ThreadStart(DecodeAllFramesToImages);
-                thread = new Thread(ts);
-                activeThread = true;
-                if (thread.ThreadState == ThreadState.Unstarted)
-                {
-                    thread.Start();
-                }
-            }
-            else
-            {
-                easyFFmpeg.InitializeFFmpeg(url, (VIDEO_INPUT_TYPE)type);
-                easyFFmpeg.PlayVideo();
-                easyFFmpeg.VideoFrameReceived += VideoFrameReceived;
-            }
-        }*/
 
         private void Btn_Play_Click(object sender, EventArgs e)
         {
@@ -119,17 +92,6 @@ namespace JJCastDemo
             }
         }
 
-        /*private void Btn_Stop_Click(object sender, EventArgs e)
-        {
-            if (Cmb_VType.SelectedIndex == 1 && thread.IsAlive)
-            {
-                activeThread = false;
-                thread.Join();
-            }
-            if(isRecord) Btn_Record_Click(null, null);
-            easyFFmpeg.DisposeFFmpeg();
-        }
-        */
         private void Btn_Stop_Click(object sender, EventArgs e)
         {
             Wmp_1.Ctlcontrols.stop();
@@ -145,6 +107,36 @@ namespace JJCastDemo
             //easyFFmpeg.DisposeFFmpeg();
 
             Application.Exit();
+        }     
+        
+        private void Btn_RecordStop_Click(object sender, EventArgs e)
+        {
+            dControl.StopRecord(process);
+            process.Kill();
+        }
+
+        private void Btn_Merge_Click(object sender, EventArgs e)
+        {
+
+            StreamWriter writer;
+            writer = File.CreateText(Application.StartupPath + "\\mergeVideo.txt");
+            writer.WriteLine("file output01.avi");
+            writer.WriteLine("file output02.avi");
+            writer.Close();
+
+            string filename = Path.GetTempFileName();
+
+            Process process = new Process();
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.FileName = _FFMPEGPath;
+            process.StartInfo.Arguments = @"-f concat -i mergeVideo.txt -c copy output_merge.avi";
+
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.CreateNoWindow = true;
+            process.Start();
+
+            Txt_URL.Text = Application.StartupPath + "\\output_merge.avi";
         }
 
         #region WebCam Method
@@ -180,90 +172,7 @@ namespace JJCastDemo
                 }
             }
         }
-        /*void BitmapToImageSource(Bitmap bitmap)
-        {
-            //UI thread에 접근하기 위해 dispatcher 사용
-            control.BeginInvoke((Action)(() =>
-            {
-                using (MemoryStream memory = new MemoryStream())
-                {
-                    if (thread.IsAlive)
-                    {
-                        bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
-                        memory.Position = 0;
-                        Bitmap bitmapimage = new BitmapImage();
-                        bitmapimage.BeginInit();
-                        bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                        //bitmapimage.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                        bitmapimage.StreamSource = memory;
-                        bitmapimage.EndInit();
-
-                        Img_video.Image = BitmapImage2Bitmap(bitmapimage);     //image 컨트롤에 웹캠 이미지 표시
-                    }
-                }
-            }));
-
-        }
-
-        private Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
-        {
-            // BitmapImage bitmapImage = new BitmapImage(new Uri("../Images/test.png", UriKind.Relative));
-
-            using (MemoryStream outStream = new MemoryStream())
-            {
-                BitmapEncoder enc = new BmpBitmapEncoder();
-                enc.Frames.Add(BitmapFrame.Create(bitmapImage));
-                enc.Save(outStream);
-                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
-
-                return new Bitmap(bitmap);
-            }
-        }
-        */
         #endregion
-
-        private void btn_RecordStop_Click(object sender, EventArgs e)
-        {
-            string process = "ffmpeg";
-            Process p = Process.GetProcessesByName(process).FirstOrDefault();
-
-            if (p != null)
-            {
-                IntPtr hWnd = p.MainWindowHandle;
-                PostMessage(hWnd, 0x100, Key_Q, 0);
-
-                try
-                {
-                    p.Kill();
-                }
-                catch (InvalidOperationException) { }
-                catch (Win32Exception) { }
-            }
-        }
-
-        private void Btn_Merge_Click(object sender, EventArgs e)
-        {
-
-            StreamWriter writer;
-            writer = File.CreateText(Application.StartupPath + "\\mergeVideo.txt");
-            writer.WriteLine("file output2.avi");
-            writer.WriteLine("file output1.avi");
-            writer.Close();
-
-            string filename = Path.GetTempFileName();
-
-            Process process = new Process();
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.FileName = _FFMPEGPath;
-            process.StartInfo.Arguments = @"-f concat -i mergeVideo.txt -c copy output_merge.avi";
-
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-            process.Start();
-
-            Txt_URL.Text = Application.StartupPath + "\\output_merge.avi";
-        }
 
 
     }

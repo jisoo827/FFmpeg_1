@@ -133,7 +133,7 @@
             this.Btn_RecordStop.TabIndex = 1;
             this.Btn_RecordStop.Text = "녹화중지";
             this.Btn_RecordStop.UseVisualStyleBackColor = true;
-            this.Btn_RecordStop.Click += new System.EventHandler(this.btn_RecordStop_Click);
+            this.Btn_RecordStop.Click += new System.EventHandler(this.Btn_RecordStop_Click);
             // 
             // Btn_Merge
             // 
