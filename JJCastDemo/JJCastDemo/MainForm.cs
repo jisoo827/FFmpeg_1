@@ -76,7 +76,7 @@ namespace JJCastDemo
 
         private void Btn_Record_Click(object sender, EventArgs e)
         {
-            dControl.PartialRecord(this.DesktopLocation, Wmp_1.Location, process, Cmb_Mic.Text.Trim(), Cmb_Monitor.Text.Trim());
+            dControl.PartialRecord(this.DesktopLocation, Wmp_1.Location, process, Cmb_Mic.Text.Trim(), Cmb_Monitor.Text.Trim(), Cmb_Cam.Text.Trim());
         }
 
         private void Btn_Play_Click(object sender, EventArgs e)

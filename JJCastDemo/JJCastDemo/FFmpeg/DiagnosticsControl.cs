@@ -25,7 +25,8 @@ namespace JJCastDemo.FFmpeg
         delegate bool ConsoleCtrlDelegate(CtrlTypes CtrlType);
 
         public int AudioRecorderProcess_ID = 0;
-
+        public int CamRecorderProcess_ID = 0;
+        Process processCam = new Process();
 
         // Enumerated type for the control messages sent to the handler routine
         enum CtrlTypes : uint
@@ -92,7 +93,7 @@ namespace JJCastDemo.FFmpeg
         /// <param name="desktopPoint"></param>
         /// <param name="videoPoint"></param>
         /// <returns></returns>
-        public int PartialRecord(Point desktopPoint, Point videoPoint, Process process , string mic, string monitor)
+        public int PartialRecord(Point desktopPoint, Point videoPoint, Process process , string mic, string monitor, string cam)
         {
             string offset = string.Empty;
             try
@@ -101,7 +102,10 @@ namespace JJCastDemo.FFmpeg
                 point.X += videoPoint.X;
                 point.Y += videoPoint.Y;
                 ProcessStartInfo cmd = new ProcessStartInfo();
+                ProcessStartInfo cmd_Cam = new ProcessStartInfo();
+
                 string argument = string.Empty;
+                string argument2 = string.Empty;
                 if (monitor.Trim().ToUpper() != "FULL") offset = "-offset_x " + point.X.ToString() + " -offset_y " + point.Y.ToString();
                 if (mic.Trim().Length == 0)
                 {
@@ -111,29 +115,6 @@ namespace JJCastDemo.FFmpeg
                 {
                     argument = "ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"output03_" + System.DateTime.Now.ToString("yyMMddHHmmss") + ".mp4\" -f dshow -i audio=\"" + mic + "\"";
                 }
-                #region 잊자
-                /*
-                   process.StartInfo.RedirectStandardOutput = true;
-                   process.StartInfo.RedirectStandardError = true;
-                   process.StartInfo.FileName = _FFMPEGPath;
-                   process.StartInfo.WorkingDirectory = @"C:\Users\pc\";
-                   //process.StartInfo.Arguments = @"-y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p ""output.avi""";
-                   if (monitor.Trim().ToUpper() != "FULL") offset = "-offset_x " + point.X.ToString() + " -offset_y " + point.Y.ToString();
-                   if (mic.Trim().Length == 0)
-                   {
-                       process.StartInfo.Arguments = "-y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"output03_" + System.DateTime.Now.ToString("HHmmss") + ".mp4\"";
-                   }
-                   else
-                   {
-                       process.StartInfo.Arguments = "-y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"output03_" + System.DateTime.Now.ToString("yyMMddHHmmss") + ".mp4\" -f dshow -i audio=\"" + mic + "\"";
-                   }
-                   Debug.WriteLine(process.StartInfo.Arguments);
-                   process.StartInfo.UseShellExecute = false;
-                   process.StartInfo.CreateNoWindow = true;
-                   process.StartInfo.RedirectStandardInput = true;
-                   process.Start();
-                   */ 
-                #endregion
                 cmd.FileName = "cmd";
                 cmd.RedirectStandardInput = true;
                 cmd.RedirectStandardOutput = true;
@@ -141,15 +122,29 @@ namespace JJCastDemo.FFmpeg
                 cmd.CreateNoWindow = true;
                 cmd.WorkingDirectory = @"C:\Users\pc\";
 
-                process.StartInfo = cmd;
-                process.Start();
+                if (cam.Trim().Length > 0)
+                {
+                    argument2 = "ffmpeg -y -f dshow -i video=\"" + cam + "\" -rtbufsize 100M -framerate 45 -video_size 298x144  -c:v libx264 -r 45 -preset ultrafast -tune zerolatency -crf 28 -pix_fmt yuv420p -c:a aac -strict -2 -ac 2 -b:a 128k \"cam.mp4\"";
+                    cmd_Cam.FileName = "cmd";
+                    cmd_Cam.RedirectStandardInput = true;
+                    cmd_Cam.RedirectStandardOutput = true;
+                    cmd_Cam.UseShellExecute = false;
+                    cmd_Cam.CreateNoWindow = true;
+                    cmd_Cam.WorkingDirectory = @"C:\Users\pc\";
+                    processCam.StartInfo = cmd_Cam;
+                    processCam.Start();
+                    SW = processCam.StandardInput;
+                    processCam.StandardInput.WriteLine(argument2);
+                    //SW.WriteLine(argument2);
+                }
+
+                process.StartInfo = cmd; 
+                process.Start(); 
                 Thread.Sleep(200);
-                SR = process.StandardOutput;
-                SW = process.StandardInput;
-                SW.WriteLine(argument);
-
-
-                if (mic.Trim().Length != 0) AudioRecorderProcess_ID = process.Id;
+                process.StandardInput.WriteLine(argument);
+                AudioRecorderProcess_ID = process.Id;
+                CamRecorderProcess_ID = processCam.Id;
+                
                 //process.BeginErrorReadLine();
 
                 //string processOutput = null;
@@ -180,39 +175,24 @@ namespace JJCastDemo.FFmpeg
                 //GenerateConsoleCtrlEvent(CtrlTypes.CTRL_C_EVENT, 0);
                 //FreeConsole();
                 process.StandardInput.WriteLine("q");
-                process.WaitForExit(2000);
-                process.Close();
+                while (!process.WaitForExit(1000))
+                {
+                    Thread.Sleep(1000);
+                }
+
                 process.Dispose();
                 AudioRecorderProcess_ID = 0;
-     
-                return 0;
             }
-            Process[] myProcesses = Process.GetProcessesByName("ffmpeg");
-            try
+            if (CamRecorderProcess_ID != 0)
             {
-                if (AttachConsole((uint)process.Id))
+                processCam.StandardInput.WriteLine("q");
+                while (!processCam.WaitForExit(1000))
                 {
-                    // Disable Ctrl-C handling for our program
-                    SetConsoleCtrlHandler(null, true);
-                    GenerateConsoleCtrlEvent(CtrlTypes.CTRL_C_EVENT, 0);
-
-                    //Moved this command up on suggestion from Timothy Jannace (see comments below)
-                    FreeConsole();
-
-                    // Must wait here. If we don't and re-enable Ctrl-C
-                    // handling below too fast, we might terminate ourselves.
-                    process.WaitForExit(2000);
-
-                    //Re-enable Ctrl-C handling or any subsequently started
-                    //programs will inherit the disabled state.
-                    SetConsoleCtrlHandler(null, false);
-                    process.Dispose();
+                    Thread.Sleep(1000);
                 }
-            }
-            catch(Exception e)
-            {
-                process.Kill();
-                return -1;
+
+                processCam.Dispose();
+                CamRecorderProcess_ID = 0;
             }
             return 0;
         }
