@@ -8,49 +8,29 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using JJCastDemo.FFmpeg.Statement;
 
 namespace JJCastDemo.FFmpeg
 {
     public class DiagnosticsControl
     {
-        [DllImport("kernel32.dll", SetLastError = true)]
-        static extern bool AttachConsole(uint dwProcessId);
-
-        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
-        static extern bool FreeConsole();
-
-        [DllImport("kernel32.dll")]
-        static extern bool SetConsoleCtrlHandler(ConsoleCtrlDelegate HandlerRoutine, bool Add);
-
-        delegate bool ConsoleCtrlDelegate(CtrlTypes CtrlType);
-
-        public int AudioRecorderProcess_ID = 0;
-        public int CamRecorderProcess_ID = 0;
-        Process processCam = new Process();
-
-        // Enumerated type for the control messages sent to the handler routine
-        enum CtrlTypes : uint
-        {
-            CTRL_C_EVENT = 0,
-            CTRL_BREAK_EVENT,
-            CTRL_CLOSE_EVENT,
-            CTRL_LOGOFF_EVENT = 5,
-            CTRL_SHUTDOWN_EVENT
-        }
-
-        [DllImport("kernel32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GenerateConsoleCtrlEvent(CtrlTypes dwCtrlEvent, uint dwProcessGroupId);
+        private static string _FFMPEGPath = string.Empty;
 
         System.IO.StreamReader SR;
         System.IO.StreamWriter SW;
+        public int AudioRecorderProcess_ID = 0;
+        public int CamRecorderProcess_ID = 0;
+        Process processDesk = null;
+        Process processCam = null;
+        FFmpegStatement ffmpegStatement = null;
 
-        private static string _FFMPEGPath = string.Empty;
+        public DiagnosticsControl()
+        {
+            processDesk = new Process();
+            processCam = new Process();
+            ffmpegStatement = new FFmpegStatement();
+        }
 
-        /// <summary>
-        /// Device List get
-        /// </summary>
-        /// <returns></returns>
         public List<Device> GetDeviceList()
         {
             List<Device> rtnList = new List<Device>();
@@ -61,7 +41,7 @@ namespace JJCastDemo.FFmpeg
             process.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
             process.StartInfo.FileName = _FFMPEGPath;
             //process.StartInfo.Arguments = @"-y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p ""output.avi""";
-            process.StartInfo.Arguments = @"ffmpeg -list_devices true -f dshow -i dummy";
+            process.StartInfo.Arguments = ffmpegStatement.GetDeviceLisStmt();
 
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
@@ -87,13 +67,7 @@ namespace JJCastDemo.FFmpeg
             return rtnList;
         }
 
-        /// <summary>
-        /// 사용자 화면 부분 녹화
-        /// </summary>
-        /// <param name="desktopPoint"></param>
-        /// <param name="videoPoint"></param>
-        /// <returns></returns>
-        public int PartialRecord(Point desktopPoint, Point videoPoint, Process process , string mic, string monitor, string cam)
+        public int PartialRecord(Point desktopPoint, Point videoPoint,  string mic, string monitor, string cam)
         {
             string offset = string.Empty;
             try
@@ -109,28 +83,29 @@ namespace JJCastDemo.FFmpeg
                 if (monitor.Trim().ToUpper() != "FULL") offset = "-offset_x " + point.X.ToString() + " -offset_y " + point.Y.ToString();
                 if (mic.Trim().Length == 0)
                 {
-                    argument = "ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"base.mp4\"";
+                    argument = ffmpegStatement.DesktopPartialRecordStmt(offset);
                 }
                 else
                 {
-                    argument = "ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"base.mp4\" -f dshow -i audio=\"" + mic + "\"";
+                    argument = ffmpegStatement.DesktopPartialRecordStmt(offset,mic);
                 }
                 cmd.FileName = "cmd";
                 cmd.RedirectStandardInput = true;
                 cmd.RedirectStandardOutput = true;
                 cmd.UseShellExecute = false;
                 cmd.CreateNoWindow = true;
-                cmd.WorkingDirectory = @"C:\Users\pc\";
+                cmd.WorkingDirectory = Application.StartupPath;
 
                 if (cam.Trim().Length > 0)
                 {
-                    argument2 = "ffmpeg -y -f dshow -i video=\"" + cam + "\" -rtbufsize 100M -framerate 45 -video_size 298x144  -c:v libx264 -r 45 -preset ultrafast -tune zerolatency -crf 28 -pix_fmt yuv420p -c:a aac -strict -2 -ac 2 -b:a 128k \"cam.mp4\"";
+                    //argument2 = ffmpegStatement.CamRecordStmt(cam);
+                    argument2 = "ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 -offset_x 255 -offset_y 305 -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"cam.mp4\"";
                     cmd_Cam.FileName = "cmd";
                     cmd_Cam.RedirectStandardInput = true;
                     cmd_Cam.RedirectStandardOutput = true;
                     cmd_Cam.UseShellExecute = false;
                     cmd_Cam.CreateNoWindow = true;
-                    cmd_Cam.WorkingDirectory = @"C:\Users\pc\";
+                    cmd_Cam.WorkingDirectory = Application.StartupPath;
                     processCam.StartInfo = cmd_Cam;
                     processCam.Start();
                     SW = processCam.StandardInput;
@@ -138,12 +113,12 @@ namespace JJCastDemo.FFmpeg
                     //SW.WriteLine(argument2);
                 }
 
-                process.StartInfo = cmd; 
-                process.Start(); 
+                processDesk.StartInfo = cmd;
+                processDesk.Start(); 
                 Thread.Sleep(200);
-                process.StandardInput.WriteLine(argument);
-                AudioRecorderProcess_ID = process.Id;
-                CamRecorderProcess_ID = processCam.Id;
+                processDesk.StandardInput.WriteLine(argument);
+                AudioRecorderProcess_ID = processDesk.Id;
+                CamRecorderProcess_ID = cam.Trim().Length > 0 ? processCam.Id : 0;
                 
                 //process.BeginErrorReadLine();
 
@@ -162,52 +137,15 @@ namespace JJCastDemo.FFmpeg
             return 1;
         }
 
-        /// <summary>
-        /// 사용자 화면 녹화 종료
-        /// </summary>
-        /// <param name="process"></param>
-        /// <returns></returns>
-        public int StopRecord(Process process)
-        {
-            if (AudioRecorderProcess_ID != 0)
-            {
-                //SetConsoleCtrlHandler(null, true);
-                //GenerateConsoleCtrlEvent(CtrlTypes.CTRL_C_EVENT, 0);
-                //FreeConsole();
-                process.StandardInput.WriteLine("q && exit");
-                process.WaitForExit(1000);
-                Thread.Sleep(1000);
-                
-
-                process.Dispose();
-                AudioRecorderProcess_ID = 0;
-            }
-            if (CamRecorderProcess_ID != 0)
-            {
-                processCam.StandardInput.WriteLine("q && exit");
-                processCam.WaitForExit(1000);                
-                Thread.Sleep(1000);
-                
-
-                processCam.Dispose();
-                CamRecorderProcess_ID = 0;
-            }
-            return 0;
-        }
-
-        /// <summary>
-        /// 동영상 이어붙이기
-        /// </summary>
-        /// <param name="process"></param>
-        /// <returns></returns>
-        public int Merge(Process process)
+        public int ConcatVideo()
         {
             ProcessStartInfo cmd = new ProcessStartInfo();
             string argument = string.Empty;
+            Process process = new Process();
             try
             {
                 StreamWriter writer;
-                writer = File.CreateText(@"C:\Users\pc\mergeVideo.txt");
+                writer = File.CreateText(Application.StartupPath + "\\concatVideo.txt");
                 writer.WriteLine("file front.mp4");
                 writer.WriteLine("file back.mp4");
                 writer.Close();
@@ -217,9 +155,9 @@ namespace JJCastDemo.FFmpeg
                 cmd.RedirectStandardOutput = true;
                 cmd.UseShellExecute = false;
                 cmd.CreateNoWindow = true;
-                cmd.WorkingDirectory = @"C:\Users\pc\";
+                cmd.WorkingDirectory = Application.StartupPath;
 
-                argument = @"ffmpeg -y -i title_01_10초_minecraft.mp4 -acodec aac -vcodec libx264 -s hd720  -r 60 -qscale 0.1 -strict experimental front.mp4 && ffmpeg -y -i output_overlay.mp4 -acodec aac -vcodec libx264 -s hd720  -r 60 -qscale 0.1 -strict experimental back.mp4 &&  ffmpeg -y -f concat -i mergeVideo.txt -c copy output_merge.mp4 && exit";
+                argument = ffmpegStatement.ConcatVideoStmt("title_01_minecraft.mp4", "output_overLay.mp4");
 
                 process.StartInfo = cmd;
                 process.Start();
@@ -227,9 +165,12 @@ namespace JJCastDemo.FFmpeg
                 SR = process.StandardOutput;
                 SW = process.StandardInput;
                 SW.WriteLine(argument);
+
+                int cnt = 0;
                 while(!process.WaitForExit(100))
                 {
                     Thread.Sleep(1000);
+                    if(cnt++ == 60) SW.WriteLine("exit");
                 }
                 
                 process.Dispose();
@@ -240,6 +181,7 @@ namespace JJCastDemo.FFmpeg
             }
             return 1;
         }
+
         public int OverLay()
         {
             ProcessStartInfo cmd = new ProcessStartInfo();
@@ -253,9 +195,9 @@ namespace JJCastDemo.FFmpeg
                 cmd.RedirectStandardOutput = true;
                 cmd.UseShellExecute = false;
                 cmd.CreateNoWindow = true;
-                cmd.WorkingDirectory = @"C:\Users\pc\";
+                cmd.WorkingDirectory = Application.StartupPath;
 
-                argument = "ffmpeg -y -i cam.mp4 -vf scale=320:240 cam_320.mp4 && ffmpeg -y -i base.mp4 -i cam_320.mp4 -filter_complex \"[1:v]setpts = PTS + 0 / TB[a];[0:v][a]overlay = (W - w):(H - h):enable = gte(t\\, 0):eof_action = pass,format = yuv420p[out]\" -map \"[out]\" -map 0:a? -c:v libx264 -crf 18 -c:a copy output_overlay.mp4 && exit";
+                argument = ffmpegStatement.OverlayVideoStmt();
 
                 process.StartInfo = cmd;
                 process.Start();
@@ -263,9 +205,12 @@ namespace JJCastDemo.FFmpeg
                 SR = process.StandardOutput;
                 SW = process.StandardInput;
                 SW.WriteLine(argument);
+
+                int cnt = 0;
                 while (!process.WaitForExit(100))
                 {
-                    Thread.Sleep(100);
+                    Thread.Sleep(1000);
+                    if (cnt++ == 60) SW.WriteLine("exit");
                 }
 
                 process.Dispose();
@@ -274,6 +219,82 @@ namespace JJCastDemo.FFmpeg
             {
                 return -1;
             }
+            return 1;            
+        }
+
+        public int StopRecord()
+        {
+            if (AudioRecorderProcess_ID != 0)
+            {
+                //SetConsoleCtrlHandler(null, true);
+                //GenerateConsoleCtrlEvent(CtrlTypes.CTRL_C_EVENT, 0);
+                //FreeConsole();
+                processDesk.StandardInput.WriteLine("q");
+                processDesk.WaitForExit(1000);
+                Thread.Sleep(1000);
+                processDesk.StandardInput.WriteLine("exit");
+                //process.WaitForExit(1000);
+                while (!processDesk.WaitForExit(100))
+                {
+                    Thread.Sleep(1000);
+                }
+                processDesk.Dispose();
+                AudioRecorderProcess_ID = 0;
+            }
+            if (CamRecorderProcess_ID != 0)
+            {
+                processCam.StandardInput.WriteLine("q");
+                processCam.WaitForExit(1000);
+                Thread.Sleep(1000);
+                processCam.StandardInput.WriteLine("exit");
+                //processCam.WaitForExit(1000);
+                while (!processCam.WaitForExit(100))
+                {
+                    Thread.Sleep(1000);
+                }
+                processCam.Dispose();
+                CamRecorderProcess_ID = 0;
+            }
+            return 0;
+        }
+
+        private static int CommandExcute(string argument)
+        {
+            ProcessStartInfo cmd = new ProcessStartInfo();
+            Process process = new Process();
+            try
+            {
+                cmd.FileName = "cmd";
+                cmd.RedirectStandardInput = true;
+                cmd.RedirectStandardOutput = true;
+                cmd.UseShellExecute = false;
+                cmd.CreateNoWindow = true;
+                cmd.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                cmd.StandardErrorEncoding = System.Text.Encoding.UTF8;
+                cmd.WorkingDirectory = Application.StartupPath;
+
+                process.StartInfo = cmd;
+                process.Start();
+                Thread.Sleep(200);
+                process.StandardInput.WriteLine(argument);
+                int cnt = 0;
+                while (!process.WaitForExit(100))
+                {
+                    Thread.Sleep(1000);
+                    if (cnt++ == 60) process.StandardInput.WriteLine("exit");
+                }
+
+                process.Dispose();
+            }
+            catch (Exception e)
+            {
+                return -1;
+            }
+            return 1;
+        }
+
+        private static int CommandExcute(string argument, Process process)
+        {
             return 1;
         }
 

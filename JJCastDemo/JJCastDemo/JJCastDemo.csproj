@@ -115,6 +115,7 @@
     <Compile Include="FFmpeg\FFmpegBinariesHelper.cs" />
     <Compile Include="FFmpeg\FFmpegHelper.cs" />
     <Compile Include="FFmpeg\H264VideoStreamEncoder.cs" />
+    <Compile Include="FFmpeg\Statement\FFmpegStatement.cs" />
     <Compile Include="FFmpeg\VideoInfo.cs" />
     <Compile Include="FFmpeg\VideoStream.cs" />
     <Compile Include="MainForm.cs">

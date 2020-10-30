@@ -31,57 +31,54 @@ namespace JJCastDemo
 
         private bool activeThread;      //thread 활성화 유무
         bool isRecord = false;
-        DiagnosticsControl dControl = new DiagnosticsControl();
-        Process process = new Process();
+        DiagnosticsControl dControl = null;
 
         public MainForm()
         {
             InitializeComponent();
         }
+
         private void MainForm_Load(object sender, EventArgs e)
         {
-            VideoStream vs = new VideoStream();
-            //vs.AVFormatTest();
-            //vs.AVFormatTest2();
-            //vs.AVFormatTest3();
-            //vs.AVFormatTest4();
+            dControl = new DiagnosticsControl();
 
-            //Application.Exit();
-            var envPathArr = Array.ConvertAll(System.Environment.GetEnvironmentVariable("PATH").Split(';'), Convert.ToString);
-            foreach (string envPath in envPathArr)
-            {
-                if (envPath.ToUpper().IndexOf("FFMPEG") > 0) DiagnosticsControl.FFMPEGPath = envPath + @"\ffmpeg.exe";
-            }
+            SetFfmpegPath();
+            InitControl();
 
             FFmpegBinariesHelper.RegisterFFmpegBinaries();
+
             Wmp_1.uiMode = "none";
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.stop();
-            List<Device> devicelist = dControl.GetDeviceList();
-            foreach(Device dv in devicelist)
-            {
-                if (dv.device == "audio") Cmb_Mic.Items.Add(dv.name);
-                else if (dv.device == "video") Cmb_Cam.Items.Add(dv.name);
-            }
-
 
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            //if (Cmb_VType.SelectedIndex == 1 && thread.IsAlive)
-            //{
-            //    activeThread = false;
-            //    thread.Join();
-            //}
-            //easyFFmpeg.DisposeFFmpeg();
-
             Application.Exit();
         }
 
         private void Btn_Record_Click(object sender, EventArgs e)
         {
-            dControl.PartialRecord(this.DesktopLocation, Wmp_1.Location, process, Cmb_Mic.Text.Trim(), Cmb_Monitor.Text.Trim(), Cmb_Cam.Text.Trim());
+            dControl.PartialRecord(this.DesktopLocation, Wmp_1.Location, Cmb_Mic.Text.Trim(), Cmb_Monitor.Text.Trim(), Cmb_Cam.Text.Trim());
+        }
+
+        private void Btn_RecordStop_Click(object sender, EventArgs e)
+        {
+            dControl.StopRecord();
+            this.Refresh();
+        }
+
+        private void Btn_Merge_Click(object sender, EventArgs e)
+        {
+            dControl.OverLay();
+            if (dControl.ConcatVideo() == 1) Txt_URL.Text = Application.StartupPath + "\\output_merge.mp4";
+        }
+
+        private void Btn_MergePlay_Click(object sender, EventArgs e)
+        {
+            Wmp_1.URL = Txt_URL.Text;
+            Wmp_1.Ctlcontrols.play();
         }
 
         private void Btn_Play_Click(object sender, EventArgs e)
@@ -113,34 +110,24 @@ namespace JJCastDemo
         {
             Wmp_1.Ctlcontrols.stop();
         }
-        
-        private void Btn_RecordStop_Click(object sender, EventArgs e)
+
+        private void SetFfmpegPath()
         {
-            dControl.StopRecord(process);
-            try
+            var envPathArr = Array.ConvertAll(System.Environment.GetEnvironmentVariable("PATH").Split(';'), Convert.ToString);
+            foreach (string envPath in envPathArr)
             {
-                process.Kill();
+                if (envPath.ToUpper().IndexOf("FFMPEG") > 0) DiagnosticsControl.FFMPEGPath = envPath + @"\ffmpeg.exe";
             }
-            catch(System.InvalidOperationException ee)
-            {
-                return;
-            }
-            this.Refresh();
         }
 
-        private void Btn_Merge_Click(object sender, EventArgs e)
+        private void InitControl()
         {
-            dControl.OverLay();
-            if (dControl.Merge(process) == 1) Txt_URL.Text = Application.StartupPath + "\\output_merge.mp4";
-        }
-
-        private void Btn_MergePlay_Click(object sender, EventArgs e)
-        {
-            Wmp_1.URL = Txt_URL.Text;
-            Wmp_1.Ctlcontrols.play();
-            bool test = false;
-
-            if (test) dControl.OverLay();
+            List<Device> devicelist = dControl.GetDeviceList();
+            foreach (Device dv in devicelist)
+            {
+                if (dv.device == "audio") Cmb_Mic.Items.Add(dv.name);
+                else if (dv.device == "video") Cmb_Cam.Items.Add(dv.name);
+            }
         }
 
         #region WebCam Method
@@ -176,7 +163,6 @@ namespace JJCastDemo
                 }
             }
         }
-
         #endregion
     }
 }
