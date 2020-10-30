@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using FFmpeg.AutoGen;
 
+
 namespace JJCastDemo.FFmpeg
 {
     public unsafe class VideoStream : IDisposable
@@ -90,8 +91,8 @@ namespace JJCastDemo.FFmpeg
             Debug.WriteLine("--------------------------------");
             rtnval[0] = _vPara->width;
             rtnval[1] = _vPara->height;
-            return rtnval;
-            /*_aStream = fmtCtx->streams[_aidx];
+            
+            _aStream = fmtCtx->streams[_aidx];
             Debug.WriteLine("프레임 개수 = " + _aStream->nb_frames);
             Debug.WriteLine("타임 베이스 = " + _aStream->time_base.num + " / " + _aStream->time_base.den);
             _aPara = _aStream->codecpar;
@@ -101,7 +102,7 @@ namespace JJCastDemo.FFmpeg
             Debug.WriteLine("샘플 레이트 = " + _aPara->sample_rate);
 
             ffmpeg.avformat_close_input(&fmtCtx);
-            return 0;*/
+            return rtnval;
         }
 
         /// <summary>
