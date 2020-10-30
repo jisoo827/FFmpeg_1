@@ -5,6 +5,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace JJCastDemo.FFmpeg
 {
@@ -21,6 +24,9 @@ namespace JJCastDemo.FFmpeg
 
         delegate bool ConsoleCtrlDelegate(CtrlTypes CtrlType);
 
+        public int AudioRecorderProcess_ID = 0;
+
+
         // Enumerated type for the control messages sent to the handler routine
         enum CtrlTypes : uint
         {
@@ -35,17 +41,23 @@ namespace JJCastDemo.FFmpeg
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GenerateConsoleCtrlEvent(CtrlTypes dwCtrlEvent, uint dwProcessGroupId);
 
-        string _FFMPEGPath = @"C:\Users\jisu827\Downloads\ffmpeg-4.3.1-win64-static\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe";
-        
+        System.IO.StreamReader SR;
+        System.IO.StreamWriter SW;
+
+        string _FFMPEGPath = SystemInformation.ComputerName == "DESKTOP-2OGUI9T" ? @"E:\_Works\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe" : @"C:\Users\jisu827\Downloads\ffmpeg-4.3.1-win64-static\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe";
+
         /// <summary>
         /// Device List get
         /// </summary>
         /// <returns></returns>
-        public List<Device> GetDeviceList(Process process)
+        public List<Device> GetDeviceList()
         {
             List<Device> rtnList = new List<Device>();
+            Process process = new Process();
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+            process.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
             process.StartInfo.FileName = _FFMPEGPath;
             //process.StartInfo.Arguments = @"-y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p ""output.avi""";
             process.StartInfo.Arguments = @"ffmpeg -list_devices true -f dshow -i dummy";
@@ -60,7 +72,7 @@ namespace JJCastDemo.FFmpeg
             {
                 if (processOutput.IndexOf("DirectShow video devices") > 0) device = "video";
                 if (processOutput.IndexOf("DirectShow audio devices") > 0) device = "audio";
-                if(device.Trim().Length > 0 && (processOutput.IndexOf("\"") > 0))
+                if (device.Trim().Length > 0 && (processOutput.IndexOf("\"") > 0) && (processOutput.IndexOf("Alternative name") < 0))
                 {
                     Device dv = new Device();
                     dv.device = device;
@@ -80,24 +92,65 @@ namespace JJCastDemo.FFmpeg
         /// <param name="desktopPoint"></param>
         /// <param name="videoPoint"></param>
         /// <returns></returns>
-        public int PartialRecord(Point desktopPoint, Point videoPoint, Process process)
+        public int PartialRecord(Point desktopPoint, Point videoPoint, Process process, string mic, string monitor)
         {
+            string offset = string.Empty;
             try
             {
                 Point point = desktopPoint;
                 point.X += videoPoint.X;
                 point.Y += videoPoint.Y;
                 ProcessStartInfo cmd = new ProcessStartInfo();
-                
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.FileName = _FFMPEGPath;
-                //process.StartInfo.Arguments = @"-y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p ""output.avi""";
-                process.StartInfo.Arguments = "-y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 -offset_x " + point.X.ToString() + " -offset_y " + point.Y.ToString() + " -video_size 720x404 -show_region 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"output03.mp4\"";
+                string argument = string.Empty;
+                if (monitor.Trim().ToUpper() != "FULL") offset = "-offset_x " + point.X.ToString() + " -offset_y " + point.Y.ToString();
+                if (mic.Trim().Length == 0)
+                {
+                    argument = "ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"output03_" + System.DateTime.Now.ToString("HHmmss") + ".mp4\"";
+                }
+                else
+                {
+                    argument = "ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"output03_" + System.DateTime.Now.ToString("yyMMddHHmmss") + ".mp4\" -f dshow -i audio=\"" + mic + "\"";
+                }
+                #region 잊자
+                /*
+                   process.StartInfo.RedirectStandardOutput = true;
+                   process.StartInfo.RedirectStandardError = true;
+                   process.StartInfo.FileName = _FFMPEGPath;
+                   process.StartInfo.WorkingDirectory = @"C:\Users\pc\";
+                   //process.StartInfo.Arguments = @"-y -rtbufsize 100M -f gdigrab -framerate 30 -probesize 10M -draw_mouse 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p ""output.avi""";
+                   if (monitor.Trim().ToUpper() != "FULL") offset = "-offset_x " + point.X.ToString() + " -offset_y " + point.Y.ToString();
+                   if (mic.Trim().Length == 0)
+                   {
+                       process.StartInfo.Arguments = "-y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"output03_" + System.DateTime.Now.ToString("HHmmss") + ".mp4\"";
+                   }
+                   else
+                   {
+                       process.StartInfo.Arguments = "-y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"output03_" + System.DateTime.Now.ToString("yyMMddHHmmss") + ".mp4\" -f dshow -i audio=\"" + mic + "\"";
+                   }
+                   Debug.WriteLine(process.StartInfo.Arguments);
+                   process.StartInfo.UseShellExecute = false;
+                   process.StartInfo.CreateNoWindow = true;
+                   process.StartInfo.RedirectStandardInput = true;
+                   process.Start();
+                   */
+                #endregion
+                cmd.FileName = "cmd";
+                cmd.RedirectStandardInput = true;
+                cmd.RedirectStandardOutput = true;
+                cmd.UseShellExecute = false;
+                cmd.CreateNoWindow = true;
+                cmd.WorkingDirectory = @"C:\Users\pc\";
 
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo = cmd;
                 process.Start();
+                Thread.Sleep(200);
+                SR = process.StandardOutput;
+                SW = process.StandardInput;
+                SW.WriteLine(argument);
+
+
+                if (mic.Trim().Length != 0) AudioRecorderProcess_ID = process.Id;
+                //process.BeginErrorReadLine();
 
                 //string processOutput = null;
                 //while ((processOutput = process.StandardError.ReadLine()) != null)
@@ -107,7 +160,7 @@ namespace JJCastDemo.FFmpeg
 
                 //process.StandardInput.Close();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return -1;
             }
@@ -121,6 +174,20 @@ namespace JJCastDemo.FFmpeg
         /// <returns></returns>
         public int StopRecord(Process process)
         {
+            if (AudioRecorderProcess_ID != 0)
+            {
+                //SetConsoleCtrlHandler(null, true);
+                //GenerateConsoleCtrlEvent(CtrlTypes.CTRL_C_EVENT, 0);
+                //FreeConsole();
+                process.StandardInput.WriteLine("q");
+                process.WaitForExit(2000);
+                process.Close();
+                process.Dispose();
+                AudioRecorderProcess_ID = 0;
+
+                return 0;
+            }
+            Process[] myProcesses = Process.GetProcessesByName("ffmpeg");
             try
             {
                 if (AttachConsole((uint)process.Id))
@@ -139,10 +206,12 @@ namespace JJCastDemo.FFmpeg
                     //Re-enable Ctrl-C handling or any subsequently started
                     //programs will inherit the disabled state.
                     SetConsoleCtrlHandler(null, false);
+                    process.Dispose();
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
+                process.Kill();
                 return -1;
             }
             return 0;
@@ -155,28 +224,75 @@ namespace JJCastDemo.FFmpeg
         /// <returns></returns>
         public int Merge(Process process)
         {
+            ProcessStartInfo cmd = new ProcessStartInfo();
+            string argument = string.Empty;
             try
             {
                 StreamWriter writer;
-                writer = File.CreateText("mergeVideo.txt");
-                writer.WriteLine("file title_01_minecraft.mp4");
-                writer.WriteLine("file All of Me (Jon Schmidt) - The Piano Guys.mp4");
+                writer = File.CreateText(@"C:\Users\pc\mergeVideo.txt");
+                writer.WriteLine("file front.mp4");
+                writer.WriteLine("file back.mp4");
                 writer.Close();
 
-                string filename = Path.GetTempFileName();
+                cmd.FileName = "cmd";
+                cmd.RedirectStandardInput = true;
+                cmd.RedirectStandardOutput = true;
+                cmd.UseShellExecute = false;
+                cmd.CreateNoWindow = true;
+                cmd.WorkingDirectory = @"C:\Users\pc\";
 
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.FileName = _FFMPEGPath;
-                process.StartInfo.Arguments = @"-f concat -i mergeVideo.txt -c copy output_merge.mp4";
+                argument = @"ffmpeg -y -i title_01_10초_minecraft.mp4 -acodec aac -vcodec libx264 -s hd720  -r 60 -qscale 0.1 -strict experimental front.mp4 && ffmpeg -y -i output03_201028214922.mp4 -acodec aac -vcodec libx264 -s hd720  -r 60 -qscale 0.1 -strict experimental back.mp4 &&  ffmpeg -y -f concat -i mergeVideo.txt -c copy output_merge.mp4 && exit";
 
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo = cmd;
                 process.Start();
-                process.WaitForExit();
-                process.Close();
+                Thread.Sleep(200);
+                SR = process.StandardOutput;
+                SW = process.StandardInput;
+                SW.WriteLine(argument);
+                while (!process.WaitForExit(100))
+                {
+                    Thread.Sleep(1000);
+                }
+
+                process.Dispose();
             }
-            catch(Exception e)
+            catch (Exception e)
+            {
+                return -1;
+            }
+            return 1;
+        }
+        public int OverLay()
+        {
+            ProcessStartInfo cmd = new ProcessStartInfo();
+            Process process = new Process();
+            string argument = string.Empty;
+            try
+            {
+
+                cmd.FileName = "cmd";
+                cmd.RedirectStandardInput = true;
+                cmd.RedirectStandardOutput = true;
+                cmd.UseShellExecute = false;
+                cmd.CreateNoWindow = true;
+                cmd.WorkingDirectory = @"C:\Users\pc\";
+
+                argument = "ffmpeg -y -i output_merge.mp4 -i 캠영상_test_1분_width240.mp4 -filter_complex \"[1:v]setpts = PTS + 10 / TB[a];[0:v][a]overlay = (W - w):(H - h):enable = gte(t\\, 10):eof_action = pass,format = yuv420p[out]\" -map \"[out]\" -map 0:a? -c:v libx264 -crf 18 -c:a copy output_overlay.mp4 && exit";
+
+                process.StartInfo = cmd;
+                process.Start();
+                Thread.Sleep(200);
+                SR = process.StandardOutput;
+                SW = process.StandardInput;
+                SW.WriteLine(argument);
+                while (!process.WaitForExit(1000))
+                {
+                    Thread.Sleep(1000);
+                }
+
+                process.Dispose();
+            }
+            catch (Exception e)
             {
                 return -1;
             }
@@ -189,5 +305,5 @@ namespace JJCastDemo.FFmpeg
         public string name;
     }
 
-    
+
 }
