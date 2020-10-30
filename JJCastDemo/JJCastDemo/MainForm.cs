@@ -27,8 +27,7 @@ namespace JJCastDemo
 
         int Key_Q = 81;
         Thread thread;
-        ThreadStart ts;
-        string _FFMPEGPath = SystemInformation.ComputerName == "DESKTOP-2OGUI9T" ? @"E:\_Works\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe" : @"C:\Users\jisu827\Downloads\ffmpeg-4.3.1-win64-static\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe";
+        ThreadStart ts;        
 
         private bool activeThread;      //thread 활성화 유무
         bool isRecord = false;
@@ -48,6 +47,12 @@ namespace JJCastDemo
             //vs.AVFormatTest4();
 
             //Application.Exit();
+            var envPathArr = Array.ConvertAll(System.Environment.GetEnvironmentVariable("PATH").Split(';'), Convert.ToString);
+            foreach (string envPath in envPathArr)
+            {
+                if (envPath.ToUpper().IndexOf("FFMPEG") > 0) DiagnosticsControl.FFMPEGPath = envPath + @"\ffmpeg.exe";
+            }
+
             FFmpegBinariesHelper.RegisterFFmpegBinaries();
             Wmp_1.uiMode = "none";
             Wmp_1.URL = Txt_URL.Text;
@@ -125,7 +130,8 @@ namespace JJCastDemo
 
         private void Btn_Merge_Click(object sender, EventArgs e)
         {
-            if(dControl.Merge(process) == 1) Txt_URL.Text = Application.StartupPath + "\\output_merge.mp4";
+            dControl.OverLay();
+            if (dControl.Merge(process) == 1) Txt_URL.Text = Application.StartupPath + "\\output_merge.mp4";
         }
 
         private void Btn_MergePlay_Click(object sender, EventArgs e)

@@ -45,7 +45,7 @@ namespace JJCastDemo.FFmpeg
         System.IO.StreamReader SR;
         System.IO.StreamWriter SW;
 
-        string _FFMPEGPath = SystemInformation.ComputerName == "DESKTOP-2OGUI9T" ? @"E:\_Works\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe" : @"C:\Users\jisu827\Downloads\ffmpeg-4.3.1-win64-static\ffmpeg-4.3.1-win64-static\bin\ffmpeg.exe";
+        private static string _FFMPEGPath = string.Empty;
 
         /// <summary>
         /// Device List get
@@ -109,11 +109,11 @@ namespace JJCastDemo.FFmpeg
                 if (monitor.Trim().ToUpper() != "FULL") offset = "-offset_x " + point.X.ToString() + " -offset_y " + point.Y.ToString();
                 if (mic.Trim().Length == 0)
                 {
-                    argument = "ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"output03_" + System.DateTime.Now.ToString("HHmmss") + ".mp4\"";
+                    argument = "ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"base.mp4\"";
                 }
                 else
                 {
-                    argument = "ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"output03_" + System.DateTime.Now.ToString("yyMMddHHmmss") + ".mp4\" -f dshow -i audio=\"" + mic + "\"";
+                    argument = "ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"base.mp4\" -f dshow -i audio=\"" + mic + "\"";
                 }
                 cmd.FileName = "cmd";
                 cmd.RedirectStandardInput = true;
@@ -174,22 +174,20 @@ namespace JJCastDemo.FFmpeg
                 //SetConsoleCtrlHandler(null, true);
                 //GenerateConsoleCtrlEvent(CtrlTypes.CTRL_C_EVENT, 0);
                 //FreeConsole();
-                process.StandardInput.WriteLine("q");
-                while (!process.WaitForExit(1000))
-                {
-                    Thread.Sleep(1000);
-                }
+                process.StandardInput.WriteLine("q && exit");
+                process.WaitForExit(1000);
+                Thread.Sleep(1000);
+                
 
                 process.Dispose();
                 AudioRecorderProcess_ID = 0;
             }
             if (CamRecorderProcess_ID != 0)
             {
-                processCam.StandardInput.WriteLine("q");
-                while (!processCam.WaitForExit(1000))
-                {
-                    Thread.Sleep(1000);
-                }
+                processCam.StandardInput.WriteLine("q && exit");
+                processCam.WaitForExit(1000);                
+                Thread.Sleep(1000);
+                
 
                 processCam.Dispose();
                 CamRecorderProcess_ID = 0;
@@ -221,7 +219,7 @@ namespace JJCastDemo.FFmpeg
                 cmd.CreateNoWindow = true;
                 cmd.WorkingDirectory = @"C:\Users\pc\";
 
-                argument = @"ffmpeg -y -i title_01_10초_minecraft.mp4 -acodec aac -vcodec libx264 -s hd720  -r 60 -qscale 0.1 -strict experimental front.mp4 && ffmpeg -y -i output03_201028214922.mp4 -acodec aac -vcodec libx264 -s hd720  -r 60 -qscale 0.1 -strict experimental back.mp4 &&  ffmpeg -y -f concat -i mergeVideo.txt -c copy output_merge.mp4 && exit";
+                argument = @"ffmpeg -y -i title_01_10초_minecraft.mp4 -acodec aac -vcodec libx264 -s hd720  -r 60 -qscale 0.1 -strict experimental front.mp4 && ffmpeg -y -i output_overlay.mp4 -acodec aac -vcodec libx264 -s hd720  -r 60 -qscale 0.1 -strict experimental back.mp4 &&  ffmpeg -y -f concat -i mergeVideo.txt -c copy output_merge.mp4 && exit";
 
                 process.StartInfo = cmd;
                 process.Start();
@@ -257,7 +255,7 @@ namespace JJCastDemo.FFmpeg
                 cmd.CreateNoWindow = true;
                 cmd.WorkingDirectory = @"C:\Users\pc\";
 
-                argument = "ffmpeg -y -i output_merge.mp4 -i 캠영상_test_1분_width240.mp4 -filter_complex \"[1:v]setpts = PTS + 10 / TB[a];[0:v][a]overlay = (W - w):(H - h):enable = gte(t\\, 10):eof_action = pass,format = yuv420p[out]\" -map \"[out]\" -map 0:a? -c:v libx264 -crf 18 -c:a copy output_overlay.mp4 && exit";
+                argument = "ffmpeg -y -i cam.mp4 -vf scale=320:240 cam_320.mp4 && ffmpeg -y -i base.mp4 -i cam_320.mp4 -filter_complex \"[1:v]setpts = PTS + 0 / TB[a];[0:v][a]overlay = (W - w):(H - h):enable = gte(t\\, 0):eof_action = pass,format = yuv420p[out]\" -map \"[out]\" -map 0:a? -c:v libx264 -crf 18 -c:a copy output_overlay.mp4 && exit";
 
                 process.StartInfo = cmd;
                 process.Start();
@@ -265,9 +263,9 @@ namespace JJCastDemo.FFmpeg
                 SR = process.StandardOutput;
                 SW = process.StandardInput;
                 SW.WriteLine(argument);
-                while (!process.WaitForExit(1000))
+                while (!process.WaitForExit(100))
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(100);
                 }
 
                 process.Dispose();
@@ -277,6 +275,12 @@ namespace JJCastDemo.FFmpeg
                 return -1;
             }
             return 1;
+        }
+
+        public static string FFMPEGPath
+        {
+            get { return _FFMPEGPath; }
+            set { _FFMPEGPath = value; }
         }
     }
     public class Device
