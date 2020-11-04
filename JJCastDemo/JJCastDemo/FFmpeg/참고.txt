@@ -1,4 +1,15 @@
-﻿﻿*******************************************************
+﻿****************************************적용*************************************************
+화면녹화
+[최신]ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 -offset_x 159 -offset_y 173 -s hd720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p "base.mp4" -f dshow -i audio="마이크(2- USB Microphone)"
+웹캠녹화
+ffmpeg -y -f dshow -i video="ABKO APC930 QHD WEBCAM" -rtbufsize 100M -framerate 45 -video_size 298x144  -c:v libx264 -r 45 -preset ultrafast -tune zerolatency -crf 28 -pix_fmt yuv420p -c:a aac -strict -2 -ac 2 -b:a 128k "cam.mp4"
+캠화면 축소
+ffmpeg -y -i cam.mp4 -vf scale=320:240 cam_320.mp4
+크로마키 & 오버레이
+ffmpeg -y -i base.mp4 -i cam_320.mp4 -filter_complex "[1:v]setpts = PTS - 0.1 / TB[a];[a]chromakey=0x57ff27 : 0.1 : 0.1 [ckout];[0:v][ckout]overlay = (W - w):(H - h):enable = gte(t\, 0):eof_action = pass,format = yuv420p[out]" -map "[out]" -map 0:a? -c:v libx264 -crf 18 -c:a copy  chromakey_output.mp4
+컨버트 & 이어붙이기
+ffmpeg -y -i chromakey_output.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts back.ts &&  ffmpeg -y -i title_01_minecraft.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts front.ts && ffmpeg -y -i "concat:front.ts|back.ts" -c copy -bsf:a aac_adtstoasc result.mp4
+﻿*******************************************************
 ffmpeg -y ⓐ -i ⓑ -acodec ⓒ -ab ⓓ -ar ⓔ -ac ⓕ -b:a ⓖ -vcodec ⓗ -level ⓘ -b:v ⓙ
 -r ⓚ -s ⓛ -threads ⓜ -strict experimental ⓝ ⓞ
 
@@ -84,8 +95,13 @@ ffmpeg -f gdigrab -framerate 6 -offset_x 100 -offset_y 200 -video_size 720x405 -
 ------ffmpeg -i output1.avi -sameq -vcodec mpeg4 output1.mp4
 
 동영상 컨버트
-ffmpeg -i output1.avi -strict -2 output.mp4
+ffmpeg -i AllOfMe.mp4 -acodec aac -vcodec libx264 -strict -2 AllOfMe2.mp4
+ffmpeg -i title_01_minecraft.mp4 -acodec aac -vcodec libx264 -strict -2 title_01_minecraft2.mp4
 ffmpeg -i output_merge2.avi -strict -2 output_merge2.mp4
+동영상 컨버트 & 병합
+ffmpeg -y -i chromakey_output.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts back.ts &&  ffmpeg -y -i title_01_minecraft.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts front.ts && ffmpeg -y -i "concat:front.ts|back.ts" -c copy -bsf:a aac_adtstoasc output_concat.mp4
+ffmpeg -i title_01_minecraft.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts front.ts
+ffmpeg -y -i "concat:front.ts|back.ts" -c copy -bsf:a aac_adtstoasc output_concat.mp4
 
 동영상 병합
 ffmpeg -i output2.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp1.ts && -i output.avi -c copy -bsf:v h264_mp4toannexb -f mpegts temp2.ts && -i "concat:temp1.ts|temp2.ts" -c copy -bsf:a aac_adtstoasc output_merge.avi
@@ -116,6 +132,16 @@ ffmpeg -i input.mov -i overlay.mov \
 output.mov
  __> 오버레이 시작하고 싶은시간 : overlay=enable=gte(t\,5) : 5초에 오버레이 하겠다
  __> [1:v]setpts=PTS+0/TB[a] .. 
+
+크로마키
+ffmpeg -y -i chromakey.mp4 -vf scale=320:240 chromakey_320.mp4
+ffmpeg -y -i base.mp4 -i chromakey_320.mp4 -filter_complex "[1:v]setpts = PTS + 0 / TB[a];[0:v][a]overlay = (W - w):(H - h):enable = gte(t\, 0):eof_action = pass,format = yuv420p[out]" -map "[out]" -map 0:a? -c:v libx264 -crf 18 -c:a copy output_overlay.mp4
+ffmpeg -i <base-video> -i <overlay-video> -filter_complex '[1:v]colorkey=0x<color>:<similarity>:<blend>[ckout];[0:v][ckout]overlay[out]' -map '[out]' <output-file>
+ffmpeg -y -i base.mp4 -i chromakey_320.mp4 -filter_complex "[1:v]setpts = PTS - 0.1 / TB[a];[1:v]colorkey = 0x57ff27 : 0.1 : 0.2;[0:v][a]overlay = (W - w):(H - h):enable = gte(t\, 0):eof_action = pass,format = yuv420p[out]" -map "[out]" -map 0:a? -c:v libx264 -crf 18 -c:a copy output_overlay2.mp4
+similarity - 키 색상과의 유사성 비율 .. 1.0은 모든 것과 일치하는 반면 정확한 키 색상 만 일치
+blend : 픽셀을 완전히 투명하게 만들거나 전혀 투명하게 만듬 , 값이 높을수록 반투명 픽셀이 생성, 투명도가 높을수록 픽셀 색상이 키 색상과 유사
+!!!!!! _> ffmpeg -y -i base.mp4 -i chromakey_320.mp4 -filter_complex "[1:v]setpts = PTS - 0.1 / TB[a];[a]chromakey=0x57ff27 : 0.1 : 0.1 [ckout];[0:v][ckout]overlay = (W - w):(H - h):enable = gte(t\, 0):eof_action = pass,format = yuv420p[out]" -map "[out]" -map 0:a? -c:v libx264 -crf 18 -c:a copy  chromakey_output.mp4
+
 *****************************************************************************************
 
 -- 화면 녹화 (음성 없이)
