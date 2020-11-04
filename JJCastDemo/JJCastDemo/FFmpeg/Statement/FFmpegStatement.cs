@@ -11,7 +11,7 @@ namespace JJCastDemo.FFmpeg.Statement
         private string stmt = string.Empty;
         public string GetDeviceLisStmt()
         {
-            stmt = @"ffmpeg -list_devices true -f dshow -i dummy && exit";
+            stmt = @"ffmpeg -list_devices true -f dshow -i dummy";
             return stmt;
         }
         /// <summary>
