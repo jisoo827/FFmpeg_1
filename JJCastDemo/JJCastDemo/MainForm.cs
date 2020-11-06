@@ -100,7 +100,6 @@ namespace JJCastDemo
             {
                 thread.Start();
             }
-            
         }
 
         private void Btn_Stop_Click(object sender, EventArgs e)
