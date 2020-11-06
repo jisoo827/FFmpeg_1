@@ -50,6 +50,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.Txt_Title = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.Btn_Test = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.Img_video)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -59,13 +60,13 @@
             // Img_video
             // 
             this.Img_video.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.Img_video.BackColor = System.Drawing.SystemColors.Info;
             this.Img_video.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Img_video.Location = new System.Drawing.Point(464, 65);
             this.Img_video.Name = "Img_video";
             this.Img_video.Size = new System.Drawing.Size(243, 165);
             this.Img_video.TabIndex = 0;
             this.Img_video.TabStop = false;
-            this.Img_video.Visible = false;
             // 
             // Btn_Play
             // 
@@ -169,12 +170,13 @@
             // 
             // Btn_Chromakey
             // 
-            this.Btn_Chromakey.Location = new System.Drawing.Point(519, 74);
+            this.Btn_Chromakey.Location = new System.Drawing.Point(519, 66);
             this.Btn_Chromakey.Name = "Btn_Chromakey";
-            this.Btn_Chromakey.Size = new System.Drawing.Size(106, 46);
+            this.Btn_Chromakey.Size = new System.Drawing.Size(106, 54);
             this.Btn_Chromakey.TabIndex = 8;
-            this.Btn_Chromakey.Text = "크로마키 칼라\r\nRGB (0, 0, 0)";
+            this.Btn_Chromakey.Text = "크로마키 칼라\r\n";
             this.Btn_Chromakey.UseVisualStyleBackColor = true;
+            this.Btn_Chromakey.Click += new System.EventHandler(this.Btn_Chromakey_Click);
             // 
             // groupBox2
             // 
@@ -250,6 +252,16 @@
             this.label4.TabIndex = 11;
             this.label4.Text = "제목";
             // 
+            // Btn_Test
+            // 
+            this.Btn_Test.Location = new System.Drawing.Point(457, 12);
+            this.Btn_Test.Name = "Btn_Test";
+            this.Btn_Test.Size = new System.Drawing.Size(75, 23);
+            this.Btn_Test.TabIndex = 2;
+            this.Btn_Test.Text = "test";
+            this.Btn_Test.UseVisualStyleBackColor = true;
+            this.Btn_Test.Click += new System.EventHandler(this.Btn_Test_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -262,6 +274,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.Txt_URL);
             this.Controls.Add(this.Btn_Stop);
+            this.Controls.Add(this.Btn_Test);
             this.Controls.Add(this.Btn_Play);
             this.Controls.Add(this.Btn_MergePlay);
             this.Controls.Add(this.Btn_Merge);
@@ -304,5 +317,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox Txt_Title;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button Btn_Test;
     }
 }

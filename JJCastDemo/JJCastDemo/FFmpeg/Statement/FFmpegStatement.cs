@@ -54,13 +54,13 @@ namespace JJCastDemo.FFmpeg.Statement
         /// <returns></returns>
         public string ConcatVideoStmt(string front, string back)
         {
-            stmt = @"ffmpeg -y -i " + front + " -acodec aac -vcodec libx264 -s hd720  -r 60 -qscale 0.1 -strict experimental front.mp4 && ffmpeg -y -i " + back + " -acodec aac -vcodec libx264 -s hd720  -r 60 -qscale 0.1 -strict experimental back.mp4 &&  ffmpeg -y -f concat -i concatVideo.txt -c copy output_concat.mp4 && exit";
+            stmt = "ffmpeg -y -i output_overlay.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts back.ts &&  ffmpeg -y -i title_01_minecraft.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts front.ts && ffmpeg -y -i \"concat:front.ts|back.ts\" -c copy -bsf:a aac_adtstoasc result.mp4 && exit";
             return stmt;
         }
 
-        public string OverlayVideoStmt()
+        public string OverlayVideoStmt(string rgbHex)
         {
-            stmt = "ffmpeg -y -i cam.mp4 -vf scale=320:240 cam_320.mp4 && ffmpeg -y -i base.mp4 -i cam_320.mp4 -filter_complex \"[1:v]setpts = PTS + 0 / TB[a];[0:v][a]overlay = (W - w):(H - h):enable = gte(t\\, 0):eof_action = pass,format = yuv420p[out]\" -map \"[out]\" -map 0:a? -c:v libx264 -crf 18 -c:a copy output_overlay.mp4 && exit";
+            stmt = "ffmpeg -y -i cam.mp4 -vf scale=320:240 cam_320.mp4 && ffmpeg -y -i base.mp4 -i cam_320.mp4 -filter_complex \"[1:v]setpts = PTS - 0.1 / TB[a];[a]chromakey = 0x" + rgbHex + " : 0.01 : 0.01[ckout];[0:v][ckout]overlay = (W - w):(H - h):enable = gte(t\\, 0):eof_action = pass,format = yuv420p[out]\" -map \"[out]\" -map 0:a? -c:v libx264 -preset ultrafast -tune zerolatency -crf 18 -c:a copy  output_overlay.mp4 && exit";
             return stmt;
         }
 

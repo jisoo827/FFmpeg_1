@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 
 namespace JJCastDemo
 {
@@ -32,6 +33,11 @@ namespace JJCastDemo
         private bool activeThread;      //thread 활성화 유무
         bool isRecord = false;
         DiagnosticsControl dControl = null;
+        private static string rgbHex = string.Empty;
+        private static byte colorR = 0;
+        private static byte colorG = 0;
+        private static byte colorB = 0;
+
 
         public MainForm()
         {
@@ -50,6 +56,9 @@ namespace JJCastDemo
             Wmp_1.uiMode = "none";
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.stop();
+
+            //VideoStream vs = new VideoStream();
+            //int[] video_size = vs.AVFormatTest3(Txt_URL.Text);
 
         }
 
@@ -71,8 +80,8 @@ namespace JJCastDemo
 
         private void Btn_Merge_Click(object sender, EventArgs e)
         {
-            dControl.OverLay();
-            if (dControl.ConcatVideo() == 1) Txt_URL.Text = Application.StartupPath + "\\output_merge.mp4";
+            dControl.OverLay(rgbHex);
+            if (dControl.ConcatVideo() == 1) Txt_URL.Text = Application.StartupPath + "\\result.mp4";
         }
 
         private void Btn_MergePlay_Click(object sender, EventArgs e)
@@ -83,27 +92,15 @@ namespace JJCastDemo
 
         private void Btn_Play_Click(object sender, EventArgs e)
         {
-            int type = Cmb_Mic.SelectedIndex;
-
-            if (type == 0)
+            //비디오 프레임 디코딩 thread 생성
+            ts = new ThreadStart(DecodeAllFramesToImages);
+            thread = new Thread(ts);
+            activeThread = true;
+            if (thread.ThreadState == System.Threading.ThreadState.Unstarted)
             {
-                //비디오 프레임 디코딩 thread 생성
-                ts = new ThreadStart(DecodeAllFramesToImages);
-                thread = new Thread(ts);
-                activeThread = true;
-                if (thread.ThreadState == System.Threading.ThreadState.Unstarted)
-                {
-                    thread.Start();
-                }
+                thread.Start();
             }
-            else
-            {
-                VideoStream vs = new VideoStream();
-                int[] video_size = vs.AVFormatTest3(Txt_URL.Text);
-                this.Wmp_1.Size = new System.Drawing.Size(video_size[0], video_size[1]);
-                Wmp_1.URL = Txt_URL.Text;
-                Wmp_1.Ctlcontrols.play();
-            }
+            
         }
 
         private void Btn_Stop_Click(object sender, EventArgs e)
@@ -156,6 +153,7 @@ namespace JJCastDemo
                         Bitmap bitmap;
 
                         bitmap = new Bitmap(convertedFrame.width, convertedFrame.height, convertedFrame.linesize[0], System.Drawing.Imaging.PixelFormat.Format24bppRgb, (IntPtr)convertedFrame.data[0]);
+                        bitmap = RemoveBackground(bitmap);
                         Img_video.Image = bitmap;
 
                         frameNumber++;
@@ -163,6 +161,68 @@ namespace JJCastDemo
                 }
             }
         }
+
+        private Bitmap RemoveBackground(Bitmap input)
+        {
+            Bitmap clone = new Bitmap(input.Width, input.Height, PixelFormat.Format32bppArgb);
+            {
+                using (input)
+                using (Graphics gr = Graphics.FromImage(clone))
+                {
+                    gr.DrawImage(input, new Rectangle(0, 0, clone.Width, clone.Height));
+                }
+
+                var data = clone.LockBits(new Rectangle(0, 0, clone.Width, clone.Height), ImageLockMode.ReadWrite, clone.PixelFormat);
+
+                var bytes = Math.Abs(data.Stride) * clone.Height;
+                byte[] rgba = new byte[bytes];
+                System.Runtime.InteropServices.Marshal.Copy(data.Scan0, rgba, 0, bytes);
+
+                var pixels = Enumerable.Range(0, rgba.Length / 4).Select(x => new {
+                    B = rgba[x * 4],
+                    G = rgba[(x * 4) + 1],
+                    R = rgba[(x * 4) + 2],
+                    A = rgba[(x * 4) + 3],
+                    MakeTransparent = new Action(() => rgba[(x * 4) + 3] = 0)
+                });
+
+                pixels
+                    .AsParallel()
+                    .ForAll(p =>
+                    {
+                        if ((p.R <= colorR + 40 && p.R >= colorR - 40) && (p.G <= colorG + 40 && p.G >= colorG - 40) && (p.B <= colorB + 40 && p.B >= colorB - 40))
+                        {
+                            p.MakeTransparent();
+                        }
+                    });
+
+                System.Runtime.InteropServices.Marshal.Copy(rgba, 0, data.Scan0, bytes);
+                clone.UnlockBits(data);
+                input.Dispose();
+                return clone;
+            }
+        }
         #endregion
+
+        private void Btn_Chromakey_Click(object sender, EventArgs e)
+        {
+            ColorDialog cd = new ColorDialog();
+            if (cd.ShowDialog() == DialogResult.OK)
+            {
+                Btn_Chromakey.BackColor = cd.Color;
+                rgbHex = string.Format("{0:X2}{1:X2}{2:X2}", cd.Color.R, cd.Color.G, cd.Color.B);
+                colorR = cd.Color.R;
+                colorG = cd.Color.G;
+                colorB = cd.Color.B;
+            }
+        }
+
+        private void Btn_Test_Click(object sender, EventArgs e)
+        {
+            Bitmap original = new Bitmap(@"C:\_Works\캡처.png");
+            Img_video.Image = RemoveBackground(original);
+            //original.Dispose();
+
+        }
     }
 }
