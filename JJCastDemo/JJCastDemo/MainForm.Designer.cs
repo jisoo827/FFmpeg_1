@@ -74,7 +74,7 @@
             this.Btn_Play.Name = "Btn_Play";
             this.Btn_Play.Size = new System.Drawing.Size(75, 23);
             this.Btn_Play.TabIndex = 2;
-            this.Btn_Play.Text = "재생";
+            this.Btn_Play.Text = "캠 테스트";
             this.Btn_Play.UseVisualStyleBackColor = true;
             this.Btn_Play.Click += new System.EventHandler(this.Btn_Play_Click);
             // 

@@ -60,7 +60,7 @@ namespace JJCastDemo.FFmpeg.Statement
 
         public string OverlayVideoStmt(string rgbHex)
         {
-            stmt = "ffmpeg -y -i cam.mp4 -vf scale=320:240 cam_320.mp4 && ffmpeg -y -i base.mp4 -i cam_320.mp4 -filter_complex \"[1:v]setpts = PTS - 0.1 / TB[a];[a]chromakey = 0x" + rgbHex + " : 0.01 : 0.01[ckout];[0:v][ckout]overlay = (W - w):(H - h):enable = gte(t\\, 0):eof_action = pass,format = yuv420p[out]\" -map \"[out]\" -map 0:a? -c:v libx264 -preset ultrafast -tune zerolatency -crf 18 -c:a copy  output_overlay.mp4 && exit";
+            stmt = "ffmpeg -y -i cam.mp4 -vf scale=320:240 cam_320.mp4 && ffmpeg -y -i base.mp4 -i cam_320.mp4 -filter_complex \"[1:v]setpts = PTS - 0.1 / TB[a];[a]chromakey=0x" + rgbHex + " : 0.1 : 0.1[ckout];[0:v][ckout]overlay = (W - w):(H - h):enable = gte(t\\, 0):eof_action = pass,format = yuv420p[out]\" -map \"[out]\" -map 0:a? -c:v libx264 -preset ultrafast -tune zerolatency -crf 18 -c:a copy  output_overlay.mp4 && exit";
             return stmt;
         }
 
