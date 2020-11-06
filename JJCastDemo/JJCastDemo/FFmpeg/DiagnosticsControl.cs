@@ -20,7 +20,7 @@ namespace JJCastDemo.FFmpeg
         public int CamRecorderProcess_ID = 0;
         private static Process processDesk = null;
         private static Process processCam = null;
-        FFmpegStatement ffmpegStatement = null;
+        readonly FFmpegStatement ffmpegStatement = null;
 
         public DiagnosticsControl()
         {
@@ -46,9 +46,11 @@ namespace JJCastDemo.FFmpeg
                         if (processOutput.IndexOf("DirectShow audio devices") > 0) device = "audio";
                         if (device.Trim().Length > 0 && (processOutput.IndexOf("\"") > 0) && (processOutput.IndexOf("Alternative name") < 0))
                         {
-                            Device dv = new Device();
-                            dv.device = device;
-                            dv.name = processOutput.Substring(processOutput.IndexOf("\"") + 1, processOutput.Length - processOutput.IndexOf("\"") - 2);
+                            Device dv = new Device
+                            {
+                                device = device,
+                                name = processOutput.Substring(processOutput.IndexOf("\"") + 1, processOutput.Length - processOutput.IndexOf("\"") - 2)
+                            };
                             rtnList.Add(dv);
                         }
                         Debug.WriteLine(processOutput);
@@ -102,7 +104,7 @@ namespace JJCastDemo.FFmpeg
 
                 AudioRecorderProcess_ID = processDesk.Id;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return -1;
             }
@@ -172,7 +174,7 @@ namespace JJCastDemo.FFmpeg
                     process.Dispose();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return -1;
             }

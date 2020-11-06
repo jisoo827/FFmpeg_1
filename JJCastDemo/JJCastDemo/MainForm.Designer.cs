@@ -50,23 +50,28 @@
             this.label1 = new System.Windows.Forms.Label();
             this.Txt_Title = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.Btn_Test = new System.Windows.Forms.Button();
+            this.Img_DeskTop = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.Img_video)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.Img_DeskTop)).BeginInit();
             this.SuspendLayout();
             // 
             // Img_video
             // 
             this.Img_video.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.Img_video.BackColor = System.Drawing.SystemColors.Info;
+            this.Img_video.BackColor = System.Drawing.Color.Transparent;
             this.Img_video.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Img_video.Location = new System.Drawing.Point(464, 65);
+            this.Img_video.Location = new System.Drawing.Point(526, 82);
             this.Img_video.Name = "Img_video";
-            this.Img_video.Size = new System.Drawing.Size(243, 165);
+            this.Img_video.Size = new System.Drawing.Size(281, 183);
+            this.Img_video.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.Img_video.TabIndex = 0;
             this.Img_video.TabStop = false;
+            this.Img_video.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseDown);
+            this.Img_video.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseMove);
+            this.Img_video.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseUp);
             // 
             // Btn_Play
             // 
@@ -74,7 +79,7 @@
             this.Btn_Play.Name = "Btn_Play";
             this.Btn_Play.Size = new System.Drawing.Size(75, 23);
             this.Btn_Play.TabIndex = 2;
-            this.Btn_Play.Text = "캠 테스트";
+            this.Btn_Play.Text = "테스트";
             this.Btn_Play.UseVisualStyleBackColor = true;
             this.Btn_Play.Click += new System.EventHandler(this.Btn_Play_Click);
             // 
@@ -122,8 +127,9 @@
             this.Wmp_1.Location = new System.Drawing.Point(3, 17);
             this.Wmp_1.Name = "Wmp_1";
             this.Wmp_1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("Wmp_1.OcxState")));
-            this.Wmp_1.Size = new System.Drawing.Size(452, 262);
+            this.Wmp_1.Size = new System.Drawing.Size(517, 331);
             this.Wmp_1.TabIndex = 6;
+            this.Wmp_1.Visible = false;
             // 
             // Btn_RecordStop
             // 
@@ -150,11 +156,11 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.Wmp_1);
             this.groupBox1.Controls.Add(this.Img_video);
+            this.groupBox1.Controls.Add(this.Wmp_1);
             this.groupBox1.Location = new System.Drawing.Point(12, 157);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(710, 284);
+            this.groupBox1.Size = new System.Drawing.Size(847, 357);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             // 
@@ -252,21 +258,26 @@
             this.label4.TabIndex = 11;
             this.label4.Text = "제목";
             // 
-            // Btn_Test
+            // Img_DeskTop
             // 
-            this.Btn_Test.Location = new System.Drawing.Point(457, 12);
-            this.Btn_Test.Name = "Btn_Test";
-            this.Btn_Test.Size = new System.Drawing.Size(75, 23);
-            this.Btn_Test.TabIndex = 2;
-            this.Btn_Test.Text = "test";
-            this.Btn_Test.UseVisualStyleBackColor = true;
-            this.Btn_Test.Click += new System.EventHandler(this.Btn_Test_Click);
+            this.Img_DeskTop.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Img_DeskTop.BackColor = System.Drawing.Color.Transparent;
+            this.Img_DeskTop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Img_DeskTop.Location = new System.Drawing.Point(18, 175);
+            this.Img_DeskTop.Name = "Img_DeskTop";
+            this.Img_DeskTop.Size = new System.Drawing.Size(513, 318);
+            this.Img_DeskTop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.Img_DeskTop.TabIndex = 7;
+            this.Img_DeskTop.TabStop = false;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(724, 444);
+            this.ClientSize = new System.Drawing.Size(861, 517);
+            this.Controls.Add(this.Img_DeskTop);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.Txt_Title);
             this.Controls.Add(this.groupBox2);
@@ -274,7 +285,6 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.Txt_URL);
             this.Controls.Add(this.Btn_Stop);
-            this.Controls.Add(this.Btn_Test);
             this.Controls.Add(this.Btn_Play);
             this.Controls.Add(this.Btn_MergePlay);
             this.Controls.Add(this.Btn_Merge);
@@ -289,6 +299,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.Img_DeskTop)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -317,6 +328,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox Txt_Title;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button Btn_Test;
+        private System.Windows.Forms.PictureBox Img_DeskTop;
     }
 }

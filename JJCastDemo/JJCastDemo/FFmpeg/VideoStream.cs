@@ -7,14 +7,15 @@ namespace JJCastDemo.FFmpeg
 {
     public unsafe class VideoStream : IDisposable
     {
-        AVFormatContext* _fmtCtx;
+        readonly AVFormatContext* _fmtCtx;
         int _vidx = -1, _aidx = -1;
         AVStream* _vStream, _aStream;
         AVCodecParameters* _vPara, _aPara;
-        AVCodec* _vCodec, _aCodec;
-        AVCodecContext* _vCtx, _aCtx;
-        AVPacket _packet;
-        AVFrame _vFrame, _aFrame;
+        private AVCodec* _vCodec, _aCodec;
+        private readonly AVCodecContext* _vCtx;
+        private readonly AVCodecContext* _aCtx;
+        private AVPacket _packet;
+        private AVFrame _vFrame, _aFrame;
 
         /// <summary>
         /// 스트림 찾기
@@ -162,9 +163,9 @@ namespace JJCastDemo.FFmpeg
                         {
                             Debug.Write(vFrame.linesize[i] + " ");
                         }
-                        arDump(vFrame.data[0], 4);
-                        arDump(vFrame.data[1], 2);
-                        arDump(vFrame.data[2], 2);
+                        ArDump(vFrame.data[0], 4);
+                        ArDump(vFrame.data[1], 2);
+                        ArDump(vFrame.data[2], 2);
 
                     }
 
@@ -184,7 +185,7 @@ namespace JJCastDemo.FFmpeg
                                 aFrame.format, aFrame.channels, aFrame.sample_rate));
                         }
                         Debug.Write(string.Format("A{0,5}(pts={1,5},size={2,5}) : ", acount++, aFrame.pts, aFrame.pkt_size));
-                        arDump(aFrame.extended_data, 16);
+                        ArDump(aFrame.extended_data, 16);
                     }
                 }
 
@@ -204,7 +205,7 @@ namespace JJCastDemo.FFmpeg
             return 0;
         }
 
-        void arDump(void* array, int length)
+        void ArDump(void* array, int length)
         {
             for (int i = 0; i < length; i++)
             {

@@ -26,22 +26,25 @@ namespace JJCastDemo
         [System.Runtime.InteropServices.DllImport("User32.dll", EntryPoint = "PostMessageA")]
         private static extern bool PostMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
 
-        int Key_Q = 81;
-        Thread thread;
-        ThreadStart ts;        
+        Thread threadCam;
+        ThreadStart threadStartCam;
+        Thread threadDesktop;
+        ThreadStart threadStartDesktop;
 
-        private bool activeThread;      //thread 활성화 유무
-        bool isRecord = false;
+        private static bool activeThread = false;      //thread 활성화 유무
         DiagnosticsControl dControl = null;
         private static string rgbHex = string.Empty;
         private static byte colorR = 0;
         private static byte colorG = 0;
         private static byte colorB = 0;
+        private static bool isCapturingMoves = false;
+        private static Point startPoint = new System.Drawing.Point();
 
 
         public MainForm()
         {
             InitializeComponent();
+            
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -57,8 +60,9 @@ namespace JJCastDemo
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.stop();
 
-            //VideoStream vs = new VideoStream();
-            //int[] video_size = vs.AVFormatTest3(Txt_URL.Text);
+            VideoStream vs = new VideoStream();
+            _ = vs.AVFormatTest3(Txt_URL.Text);
+            isCapturingMoves = false;
 
         }
 
@@ -93,18 +97,37 @@ namespace JJCastDemo
         private void Btn_Play_Click(object sender, EventArgs e)
         {
             //비디오 프레임 디코딩 thread 생성
-            ts = new ThreadStart(DecodeAllFramesToImages);
-            thread = new Thread(ts);
-            activeThread = true;
-            if (thread.ThreadState == System.Threading.ThreadState.Unstarted)
+            if (!activeThread)
             {
-                thread.Start();
+                threadStartCam = new ThreadStart(DecodeAllFramesToImages);
+                threadCam = new Thread(threadStartCam);
+                if (threadCam.ThreadState == System.Threading.ThreadState.Unstarted)
+                {
+                    threadCam.Start();
+                }
+                threadStartDesktop = new ThreadStart(ScreenCapture);
+                threadDesktop = new Thread(threadStartDesktop);
+                if (threadDesktop.ThreadState == System.Threading.ThreadState.Unstarted)
+                {
+                    threadDesktop.Start();
+                }
+                activeThread = true;
             }
         }
 
         private void Btn_Stop_Click(object sender, EventArgs e)
         {
             Wmp_1.Ctlcontrols.stop();
+
+            threadCam.Interrupt();
+            threadCam.Abort();
+            threadDesktop.Interrupt();
+            threadDesktop.Abort();
+            activeThread = false;
+            Img_video.Image = null;
+            Img_DeskTop.Image = null;
+
+
         }
 
         private void SetFfmpegPath()
@@ -126,7 +149,7 @@ namespace JJCastDemo
             }
         }
 
-        #region WebCam Method
+        #region RecordTest Method
         private unsafe void DecodeAllFramesToImages()
         {
             //video="웹캠 디바이스 이름"
@@ -150,10 +173,17 @@ namespace JJCastDemo
                         var convertedFrame = vfc.Convert(frame);
 
                         Bitmap bitmap;
-
+                        //362, 235
                         bitmap = new Bitmap(convertedFrame.width, convertedFrame.height, convertedFrame.linesize[0], System.Drawing.Imaging.PixelFormat.Format24bppRgb, (IntPtr)convertedFrame.data[0]);
-                        bitmap = RemoveBackground(bitmap);
-                        Img_video.Image = bitmap;
+                        int width = Img_video.Width; int height = Img_video.Height;
+                        Size resize = new Size(width, height);
+                        Bitmap resizeImage = new Bitmap(bitmap, resize);
+                        //bitmap = new Bitmap(362, 235, convertedFrame.linesize[0], System.Drawing.Imaging.PixelFormat.Format24bppRgb, (IntPtr)convertedFrame.data[0]);
+                        bitmap.Dispose();
+                        resizeImage = RemoveBackground(resizeImage);
+                        
+                        Img_video.Image = resizeImage;
+                        //bitmap.Dispose();
 
                         frameNumber++;
                     }
@@ -201,6 +231,22 @@ namespace JJCastDemo
                 return clone;
             }
         }
+
+        private void ScreenCapture()
+        {
+            while (activeThread)
+            {
+                Size size = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+                Bitmap bitmap = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+                Graphics graphics = Graphics.FromImage(bitmap);
+                graphics.CopyFromScreen(0, 0, 0, 0, size);
+
+                Img_DeskTop.Image = bitmap;
+                graphics.Dispose();
+            }
+            
+        }
+
         #endregion
 
         private void Btn_Chromakey_Click(object sender, EventArgs e)
@@ -216,12 +262,29 @@ namespace JJCastDemo
             }
         }
 
-        private void Btn_Test_Click(object sender, EventArgs e)
+        private void Img_video_MouseDown(object sender, MouseEventArgs e)
         {
-            Bitmap original = new Bitmap(@"C:\_Works\캡처.png");
-            Img_video.Image = RemoveBackground(original);
-            //original.Dispose();
+            return;
+            Btn_MergePlay.Visible = true;
+            if (e.Button != MouseButtons.Left) return;
+           
+            isCapturingMoves = true;
+            startPoint.X = e.X;
+            startPoint.Y = e.Y;
+            return;
+        }
 
+        private void Img_video_MouseMove(object sender, MouseEventArgs e)
+        {
+            return;
+            if (!isCapturingMoves) return;
+            Img_video.Location = new System.Drawing.Point(e.X - startPoint.X + Img_video.Location.X, Img_video.Location.Y - startPoint.Y + e.Y);
+        }
+
+        private void Img_video_MouseUp(object sender, MouseEventArgs e)
+        {
+            return;
+            isCapturingMoves = false;
         }
     }
 }
