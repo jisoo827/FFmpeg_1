@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.Img_video = new System.Windows.Forms.PictureBox();
             this.Btn_Play = new System.Windows.Forms.Button();
             this.Btn_Stop = new System.Windows.Forms.Button();
             this.Txt_URL = new System.Windows.Forms.TextBox();
@@ -50,28 +49,20 @@
             this.label1 = new System.Windows.Forms.Label();
             this.Txt_Title = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.radioButton4 = new System.Windows.Forms.RadioButton();
+            this.radioButton5 = new System.Windows.Forms.RadioButton();
+            this.radioButton6 = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.Img_DeskTop = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.Img_video)).BeginInit();
+            this.Img_video = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Img_DeskTop)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Img_video)).BeginInit();
             this.SuspendLayout();
-            // 
-            // Img_video
-            // 
-            this.Img_video.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.Img_video.BackColor = System.Drawing.Color.Transparent;
-            this.Img_video.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Img_video.Location = new System.Drawing.Point(526, 82);
-            this.Img_video.Name = "Img_video";
-            this.Img_video.Size = new System.Drawing.Size(281, 183);
-            this.Img_video.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.Img_video.TabIndex = 0;
-            this.Img_video.TabStop = false;
-            this.Img_video.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseDown);
-            this.Img_video.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseMove);
-            this.Img_video.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseUp);
             // 
             // Btn_Play
             // 
@@ -127,7 +118,7 @@
             this.Wmp_1.Location = new System.Drawing.Point(3, 17);
             this.Wmp_1.Name = "Wmp_1";
             this.Wmp_1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("Wmp_1.OcxState")));
-            this.Wmp_1.Size = new System.Drawing.Size(517, 331);
+            this.Wmp_1.Size = new System.Drawing.Size(683, 399);
             this.Wmp_1.TabIndex = 6;
             this.Wmp_1.Visible = false;
             // 
@@ -160,7 +151,7 @@
             this.groupBox1.Controls.Add(this.Wmp_1);
             this.groupBox1.Location = new System.Drawing.Point(12, 157);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(847, 357);
+            this.groupBox1.Size = new System.Drawing.Size(1013, 425);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             // 
@@ -258,6 +249,78 @@
             this.label4.TabIndex = 11;
             this.label4.Text = "제목";
             // 
+            // radioButton1
+            // 
+            this.radioButton1.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Image = ((System.Drawing.Image)(resources.GetObject("radioButton1.Image")));
+            this.radioButton1.Location = new System.Drawing.Point(790, 13);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(111, 65);
+            this.radioButton1.TabIndex = 14;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
+            // radioButton3
+            // 
+            this.radioButton3.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton3.AutoSize = true;
+            this.radioButton3.Image = ((System.Drawing.Image)(resources.GetObject("radioButton3.Image")));
+            this.radioButton3.Location = new System.Drawing.Point(908, 13);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(111, 65);
+            this.radioButton3.TabIndex = 15;
+            this.radioButton3.TabStop = true;
+            this.radioButton3.UseVisualStyleBackColor = true;
+            // 
+            // radioButton4
+            // 
+            this.radioButton4.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton4.AutoSize = true;
+            this.radioButton4.Image = ((System.Drawing.Image)(resources.GetObject("radioButton4.Image")));
+            this.radioButton4.Location = new System.Drawing.Point(676, 82);
+            this.radioButton4.Name = "radioButton4";
+            this.radioButton4.Size = new System.Drawing.Size(111, 65);
+            this.radioButton4.TabIndex = 13;
+            this.radioButton4.TabStop = true;
+            this.radioButton4.UseVisualStyleBackColor = true;
+            // 
+            // radioButton5
+            // 
+            this.radioButton5.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton5.AutoSize = true;
+            this.radioButton5.Image = ((System.Drawing.Image)(resources.GetObject("radioButton5.Image")));
+            this.radioButton5.Location = new System.Drawing.Point(790, 82);
+            this.radioButton5.Name = "radioButton5";
+            this.radioButton5.Size = new System.Drawing.Size(111, 65);
+            this.radioButton5.TabIndex = 14;
+            this.radioButton5.TabStop = true;
+            this.radioButton5.UseVisualStyleBackColor = true;
+            // 
+            // radioButton6
+            // 
+            this.radioButton6.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton6.AutoSize = true;
+            this.radioButton6.Image = ((System.Drawing.Image)(resources.GetObject("radioButton6.Image")));
+            this.radioButton6.Location = new System.Drawing.Point(908, 82);
+            this.radioButton6.Name = "radioButton6";
+            this.radioButton6.Size = new System.Drawing.Size(100, 65);
+            this.radioButton6.TabIndex = 15;
+            this.radioButton6.TabStop = true;
+            this.radioButton6.UseVisualStyleBackColor = true;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Image = ((System.Drawing.Image)(resources.GetObject("radioButton2.Image")));
+            this.radioButton2.Location = new System.Drawing.Point(676, 13);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(111, 65);
+            this.radioButton2.TabIndex = 13;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
             // Img_DeskTop
             // 
             this.Img_DeskTop.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -267,16 +330,37 @@
             this.Img_DeskTop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Img_DeskTop.Location = new System.Drawing.Point(18, 175);
             this.Img_DeskTop.Name = "Img_DeskTop";
-            this.Img_DeskTop.Size = new System.Drawing.Size(513, 318);
+            this.Img_DeskTop.Size = new System.Drawing.Size(679, 386);
             this.Img_DeskTop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.Img_DeskTop.TabIndex = 7;
             this.Img_DeskTop.TabStop = false;
+            // 
+            // Img_video
+            // 
+            this.Img_video.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.Img_video.BackColor = System.Drawing.Color.Transparent;
+            this.Img_video.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Img_video.Location = new System.Drawing.Point(692, 116);
+            this.Img_video.Name = "Img_video";
+            this.Img_video.Size = new System.Drawing.Size(281, 183);
+            this.Img_video.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.Img_video.TabIndex = 0;
+            this.Img_video.TabStop = false;
+            this.Img_video.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseDown);
+            this.Img_video.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseMove);
+            this.Img_video.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseUp);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(861, 517);
+            this.ClientSize = new System.Drawing.Size(1027, 585);
+            this.Controls.Add(this.radioButton6);
+            this.Controls.Add(this.radioButton3);
+            this.Controls.Add(this.radioButton5);
+            this.Controls.Add(this.radioButton1);
+            this.Controls.Add(this.radioButton2);
+            this.Controls.Add(this.radioButton4);
             this.Controls.Add(this.Img_DeskTop);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.Txt_Title);
@@ -294,12 +378,12 @@
             this.Text = "JJCastDemo";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.Img_video)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Img_DeskTop)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Img_video)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -329,5 +413,11 @@
         private System.Windows.Forms.TextBox Txt_Title;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.PictureBox Img_DeskTop;
+        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.RadioButton radioButton4;
+        private System.Windows.Forms.RadioButton radioButton5;
+        private System.Windows.Forms.RadioButton radioButton6;
+        private System.Windows.Forms.RadioButton radioButton2;
     }
 }

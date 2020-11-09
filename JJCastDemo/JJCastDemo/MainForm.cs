@@ -90,20 +90,25 @@ namespace JJCastDemo
 
         private void Btn_MergePlay_Click(object sender, EventArgs e)
         {
+            Img_DeskTop.Visible = false;
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.play();
         }
 
         private void Btn_Play_Click(object sender, EventArgs e)
         {
+            Img_DeskTop.Visible = true;
             //비디오 프레임 디코딩 thread 생성
             if (!activeThread)
             {
-                threadStartCam = new ThreadStart(DecodeAllFramesToImages);
-                threadCam = new Thread(threadStartCam);
-                if (threadCam.ThreadState == System.Threading.ThreadState.Unstarted)
-                {
-                    threadCam.Start();
+                if (Cmb_Cam.Text.Trim().Length > 0)
+                { 
+                    threadStartCam = new ThreadStart(DecodeAllFramesToImages);
+                    threadCam = new Thread(threadStartCam);
+                    if (threadCam.ThreadState == System.Threading.ThreadState.Unstarted)
+                    {
+                        threadCam.Start();
+                    }
                 }
                 threadStartDesktop = new ThreadStart(ScreenCapture);
                 threadDesktop = new Thread(threadStartDesktop);
@@ -152,42 +157,55 @@ namespace JJCastDemo
         #region RecordTest Method
         private unsafe void DecodeAllFramesToImages()
         {
+            try
+            { 
             //video="웹캠 디바이스 이름"
-            string device = "video=ABKO APC930 QHD WEBCAM";
-            using (var vsd = new VideoStreamDecoderCam(device))
-            {
-                //Console.WriteLine($"codec name: {vsd.CodecName}");
-
-                var info = vsd.GetContextInfo();
-                info.ToList().ForEach(x => Console.WriteLine($"{x.Key} = {x.Value}"));
-
-                var sourceSize = vsd.FrameSize;
-                var sourcePixelFormat = vsd.PixelFormat;
-                var destinationSize = sourceSize;
-                var destinationPixelFormat = AVPixelFormat.AV_PIX_FMT_BGR24;
-                using (var vfc = new VideoFrameConverterCam(sourceSize, sourcePixelFormat, destinationSize, destinationPixelFormat))
+                string device = "video=ABKO APC930 QHD WEBCAM";
+                using (var vsd = new VideoStreamDecoderCam(device))
                 {
-                    var frameNumber = 0;
-                    while (vsd.TryDecodeNextFrame(out var frame) && activeThread)
+                    //Console.WriteLine($"codec name: {vsd.CodecName}");
+
+                    var info = vsd.GetContextInfo();
+                    info.ToList().ForEach(x => Console.WriteLine($"{x.Key} = {x.Value}"));
+
+                    var sourceSize = vsd.FrameSize;
+                    var sourcePixelFormat = vsd.PixelFormat;
+                    var destinationSize = sourceSize;
+                    var destinationPixelFormat = AVPixelFormat.AV_PIX_FMT_BGR24;
+                    using (var vfc = new VideoFrameConverterCam(sourceSize, sourcePixelFormat, destinationSize, destinationPixelFormat))
                     {
-                        var convertedFrame = vfc.Convert(frame);
+                        var frameNumber = 0;
+                        while (vsd.TryDecodeNextFrame(out var frame) && activeThread)
+                        {
+                            var convertedFrame = vfc.Convert(frame);
 
-                        Bitmap bitmap;
-                        //362, 235
-                        bitmap = new Bitmap(convertedFrame.width, convertedFrame.height, convertedFrame.linesize[0], System.Drawing.Imaging.PixelFormat.Format24bppRgb, (IntPtr)convertedFrame.data[0]);
-                        int width = Img_video.Width; int height = Img_video.Height;
-                        Size resize = new Size(width, height);
-                        Bitmap resizeImage = new Bitmap(bitmap, resize);
-                        //bitmap = new Bitmap(362, 235, convertedFrame.linesize[0], System.Drawing.Imaging.PixelFormat.Format24bppRgb, (IntPtr)convertedFrame.data[0]);
-                        bitmap.Dispose();
-                        resizeImage = RemoveBackground(resizeImage);
+                            Bitmap bitmap;
+                            //362, 235
+                            bitmap = new Bitmap(convertedFrame.width, convertedFrame.height, convertedFrame.linesize[0], System.Drawing.Imaging.PixelFormat.Format24bppRgb, (IntPtr)convertedFrame.data[0]);
+                            int width = Img_video.Width; int height = Img_video.Height;
+                            Size resize = new Size(width, height);
+                            Bitmap resizeImage = new Bitmap(bitmap, resize);
+                            //bitmap = new Bitmap(362, 235, convertedFrame.linesize[0], System.Drawing.Imaging.PixelFormat.Format24bppRgb, (IntPtr)convertedFrame.data[0]);
+                            bitmap.Dispose();
+                            resizeImage = RemoveBackground(resizeImage);
                         
-                        Img_video.Image = resizeImage;
-                        //bitmap.Dispose();
+                            Img_video.Image = resizeImage;
+                            //bitmap.Dispose();
 
-                        frameNumber++;
+                            frameNumber++;
+                        }
                     }
                 }
+            }
+            catch (Exception)
+            {
+                activeThread = false;
+                threadCam.Interrupt();
+                threadCam.Abort();
+                threadDesktop.Interrupt();
+                threadDesktop.Abort();
+                Img_video.Image = null;
+                Img_DeskTop.Image = null;
             }
         }
 
@@ -234,15 +252,28 @@ namespace JJCastDemo
 
         private void ScreenCapture()
         {
-            while (activeThread)
+            try
             {
-                Size size = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-                Bitmap bitmap = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-                Graphics graphics = Graphics.FromImage(bitmap);
-                graphics.CopyFromScreen(0, 0, 0, 0, size);
+                while (activeThread)
+                {
+                    Size size = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+                    Bitmap bitmap = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+                    Graphics graphics = Graphics.FromImage(bitmap);
+                    graphics.CopyFromScreen(0, 0, 0, 0, size);
 
-                Img_DeskTop.Image = bitmap;
-                graphics.Dispose();
+                    Img_DeskTop.Image = bitmap;
+                    graphics.Dispose();
+                }
+            }
+            catch(Exception)
+            {
+                activeThread = false;
+                threadCam.Interrupt();
+                threadCam.Abort();
+                threadDesktop.Interrupt();
+                threadDesktop.Abort();
+                Img_video.Image = null;
+                Img_DeskTop.Image = null;
             }
             
         }
