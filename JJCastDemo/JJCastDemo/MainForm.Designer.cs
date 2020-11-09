@@ -49,12 +49,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.Txt_Title = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
-            this.radioButton4 = new System.Windows.Forms.RadioButton();
-            this.radioButton5 = new System.Windows.Forms.RadioButton();
-            this.radioButton6 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.Rdb_RightIn = new System.Windows.Forms.RadioButton();
+            this.Rdb_RightBottomIn = new System.Windows.Forms.RadioButton();
+            this.Rdb_RightBottomOut = new System.Windows.Forms.RadioButton();
+            this.Rdb_DiagonalOut = new System.Windows.Forms.RadioButton();
+            this.Rdb_DiagonalIn = new System.Windows.Forms.RadioButton();
+            this.Rdb_RightOut = new System.Windows.Forms.RadioButton();
             this.Img_DeskTop = new System.Windows.Forms.PictureBox();
             this.Img_video = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).BeginInit();
@@ -249,77 +249,77 @@
             this.label4.TabIndex = 11;
             this.label4.Text = "제목";
             // 
-            // radioButton1
+            // Rdb_RightIn
             // 
-            this.radioButton1.Appearance = System.Windows.Forms.Appearance.Button;
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Image = ((System.Drawing.Image)(resources.GetObject("radioButton1.Image")));
-            this.radioButton1.Location = new System.Drawing.Point(790, 13);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(111, 65);
-            this.radioButton1.TabIndex = 14;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.Rdb_RightIn.Appearance = System.Windows.Forms.Appearance.Button;
+            this.Rdb_RightIn.AutoSize = true;
+            this.Rdb_RightIn.Image = ((System.Drawing.Image)(resources.GetObject("Rdb_RightIn.Image")));
+            this.Rdb_RightIn.Location = new System.Drawing.Point(790, 13);
+            this.Rdb_RightIn.Name = "Rdb_RightIn";
+            this.Rdb_RightIn.Size = new System.Drawing.Size(111, 65);
+            this.Rdb_RightIn.TabIndex = 14;
+            this.Rdb_RightIn.TabStop = true;
+            this.Rdb_RightIn.UseVisualStyleBackColor = true;
             // 
-            // radioButton3
+            // Rdb_RightBottomIn
             // 
-            this.radioButton3.Appearance = System.Windows.Forms.Appearance.Button;
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Image = ((System.Drawing.Image)(resources.GetObject("radioButton3.Image")));
-            this.radioButton3.Location = new System.Drawing.Point(908, 13);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(111, 65);
-            this.radioButton3.TabIndex = 15;
-            this.radioButton3.TabStop = true;
-            this.radioButton3.UseVisualStyleBackColor = true;
+            this.Rdb_RightBottomIn.Appearance = System.Windows.Forms.Appearance.Button;
+            this.Rdb_RightBottomIn.AutoSize = true;
+            this.Rdb_RightBottomIn.Image = ((System.Drawing.Image)(resources.GetObject("Rdb_RightBottomIn.Image")));
+            this.Rdb_RightBottomIn.Location = new System.Drawing.Point(908, 13);
+            this.Rdb_RightBottomIn.Name = "Rdb_RightBottomIn";
+            this.Rdb_RightBottomIn.Size = new System.Drawing.Size(111, 65);
+            this.Rdb_RightBottomIn.TabIndex = 15;
+            this.Rdb_RightBottomIn.TabStop = true;
+            this.Rdb_RightBottomIn.UseVisualStyleBackColor = true;
             // 
-            // radioButton4
+            // Rdb_RightBottomOut
             // 
-            this.radioButton4.Appearance = System.Windows.Forms.Appearance.Button;
-            this.radioButton4.AutoSize = true;
-            this.radioButton4.Image = ((System.Drawing.Image)(resources.GetObject("radioButton4.Image")));
-            this.radioButton4.Location = new System.Drawing.Point(676, 82);
-            this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(111, 65);
-            this.radioButton4.TabIndex = 13;
-            this.radioButton4.TabStop = true;
-            this.radioButton4.UseVisualStyleBackColor = true;
+            this.Rdb_RightBottomOut.Appearance = System.Windows.Forms.Appearance.Button;
+            this.Rdb_RightBottomOut.AutoSize = true;
+            this.Rdb_RightBottomOut.Image = ((System.Drawing.Image)(resources.GetObject("Rdb_RightBottomOut.Image")));
+            this.Rdb_RightBottomOut.Location = new System.Drawing.Point(676, 82);
+            this.Rdb_RightBottomOut.Name = "Rdb_RightBottomOut";
+            this.Rdb_RightBottomOut.Size = new System.Drawing.Size(111, 65);
+            this.Rdb_RightBottomOut.TabIndex = 13;
+            this.Rdb_RightBottomOut.TabStop = true;
+            this.Rdb_RightBottomOut.UseVisualStyleBackColor = true;
             // 
-            // radioButton5
+            // Rdb_DiagonalOut
             // 
-            this.radioButton5.Appearance = System.Windows.Forms.Appearance.Button;
-            this.radioButton5.AutoSize = true;
-            this.radioButton5.Image = ((System.Drawing.Image)(resources.GetObject("radioButton5.Image")));
-            this.radioButton5.Location = new System.Drawing.Point(790, 82);
-            this.radioButton5.Name = "radioButton5";
-            this.radioButton5.Size = new System.Drawing.Size(111, 65);
-            this.radioButton5.TabIndex = 14;
-            this.radioButton5.TabStop = true;
-            this.radioButton5.UseVisualStyleBackColor = true;
+            this.Rdb_DiagonalOut.Appearance = System.Windows.Forms.Appearance.Button;
+            this.Rdb_DiagonalOut.AutoSize = true;
+            this.Rdb_DiagonalOut.Image = ((System.Drawing.Image)(resources.GetObject("Rdb_DiagonalOut.Image")));
+            this.Rdb_DiagonalOut.Location = new System.Drawing.Point(790, 82);
+            this.Rdb_DiagonalOut.Name = "Rdb_DiagonalOut";
+            this.Rdb_DiagonalOut.Size = new System.Drawing.Size(111, 65);
+            this.Rdb_DiagonalOut.TabIndex = 14;
+            this.Rdb_DiagonalOut.TabStop = true;
+            this.Rdb_DiagonalOut.UseVisualStyleBackColor = true;
             // 
-            // radioButton6
+            // Rdb_DiagonalIn
             // 
-            this.radioButton6.Appearance = System.Windows.Forms.Appearance.Button;
-            this.radioButton6.AutoSize = true;
-            this.radioButton6.Image = ((System.Drawing.Image)(resources.GetObject("radioButton6.Image")));
-            this.radioButton6.Location = new System.Drawing.Point(908, 82);
-            this.radioButton6.Name = "radioButton6";
-            this.radioButton6.Size = new System.Drawing.Size(100, 65);
-            this.radioButton6.TabIndex = 15;
-            this.radioButton6.TabStop = true;
-            this.radioButton6.UseVisualStyleBackColor = true;
+            this.Rdb_DiagonalIn.Appearance = System.Windows.Forms.Appearance.Button;
+            this.Rdb_DiagonalIn.AutoSize = true;
+            this.Rdb_DiagonalIn.Image = ((System.Drawing.Image)(resources.GetObject("Rdb_DiagonalIn.Image")));
+            this.Rdb_DiagonalIn.Location = new System.Drawing.Point(908, 82);
+            this.Rdb_DiagonalIn.Name = "Rdb_DiagonalIn";
+            this.Rdb_DiagonalIn.Size = new System.Drawing.Size(100, 65);
+            this.Rdb_DiagonalIn.TabIndex = 15;
+            this.Rdb_DiagonalIn.TabStop = true;
+            this.Rdb_DiagonalIn.UseVisualStyleBackColor = true;
             // 
-            // radioButton2
+            // Rdb_RightOut
             // 
-            this.radioButton2.Appearance = System.Windows.Forms.Appearance.Button;
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Image = ((System.Drawing.Image)(resources.GetObject("radioButton2.Image")));
-            this.radioButton2.Location = new System.Drawing.Point(676, 13);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(111, 65);
-            this.radioButton2.TabIndex = 13;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.Rdb_RightOut.Appearance = System.Windows.Forms.Appearance.Button;
+            this.Rdb_RightOut.AutoSize = true;
+            this.Rdb_RightOut.Image = ((System.Drawing.Image)(resources.GetObject("Rdb_RightOut.Image")));
+            this.Rdb_RightOut.Location = new System.Drawing.Point(676, 13);
+            this.Rdb_RightOut.Name = "Rdb_RightOut";
+            this.Rdb_RightOut.Size = new System.Drawing.Size(111, 65);
+            this.Rdb_RightOut.TabIndex = 13;
+            this.Rdb_RightOut.TabStop = true;
+            this.Rdb_RightOut.UseVisualStyleBackColor = true;
             // 
             // Img_DeskTop
             // 
@@ -355,12 +355,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1027, 585);
-            this.Controls.Add(this.radioButton6);
-            this.Controls.Add(this.radioButton3);
-            this.Controls.Add(this.radioButton5);
-            this.Controls.Add(this.radioButton1);
-            this.Controls.Add(this.radioButton2);
-            this.Controls.Add(this.radioButton4);
+            this.Controls.Add(this.Rdb_DiagonalIn);
+            this.Controls.Add(this.Rdb_RightBottomIn);
+            this.Controls.Add(this.Rdb_DiagonalOut);
+            this.Controls.Add(this.Rdb_RightIn);
+            this.Controls.Add(this.Rdb_RightOut);
+            this.Controls.Add(this.Rdb_RightBottomOut);
             this.Controls.Add(this.Img_DeskTop);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.Txt_Title);
@@ -413,11 +413,11 @@
         private System.Windows.Forms.TextBox Txt_Title;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.PictureBox Img_DeskTop;
-        private System.Windows.Forms.RadioButton radioButton1;
-        private System.Windows.Forms.RadioButton radioButton3;
-        private System.Windows.Forms.RadioButton radioButton4;
-        private System.Windows.Forms.RadioButton radioButton5;
-        private System.Windows.Forms.RadioButton radioButton6;
-        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton Rdb_RightIn;
+        private System.Windows.Forms.RadioButton Rdb_RightBottomIn;
+        private System.Windows.Forms.RadioButton Rdb_RightBottomOut;
+        private System.Windows.Forms.RadioButton Rdb_DiagonalOut;
+        private System.Windows.Forms.RadioButton Rdb_DiagonalIn;
+        private System.Windows.Forms.RadioButton Rdb_RightOut;
     }
 }

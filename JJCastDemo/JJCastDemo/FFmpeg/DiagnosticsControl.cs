@@ -92,7 +92,7 @@ namespace JJCastDemo.FFmpeg
                     bool test = false;
                     if (test)
                     {
-                        argument2 = "ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 320x240 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"cam.mp4\"";
+                        argument2 = "ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"cam.mp4\"";
                     }
                     CommandExcute(argument, processDesk, argument2, processCam);
                     CamRecorderProcess_ID = processCam.Id;
@@ -116,9 +116,43 @@ namespace JJCastDemo.FFmpeg
             return CommandExcute(ffmpegStatement.ConcatVideoStmt("title_01_minecraft.mp4", "output_overLay.mp4"), new Process(), false, true);
         }
 
-        public int OverLay(string rgbHex)
+        public int OverLay(string rgbHex, string rdbCheck)
         {
-            return CommandExcute(ffmpegStatement.OverlayVideoStmt(rgbHex), new Process(), false, true);
+            string overlayLocation = string.Empty;
+            string pad = string.Empty;
+            string crop = "[b]";
+            string overlay = "(W - w):(H - h)";
+            bool isCrop = false;
+
+            switch (rdbCheck)
+            {
+                case "RIGHTOUT":
+                    pad = "iw + (iw/3)/ih";
+                    crop = "[b]crop=iw/3:ih:iw/3:0[b2]";
+                    overlay = "(W - w):0";
+                    isCrop = true;
+                    break;
+                case "RIGHTIN":
+                    pad = "iw:ih";
+                    crop = "[b]crop=iw/3:ih:iw/3:0[b2];[b2]";
+                    overlay = "(W - w):0";
+                    isCrop = true;
+                    break;
+                case "RIGHTBOTTOMIN":
+                default:
+                    pad = "iw/ih";
+                    break;
+                case "RIGHTBOTTOMOUT":
+                    pad = "iw+320/ih";
+                    break;
+                case "DIAGONALOUT":
+                    pad = "iw+320/ih+240";
+                    break;
+                case "DIAGONALIN":
+                    pad = "iw+160/ih+120";
+                    break;
+            }
+            return CommandExcute(ffmpegStatement.OverlayVideoStmt(rgbHex, pad, crop, overlay, isCrop), new Process(), false, true);
         }
 
         public int StopRecord()

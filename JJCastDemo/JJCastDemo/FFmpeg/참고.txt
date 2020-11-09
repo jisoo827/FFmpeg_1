@@ -12,7 +12,7 @@ ffmpeg -y -i chromakey_output.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts back
 
 FFFDFF
 크로마키 & 오버레이
-ffmpeg -y -i base_35m.mp4 -i greenscreensample_480.mp4 -filter_complex "[1:v]setpts = PTS - 0.1 / TB[a];[a]chromakey=0x56cd53 : 0.1 : 0.1 [ckout];[0:v][ckout]overlay = (W - w):(H - h):enable = gte(t\, 0):eof_action = pass,format = yuv420p[out]" -map "[out]" -map 0:a? -c:v libx264 -preset ultrafast -tune zerolatency -crf 18 -c:a copy chromakey_output_3.mp4
+ffmpeg -y -i base.mp4 -i cam_320.mp4 -filter_complex "[0:v]pad=iw:ih:color=white[a];[1:v]setpts = PTS - 0.1 / TB[b];[b]crop=iw:ih:0:0[b2];[b2]chromakey = 0x00D800 : 0.1 : 0.1[ckout];[a][ckout]overlay = (W - w):(H - h):enable = gte(t\, 0):eof_action = pass,format = yuv420p[out]" -map "[out]" -map 0:a? -c:v libx264 -preset ultrafast -tune zerolatency -crf 18 -c:a copy  output_overlay_RIGHTBOTTOMIN.mp4
 ffmpeg -y -i base_35m.mp4 -i tomyyouth480.mp4 -filter_complex "[1:v]setpts = PTS - 0.1 / TB[a];[a]chromakey=0xae1816 : 0.1 : 0.1 [ckout];[0:v][ckout]overlay = (W - w):(H - h):enable = gte(t\, 0):eof_action = pass,format = yuv420p[out]" -map "[out]" -map 0:a? -c:v libx264 -preset ultrafast -tune zerolatency -crf 18 -c:a copy chromakey_output_2.mp4
 ffmpeg -y -i base_35m.mp4 -i cam_35m_320.mp4 -filter_complex "[1:v]setpts = PTS - 0.1 / TB[a];[0:v][a]overlay = (W - w):(H - h):enable = gte(t\, 0):eof_action = pass,format = yuv420p[out]" -map "[out]" -map 0:a? -c:v libx264 -crf 18 -c:a copy  overlay_output_35m.mp4
 
@@ -146,7 +146,13 @@ output.mov
  [1:v] : 2번째 비디오
  padding : 여백넣기
  padding=n:n:n:n:color
- crop  : 자르기
+ crop  : 자르기  //  crop=out_w:out_h:x:y // 
+    out_w is the width of the output rectangle
+    out_h is the height of the output rectangle
+    x and y specify the top left corner of the output rectangle
+
+
+
  뒤에 [a] 이런식으로 붙는건 alias
  
 ffmpeg -y -i base.mp4 -i cam_320.mp4 -filter_complex "[0:v]pad=iw+320:ih:color=white[a];[1:v]setpts = PTS - 0.1 / TB[b];[b]chromakey = 0x00D800 : 0.1 : 0.1[ckout];[a][ckout]overlay = (W - w):(H - h):enable = gte(t\, 0):eof_action = pass,format = yuv420p[out]" -map "[out]" -map 0:a? -c:v libx264 -preset ultrafast -tune zerolatency -crf 18 -c:a copy  output_overlay2.mp4

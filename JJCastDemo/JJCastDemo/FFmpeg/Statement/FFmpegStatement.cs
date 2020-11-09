@@ -58,9 +58,11 @@ namespace JJCastDemo.FFmpeg.Statement
             return stmt;
         }
 
-        public string OverlayVideoStmt(string rgbHex)
+        public string OverlayVideoStmt(string rgbHex, string pad, string crop, string overlay, bool isCrop = false)
         {
-            stmt = "ffmpeg -y -i cam.mp4 -vf scale=320:240 cam_320.mp4 && ffmpeg -y -i base.mp4 -i cam_320.mp4 -filter_complex \"[1:v]setpts = PTS - 0.1 / TB[a];[a]chromakey=0x" + rgbHex + " : 0.1 : 0.1[ckout];[0:v][ckout]overlay = (W - w):(H - h):enable = gte(t\\, 0):eof_action = pass,format = yuv420p[out]\" -map \"[out]\" -map 0:a? -c:v libx264 -preset ultrafast -tune zerolatency -crf 18 -c:a copy  output_overlay.mp4 && exit";
+            stmt = string.Empty;
+            if (!isCrop) stmt = "ffmpeg -y -i cam.mp4 -vf scale=320:240 cam_320.mp4 && ";
+            stmt += "ffmpeg -y -i base.mp4 -i " + (isCrop ? "cam.mp4" : "cam_320.mp4") + " -filter_complex \"[0:v]pad = " + pad + ": color = white[a];[1:v]setpts = PTS - 0.1 / TB[b];" + crop + "chromakey = 0x00D800 : 0.1 : 0.1[ckout];[a][ckout]overlay = " + overlay + ":enable = gte(t\\, 0):eof_action = pass,format = yuv420p[out]\" -map \"[out]\" -map 0:a? -c:v libx264 -preset ultrafast -tune zerolatency -crf 18 -c:a copy  output_overlay.mp4 && exit";
             return stmt;
         }
 

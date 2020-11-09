@@ -84,7 +84,9 @@ namespace JJCastDemo
 
         private void Btn_Merge_Click(object sender, EventArgs e)
         {
-            dControl.OverLay(rgbHex);
+            string rdbCheck = Rdb_RightOut.Checked ? "RIGHTOUT" : Rdb_RightIn.Checked ? "RIGHTIN" : Rdb_RightBottomIn.Checked ? "RIGHTBOTTOMIN" : 
+                Rdb_RightBottomOut.Checked ? "RIGHTBOTTOMOUT" : Rdb_DiagonalOut.Checked ? "DIAGONALOUT" : "DIAGONALIN";
+            dControl.OverLay(rgbHex, rdbCheck);
             if (dControl.ConcatVideo() == 1) Txt_URL.Text = Application.StartupPath + "\\result.mp4";
         }
 

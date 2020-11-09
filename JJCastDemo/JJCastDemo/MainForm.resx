@@ -132,7 +132,7 @@
     <value>17, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="radioButton1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="Rdb_RightIn.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAGkAAAA7CAYAAAB4xKTGAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wgAADsIBFShKgAAABvFJREFUeF7tnHtMFEccx3lorILyOJCXDwQOEatwgLy8O+7F3e3d8TjgUAgPSxWq
@@ -168,7 +168,7 @@
         AAAASUVORK5CYII=
 </value>
   </data>
-  <data name="radioButton3.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="Rdb_RightBottomIn.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAGkAAAA7CAYAAAB4xKTGAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wgAADsIBFShKgAAABCVJREFUeF7tmd1LHFcUwFfBNEmNCWRDbPNRwSC10WShTcua3c3OruvMfumaxIAh
@@ -192,7 +192,7 @@
         q1/nAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="radioButton4.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="Rdb_RightBottomOut.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAGkAAAA7CAYAAAB4xKTGAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wgAADsIBFShKgAAAA0VJREFUeF7tmTtIK0EUhoOiNmJlncbqIkog2AlXBTGdjSiiCAqCYCtpIj4aQTSx
@@ -212,7 +212,7 @@
         S4ODg+7PEeFD9A8nhwhyI/jshQAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="radioButton5.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="Rdb_DiagonalOut.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAGkAAAA7CAYAAAB4xKTGAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wgAADsIBFShKgAAAA11JREFUeF7tmT1II0EYhoNibMTKOo2ViCLk7DxOBTGdjSiiCAqCYCs2ij9wCMG/
@@ -232,7 +232,7 @@
         NBrVs7PHFQjGCOTOj59Ren5OHgtly/X1NfX09Bh/R9gP0X+pcdgRXuQv5gAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="radioButton6.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="Rdb_DiagonalIn.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAF4AAAA7CAYAAADy6z2HAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wgAADsIBFShKgAAAA3VJREFUeF7tmE9Ik2EYwIeBBFGuMZ140C4xyAkKibJQh3Nzzj8oIYYTQpC8eAgG
@@ -253,7 +253,7 @@
         1zlacbJTFAAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="radioButton2.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="Rdb_RightOut.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAGkAAAA7CAYAAAB4xKTGAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wgAADsIBFShKgAAABTlJREFUeF7tnEsobmsYxylkG0jkLvdL5Fokx7UOcovketwTRgZGkksxQDKVpBix
