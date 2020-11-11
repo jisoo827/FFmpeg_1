@@ -38,6 +38,7 @@
             this.Btn_RecordStop = new System.Windows.Forms.Button();
             this.Btn_Merge = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.Img_video = new System.Windows.Forms.PictureBox();
             this.Btn_MergePlay = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.Btn_Chromakey = new System.Windows.Forms.Button();
@@ -56,12 +57,11 @@
             this.Rdb_DiagonalIn = new System.Windows.Forms.RadioButton();
             this.Rdb_RightOut = new System.Windows.Forms.RadioButton();
             this.Img_DeskTop = new System.Windows.Forms.PictureBox();
-            this.Img_video = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).BeginInit();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.Img_video)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Img_DeskTop)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Img_video)).BeginInit();
             this.SuspendLayout();
             // 
             // Btn_Play
@@ -154,6 +154,21 @@
             this.groupBox1.Size = new System.Drawing.Size(1013, 425);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
+            // 
+            // Img_video
+            // 
+            this.Img_video.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.Img_video.BackColor = System.Drawing.Color.Transparent;
+            this.Img_video.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Img_video.Location = new System.Drawing.Point(692, 116);
+            this.Img_video.Name = "Img_video";
+            this.Img_video.Size = new System.Drawing.Size(281, 183);
+            this.Img_video.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.Img_video.TabIndex = 0;
+            this.Img_video.TabStop = false;
+            this.Img_video.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseDown);
+            this.Img_video.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseMove);
+            this.Img_video.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseUp);
             // 
             // Btn_MergePlay
             // 
@@ -335,21 +350,6 @@
             this.Img_DeskTop.TabIndex = 7;
             this.Img_DeskTop.TabStop = false;
             // 
-            // Img_video
-            // 
-            this.Img_video.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.Img_video.BackColor = System.Drawing.Color.Transparent;
-            this.Img_video.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Img_video.Location = new System.Drawing.Point(692, 116);
-            this.Img_video.Name = "Img_video";
-            this.Img_video.Size = new System.Drawing.Size(281, 183);
-            this.Img_video.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.Img_video.TabIndex = 0;
-            this.Img_video.TabStop = false;
-            this.Img_video.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseDown);
-            this.Img_video.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseMove);
-            this.Img_video.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseUp);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -380,10 +380,10 @@
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).EndInit();
             this.groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.Img_video)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Img_DeskTop)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Img_video)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

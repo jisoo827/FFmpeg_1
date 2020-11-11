@@ -68,31 +68,23 @@ namespace JJCastDemo.FFmpeg
 
         }
 
-        public int PartialRecord(Point desktopPoint, Point videoPoint, string mic, string monitor, string cam)
+        public int PartialRecord(string mic, Device monitor, string cam)
         {
             processDesk = new Process();
             processCam = new Process();
-            string offset = string.Empty;
+            
             try
             {
-                Point point = desktopPoint;
-                point.X += videoPoint.X;
-                point.Y += videoPoint.Y;
-
-                string argument = string.Empty;
-                string argument2 = string.Empty;
-
-                if (monitor.Trim().ToUpper() != "FULL") offset = "-offset_x " + point.X.ToString() + " -offset_y " + point.Y.ToString();
-
-                argument = mic.Trim().Length == 0 ? ffmpegStatement.DesktopPartialRecordStmt(offset) : ffmpegStatement.DesktopPartialRecordStmt(offset, mic);
-
+                string offset = "-offset_x " + monitor.point.X.ToString() + " -offset_y " + monitor.point.Y.ToString() + " -video_size " + monitor.size.Width.ToString() + "X" + monitor.size.Height.ToString();
+                string argument = mic.Trim().Length == 0 ? ffmpegStatement.DesktopPartialRecordStmt(offset) : ffmpegStatement.DesktopPartialRecordStmt(offset, mic);
+                
                 if (cam.Trim().Length > 0)
                 {
-                    argument2 = ffmpegStatement.CamRecordStmt(cam);
+                    string argument2 = ffmpegStatement.CamRecordStmt(cam);
                     bool test = false;
                     if (test)
                     {
-                        argument2 = "ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -video_size 1280x720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"cam.mp4\"";
+                        argument2 = "ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 " + offset + " -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p \"cam.mp4\"";
                     }
                     CommandExcute(argument, processDesk, argument2, processCam);
                     CamRecorderProcess_ID = processCam.Id;
@@ -116,43 +108,42 @@ namespace JJCastDemo.FFmpeg
             return CommandExcute(ffmpegStatement.ConcatVideoStmt("title_01_minecraft.mp4", "output_overLay.mp4"), new Process(), false, true);
         }
 
-        public int OverLay(string rgbHex, string rdbCheck)
+        public int OverLay(string rgbHex, string rdbCheck, Size monitorSize)
         {
-            string overlayLocation = string.Empty;
             string pad = string.Empty;
             string crop = "[b]";
             string overlay = "(W - w):(H - h)";
-            bool isCrop = false;
+            string size = "320:240";
 
             switch (rdbCheck)
             {
                 case "RIGHTOUT":
-                    pad = "iw + (iw/3)/ih";
-                    crop = "[b]crop=iw/3:ih:iw/3:0[b2]";
+                    pad = "iw + (iw/3):ih";
+                    crop = "[b]crop=iw/3:ih:iw/3:0[b2];[b2]";
                     overlay = "(W - w):0";
-                    isCrop = true;
+                    size = monitorSize.Width.ToString() + ":" + monitorSize.Height.ToString();
                     break;
                 case "RIGHTIN":
                     pad = "iw:ih";
                     crop = "[b]crop=iw/3:ih:iw/3:0[b2];[b2]";
                     overlay = "(W - w):0";
-                    isCrop = true;
+                    size = monitorSize.Width.ToString() + ":" + monitorSize.Height.ToString();
                     break;
                 case "RIGHTBOTTOMIN":
                 default:
-                    pad = "iw/ih";
+                    pad = "iw:ih";
                     break;
                 case "RIGHTBOTTOMOUT":
-                    pad = "iw+320/ih";
+                    pad = "iw+320:ih";
                     break;
                 case "DIAGONALOUT":
-                    pad = "iw+320/ih+240";
+                    pad = "iw+320:ih+240";
                     break;
                 case "DIAGONALIN":
-                    pad = "iw+160/ih+120";
+                    pad = "iw+160:ih+120";
                     break;
             }
-            return CommandExcute(ffmpegStatement.OverlayVideoStmt(rgbHex, pad, crop, overlay, isCrop), new Process(), false, true);
+            return CommandExcute(ffmpegStatement.OverlayVideoStmt(pad, crop, overlay, rgbHex, size), new Process(), false, true);
         }
 
         public int StopRecord()
@@ -264,8 +255,10 @@ namespace JJCastDemo.FFmpeg
     }
     public class Device
     {
-        public string device;
-        public string name;
+        public string device { get; set; }
+        public string name { get; set; }
+        public Size size { get; set; }
+        public Point point { get; set; }
     }
 
 

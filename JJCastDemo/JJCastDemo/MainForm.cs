@@ -30,6 +30,7 @@ namespace JJCastDemo
         ThreadStart threadStartCam;
         Thread threadDesktop;
         ThreadStart threadStartDesktop;
+        Device monitor;
 
         private static bool activeThread = false;      //thread 활성화 유무
         DiagnosticsControl dControl = null;
@@ -73,7 +74,7 @@ namespace JJCastDemo
 
         private void Btn_Record_Click(object sender, EventArgs e)
         {
-            dControl.PartialRecord(this.DesktopLocation, Wmp_1.Location, Cmb_Mic.Text.Trim(), Cmb_Monitor.Text.Trim(), Cmb_Cam.Text.Trim());
+            dControl.PartialRecord(Cmb_Mic.Text.Trim(), (Device)Cmb_Monitor.SelectedItem, Cmb_Cam.Text.Trim());
         }
 
         private void Btn_RecordStop_Click(object sender, EventArgs e)
@@ -86,13 +87,14 @@ namespace JJCastDemo
         {
             string rdbCheck = Rdb_RightOut.Checked ? "RIGHTOUT" : Rdb_RightIn.Checked ? "RIGHTIN" : Rdb_RightBottomIn.Checked ? "RIGHTBOTTOMIN" : 
                 Rdb_RightBottomOut.Checked ? "RIGHTBOTTOMOUT" : Rdb_DiagonalOut.Checked ? "DIAGONALOUT" : "DIAGONALIN";
-            dControl.OverLay(rgbHex, rdbCheck);
+            dControl.OverLay(rgbHex, rdbCheck, ((Device)Cmb_Monitor.SelectedItem).size);
             if (dControl.ConcatVideo() == 1) Txt_URL.Text = Application.StartupPath + "\\result.mp4";
         }
 
         private void Btn_MergePlay_Click(object sender, EventArgs e)
         {
             Img_DeskTop.Visible = false;
+            Wmp_1.Visible = true;
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.play();
         }
@@ -100,6 +102,7 @@ namespace JJCastDemo
         private void Btn_Play_Click(object sender, EventArgs e)
         {
             Img_DeskTop.Visible = true;
+            monitor = (Device)Cmb_Monitor.SelectedItem;
             //비디오 프레임 디코딩 thread 생성
             if (!activeThread)
             {
@@ -125,12 +128,22 @@ namespace JJCastDemo
         private void Btn_Stop_Click(object sender, EventArgs e)
         {
             Wmp_1.Ctlcontrols.stop();
+            Wmp_1.Visible = false;
 
-            threadCam.Interrupt();
-            threadCam.Abort();
-            threadDesktop.Interrupt();
-            threadDesktop.Abort();
-            activeThread = false;
+            if (activeThread)
+            {
+                if (threadCam != null)
+                {
+                    threadCam.Interrupt();
+                    threadCam.Abort();
+                }
+                if (threadDesktop!= null)
+                {
+                    threadDesktop.Interrupt();
+                    threadDesktop.Abort();
+                }
+                activeThread = false;
+            }
             Img_video.Image = null;
             Img_DeskTop.Image = null;
 
@@ -149,11 +162,21 @@ namespace JJCastDemo
         private void InitControl()
         {
             List<Device> devicelist = dControl.GetDeviceList();
+            List<Device> monitorlist = new List<Device>();
             foreach (Device dv in devicelist)
             {
                 if (dv.device == "audio") Cmb_Mic.Items.Add(dv.name);
                 else if (dv.device == "video") Cmb_Cam.Items.Add(dv.name);
             }
+
+            Screen[] screenlist = Screen.AllScreens;
+            foreach(Screen screen in screenlist)
+            {
+                monitorlist.Add(new Device { device = "monitor", name = screen.DeviceName.Substring(screen.DeviceName.IndexOf(".\\") + 2), size = screen.Bounds.Size, point = screen.Bounds.Location });
+            }
+            
+            Cmb_Monitor.DataSource = new BindingSource(monitorlist,null);
+            Cmb_Monitor.DisplayMember = "name";
         }
 
         #region RecordTest Method
@@ -257,11 +280,10 @@ namespace JJCastDemo
             try
             {
                 while (activeThread)
-                {
-                    Size size = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-                    Bitmap bitmap = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+                {                    
+                    Bitmap bitmap = new Bitmap(monitor.size.Width, monitor.size.Height);
                     Graphics graphics = Graphics.FromImage(bitmap);
-                    graphics.CopyFromScreen(0, 0, 0, 0, size);
+                    graphics.CopyFromScreen(monitor.point.X, monitor.point.Y, 0, 0, monitor.size);
 
                     Img_DeskTop.Image = bitmap;
                     graphics.Dispose();
@@ -270,8 +292,11 @@ namespace JJCastDemo
             catch(Exception)
             {
                 activeThread = false;
-                threadCam.Interrupt();
-                threadCam.Abort();
+                if (threadCam != null)
+                {
+                    threadCam.Interrupt();
+                    threadCam.Abort();
+                }
                 threadDesktop.Interrupt();
                 threadDesktop.Abort();
                 Img_video.Image = null;
