@@ -114,7 +114,7 @@ namespace JJCastDemo.FFmpeg
             string crop = "[b]";
             string overlay = "(W - w):(H - h)";
             string size = "320:240";
-
+            if (rgbHex.Trim().Length == 0) rgbHex = "00D800";
             switch (rdbCheck)
             {
                 case "RIGHTOUT":
