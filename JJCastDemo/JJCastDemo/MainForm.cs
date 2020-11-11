@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
+using JJCastDemo.Common;
 
 namespace JJCastDemo
 {
@@ -74,11 +75,13 @@ namespace JJCastDemo
 
         private void Btn_Record_Click(object sender, EventArgs e)
         {
+            Global.WriteLog("녹화 시작");
             dControl.PartialRecord(Cmb_Mic.Text.Trim(), (Device)Cmb_Monitor.SelectedItem, Cmb_Cam.Text.Trim());
         }
 
         private void Btn_RecordStop_Click(object sender, EventArgs e)
         {
+            Global.WriteLog("녹화 종료");
             dControl.StopRecord();
             this.Refresh();
         }
@@ -87,8 +90,11 @@ namespace JJCastDemo
         {
             string rdbCheck = Rdb_RightOut.Checked ? "RIGHTOUT" : Rdb_RightIn.Checked ? "RIGHTIN" : Rdb_RightBottomIn.Checked ? "RIGHTBOTTOMIN" : 
                 Rdb_RightBottomOut.Checked ? "RIGHTBOTTOMOUT" : Rdb_DiagonalOut.Checked ? "DIAGONALOUT" : "DIAGONALIN";
+            Global.WriteLog("오버레이(캠 리사이즈 + 오버레이) 시작");
             dControl.OverLay(rgbHex, rdbCheck, ((Device)Cmb_Monitor.SelectedItem).size);
+            Global.WriteLog("인트로 이어붙이기 시작");
             if (dControl.ConcatVideo() == 1) Txt_URL.Text = Application.StartupPath + "\\result.mp4";
+            Global.WriteLog("합성 종료");
         }
 
         private void Btn_MergePlay_Click(object sender, EventArgs e)
@@ -106,6 +112,7 @@ namespace JJCastDemo
             //비디오 프레임 디코딩 thread 생성
             if (!activeThread)
             {
+                label5.Text = "";
                 if (Cmb_Cam.Text.Trim().Length > 0)
                 { 
                     threadStartCam = new ThreadStart(DecodeAllFramesToImages);
@@ -122,6 +129,10 @@ namespace JJCastDemo
                     threadDesktop.Start();
                 }
                 activeThread = true;
+            }
+            else
+            {
+                label5.Text = "Thread activing!!";
             }
         }
 
@@ -143,6 +154,7 @@ namespace JJCastDemo
                     threadDesktop.Abort();
                 }
                 activeThread = false;
+                label5.Text = "";
             }
             Img_video.Image = null;
             Img_DeskTop.Image = null;
@@ -223,7 +235,7 @@ namespace JJCastDemo
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 activeThread = false;
                 threadCam.Interrupt();
@@ -232,6 +244,7 @@ namespace JJCastDemo
                 threadDesktop.Abort();
                 Img_video.Image = null;
                 Img_DeskTop.Image = null;
+                Global.WriteLog(e.Message);
             }
         }
 
@@ -290,7 +303,7 @@ namespace JJCastDemo
                     graphics.Dispose();
                 }
             }
-            catch(Exception)
+            catch(Exception e)
             {
                 activeThread = false;
                 if (threadCam != null)
@@ -302,6 +315,7 @@ namespace JJCastDemo
                 threadDesktop.Abort();
                 Img_video.Image = null;
                 Img_DeskTop.Image = null;
+                Global.WriteLog(e.Message);
             }
             
         }

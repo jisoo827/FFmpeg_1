@@ -57,6 +57,7 @@
             this.Rdb_DiagonalIn = new System.Windows.Forms.RadioButton();
             this.Rdb_RightOut = new System.Windows.Forms.RadioButton();
             this.Img_DeskTop = new System.Windows.Forms.PictureBox();
+            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Img_video)).BeginInit();
@@ -350,6 +351,14 @@
             this.Img_DeskTop.TabIndex = 7;
             this.Img_DeskTop.TabStop = false;
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(487, 17);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(0, 12);
+            this.label5.TabIndex = 6;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -359,6 +368,7 @@
             this.Controls.Add(this.Rdb_RightBottomIn);
             this.Controls.Add(this.Rdb_DiagonalOut);
             this.Controls.Add(this.Rdb_RightIn);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.Rdb_RightOut);
             this.Controls.Add(this.Rdb_RightBottomOut);
             this.Controls.Add(this.Img_DeskTop);
@@ -419,5 +429,6 @@
         private System.Windows.Forms.RadioButton Rdb_DiagonalOut;
         private System.Windows.Forms.RadioButton Rdb_DiagonalIn;
         private System.Windows.Forms.RadioButton Rdb_RightOut;
+        private System.Windows.Forms.Label label5;
     }
 }

@@ -126,6 +126,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Global.cs" />
     <Compile Include="FFmpeg\Decoder\VideoFrameConverterCam.cs" />
     <Compile Include="FFmpeg\Decoder\VideoStreamDecoderCam.cs" />
     <Compile Include="FFmpeg\DiagnosticsControl.cs" />

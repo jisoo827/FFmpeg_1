@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using JJCastDemo.FFmpeg.Statement;
+using JJCastDemo.Common;
 
 namespace JJCastDemo.FFmpeg
 {
@@ -96,8 +97,9 @@ namespace JJCastDemo.FFmpeg
 
                 AudioRecorderProcess_ID = processDesk.Id;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Global.WriteLog("녹화 오류 : " + e.Message);
                 return -1;
             }
             return 1;
@@ -199,8 +201,9 @@ namespace JJCastDemo.FFmpeg
                     process.Dispose();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Global.WriteLog("에러발생 : " + e.Message);
                 return -1;
             }
             return 1;
