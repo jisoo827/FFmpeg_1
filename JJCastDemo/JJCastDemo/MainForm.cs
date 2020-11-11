@@ -168,7 +168,8 @@ namespace JJCastDemo
                 if (dv.device == "audio") Cmb_Mic.Items.Add(dv.name);
                 else if (dv.device == "video") Cmb_Cam.Items.Add(dv.name);
             }
-
+            if(Cmb_Cam.Items.Count > 0) Cmb_Cam.SelectedIndex = 0;
+            if (Cmb_Mic.Items.Count > 0) Cmb_Mic.SelectedIndex = 0;
             Screen[] screenlist = Screen.AllScreens;
             foreach(Screen screen in screenlist)
             {
