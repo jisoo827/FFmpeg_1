@@ -40,6 +40,7 @@ namespace JJCastDemo
         private static byte colorG = 0;
         private static byte colorB = 0;
         private static bool isCapturingMoves = false;
+        private static string camName = string.Empty;
         private static Point startPoint = new System.Drawing.Point();
 
 
@@ -109,6 +110,7 @@ namespace JJCastDemo
         {
             Img_DeskTop.Visible = true;
             monitor = (Device)Cmb_Monitor.SelectedItem;
+            camName = Cmb_Cam.Text.Trim();
             //비디오 프레임 디코딩 thread 생성
             if (!activeThread)
             {
@@ -196,9 +198,9 @@ namespace JJCastDemo
         private unsafe void DecodeAllFramesToImages()
         {
             try
-            { 
-            //video="웹캠 디바이스 이름"
-                string device = "video=ABKO APC930 QHD WEBCAM";
+            {
+                //video="웹캠 디바이스 이름"
+                string device = "video=" + camName;
                 using (var vsd = new VideoStreamDecoderCam(device))
                 {
                     //Console.WriteLine($"codec name: {vsd.CodecName}");
