@@ -104,10 +104,13 @@ namespace JJCastDemo
             Wmp_1.Visible = true;
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.play();
+            int mediaHeight = Wmp_1.currentMedia.imageSourceHeight;
+            int mediaWidth = Wmp_1.currentMedia.imageSourceWidth;
         }
 
         private void Btn_Play_Click(object sender, EventArgs e)
         {
+            Wmp_1.Ctlcontrols.stop();
             Img_DeskTop.Visible = true;
             monitor = (Device)Cmb_Monitor.SelectedItem;
             camName = Cmb_Cam.Text.Trim();

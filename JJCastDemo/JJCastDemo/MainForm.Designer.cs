@@ -58,7 +58,10 @@
             this.Rdb_RightOut = new System.Windows.Forms.RadioButton();
             this.Img_DeskTop = new System.Windows.Forms.PictureBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.selectionRangeSlider1 = new JJCastDemo.SelectionRangeSlider();
+            this.selectionRangeSlider2 = new JJCastDemo.SelectionRangeSlider();
             ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).BeginInit();
+            this.Wmp_1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Img_video)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -115,6 +118,7 @@
             this.Wmp_1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.Wmp_1.Controls.Add(this.selectionRangeSlider1);
             this.Wmp_1.Enabled = true;
             this.Wmp_1.Location = new System.Drawing.Point(3, 17);
             this.Wmp_1.Name = "Wmp_1";
@@ -183,12 +187,13 @@
             // 
             // Btn_Chromakey
             // 
+            this.Btn_Chromakey.BackColor = System.Drawing.Color.Transparent;
             this.Btn_Chromakey.Location = new System.Drawing.Point(519, 66);
             this.Btn_Chromakey.Name = "Btn_Chromakey";
             this.Btn_Chromakey.Size = new System.Drawing.Size(106, 54);
             this.Btn_Chromakey.TabIndex = 8;
             this.Btn_Chromakey.Text = "크로마키 칼라\r\n";
-            this.Btn_Chromakey.UseVisualStyleBackColor = true;
+            this.Btn_Chromakey.UseVisualStyleBackColor = false;
             this.Btn_Chromakey.Click += new System.EventHandler(this.Btn_Chromakey_Click);
             // 
             // groupBox2
@@ -359,11 +364,39 @@
             this.label5.Size = new System.Drawing.Size(0, 12);
             this.label5.TabIndex = 6;
             // 
+            // selectionRangeSlider1
+            // 
+            this.selectionRangeSlider1.BackColor = System.Drawing.Color.Transparent;
+            this.selectionRangeSlider1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.selectionRangeSlider1.Location = new System.Drawing.Point(0, 373);
+            this.selectionRangeSlider1.Max = 100;
+            this.selectionRangeSlider1.Min = 0;
+            this.selectionRangeSlider1.Name = "selectionRangeSlider1";
+            this.selectionRangeSlider1.SelectedMax = 100;
+            this.selectionRangeSlider1.SelectedMin = 0;
+            this.selectionRangeSlider1.Size = new System.Drawing.Size(683, 26);
+            this.selectionRangeSlider1.TabIndex = 16;
+            this.selectionRangeSlider1.Value = 50;
+            // 
+            // selectionRangeSlider2
+            // 
+            this.selectionRangeSlider2.BackColor = System.Drawing.Color.Transparent;
+            this.selectionRangeSlider2.Location = new System.Drawing.Point(489, 17);
+            this.selectionRangeSlider2.Max = 100;
+            this.selectionRangeSlider2.Min = 0;
+            this.selectionRangeSlider2.Name = "selectionRangeSlider2";
+            this.selectionRangeSlider2.SelectedMax = 100;
+            this.selectionRangeSlider2.SelectedMin = 0;
+            this.selectionRangeSlider2.Size = new System.Drawing.Size(158, 12);
+            this.selectionRangeSlider2.TabIndex = 17;
+            this.selectionRangeSlider2.Value = 50;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1027, 585);
+            this.Controls.Add(this.selectionRangeSlider2);
             this.Controls.Add(this.Rdb_DiagonalIn);
             this.Controls.Add(this.Rdb_RightBottomIn);
             this.Controls.Add(this.Rdb_DiagonalOut);
@@ -389,6 +422,7 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).EndInit();
+            this.Wmp_1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.Img_video)).EndInit();
             this.groupBox2.ResumeLayout(false);
@@ -430,5 +464,7 @@
         private System.Windows.Forms.RadioButton Rdb_DiagonalIn;
         private System.Windows.Forms.RadioButton Rdb_RightOut;
         private System.Windows.Forms.Label label5;
+        private SelectionRangeSlider selectionRangeSlider1;
+        private SelectionRangeSlider selectionRangeSlider2;
     }
 }
