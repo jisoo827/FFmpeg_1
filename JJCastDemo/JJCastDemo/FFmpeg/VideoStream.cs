@@ -21,10 +21,11 @@ namespace JJCastDemo.FFmpeg
         /// 스트림 찾기
         /// </summary>
         /// <returns></returns>
-        public int AVFormatTest()
+        public int AVFormatTest(string url)
         {
+            
             var fmtCtx = _fmtCtx;
-            int ret = ffmpeg.avformat_open_input(&fmtCtx, "E:\\_Works\\All of Me (Jon Schmidt) - The Piano Guys.mp4", null, null);
+            int ret = ffmpeg.avformat_open_input(&fmtCtx, url, null, null);
             if (ret != 0) return -1;
             ffmpeg.avformat_find_stream_info(fmtCtx, null);
 
@@ -33,8 +34,9 @@ namespace JJCastDemo.FFmpeg
             Debug.WriteLine("시간 = {0:d}초\n", fmtCtx->duration / ffmpeg.AV_TIME_BASE);
 
             Debug.WriteLine("비트레이트 = {0:d}\n", fmtCtx->bit_rate);
+            ret = (int)(fmtCtx->duration / 1000);
             ffmpeg.avformat_close_input(&fmtCtx);
-            return 0;
+            return ret;
         }
 
         /// <summary>

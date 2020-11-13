@@ -58,8 +58,9 @@
             this.Rdb_RightOut = new System.Windows.Forms.RadioButton();
             this.Img_DeskTop = new System.Windows.Forms.PictureBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.selectionRangeSlider1 = new JJCastDemo.SelectionRangeSlider();
+            this.Btn_Pause = new System.Windows.Forms.Button();
             this.selectionRangeSlider2 = new JJCastDemo.SelectionRangeSlider();
+            this.selectionRangeSlider1 = new JJCastDemo.SelectionRangeSlider();
             ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).BeginInit();
             this.Wmp_1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -364,6 +365,29 @@
             this.label5.Size = new System.Drawing.Size(0, 12);
             this.label5.TabIndex = 6;
             // 
+            // Btn_Pause
+            // 
+            this.Btn_Pause.Location = new System.Drawing.Point(457, 12);
+            this.Btn_Pause.Name = "Btn_Pause";
+            this.Btn_Pause.Size = new System.Drawing.Size(75, 23);
+            this.Btn_Pause.TabIndex = 18;
+            this.Btn_Pause.Text = "일시정지";
+            this.Btn_Pause.UseVisualStyleBackColor = true;
+            this.Btn_Pause.Click += new System.EventHandler(this.Btn_Pause_Click);
+            // 
+            // selectionRangeSlider2
+            // 
+            this.selectionRangeSlider2.BackColor = System.Drawing.Color.Transparent;
+            this.selectionRangeSlider2.Location = new System.Drawing.Point(543, 17);
+            this.selectionRangeSlider2.Max = 100;
+            this.selectionRangeSlider2.Min = 0;
+            this.selectionRangeSlider2.Name = "selectionRangeSlider2";
+            this.selectionRangeSlider2.SelectedMax = 100;
+            this.selectionRangeSlider2.SelectedMin = 0;
+            this.selectionRangeSlider2.Size = new System.Drawing.Size(104, 12);
+            this.selectionRangeSlider2.TabIndex = 17;
+            this.selectionRangeSlider2.Value = 50;
+            // 
             // selectionRangeSlider1
             // 
             this.selectionRangeSlider1.BackColor = System.Drawing.Color.Transparent;
@@ -377,25 +401,14 @@
             this.selectionRangeSlider1.Size = new System.Drawing.Size(683, 26);
             this.selectionRangeSlider1.TabIndex = 16;
             this.selectionRangeSlider1.Value = 50;
-            // 
-            // selectionRangeSlider2
-            // 
-            this.selectionRangeSlider2.BackColor = System.Drawing.Color.Transparent;
-            this.selectionRangeSlider2.Location = new System.Drawing.Point(489, 17);
-            this.selectionRangeSlider2.Max = 100;
-            this.selectionRangeSlider2.Min = 0;
-            this.selectionRangeSlider2.Name = "selectionRangeSlider2";
-            this.selectionRangeSlider2.SelectedMax = 100;
-            this.selectionRangeSlider2.SelectedMin = 0;
-            this.selectionRangeSlider2.Size = new System.Drawing.Size(158, 12);
-            this.selectionRangeSlider2.TabIndex = 17;
-            this.selectionRangeSlider2.Value = 50;
+            this.selectionRangeSlider1.ValueChanged += new System.EventHandler(this.selectionRangeSlider1_ValueChanged);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1027, 585);
+            this.Controls.Add(this.Btn_Pause);
             this.Controls.Add(this.selectionRangeSlider2);
             this.Controls.Add(this.Rdb_DiagonalIn);
             this.Controls.Add(this.Rdb_RightBottomIn);
@@ -466,5 +479,6 @@
         private System.Windows.Forms.Label label5;
         private SelectionRangeSlider selectionRangeSlider1;
         private SelectionRangeSlider selectionRangeSlider2;
+        private System.Windows.Forms.Button Btn_Pause;
     }
 }

@@ -153,7 +153,7 @@ namespace JJCastDemo
                 return;
             int pointedValue = Min + e.X * (Max - Min) / Width;
             if (movingMode == MovingMode.MovingValue)
-                Value = Math.Max(Math.Min(pointedValue, 99), 1);
+                Value = Math.Max(Math.Min(pointedValue, Max - 1), 1);
             else if (movingMode == MovingMode.MovingMin)
             {
                 SelectedMin = Math.Max(pointedValue, 0);
@@ -161,7 +161,7 @@ namespace JJCastDemo
             }
             else if (movingMode == MovingMode.MovingMax)
             {
-                SelectedMax = Math.Min(pointedValue, 100);
+                SelectedMax = Math.Min(pointedValue, Max);
                 SelectedMax = SelectedMax <= SelectedMin ? SelectedMin + 1 : SelectedMax;
             }
         }

@@ -31,9 +31,12 @@ namespace JJCastDemo
         ThreadStart threadStartCam;
         Thread threadDesktop;
         ThreadStart threadStartDesktop;
+        Thread threadTrack;
+        ThreadStart threadStartTrack;
         Device monitor;
 
         private static bool activeThread = false;      //thread 활성화 유무
+        private static bool isActiveTrack = false;      //thread 활성화 유무
         DiagnosticsControl dControl = null;
         private static string rgbHex = string.Empty;
         private static byte colorR = 0;
@@ -100,17 +103,24 @@ namespace JJCastDemo
 
         private void Btn_MergePlay_Click(object sender, EventArgs e)
         {
+            if (Txt_URL.Text.Trim().Length <= 0) return;
             Img_DeskTop.Visible = false;
             Wmp_1.Visible = true;
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.play();
-            int mediaHeight = Wmp_1.currentMedia.imageSourceHeight;
-            int mediaWidth = Wmp_1.currentMedia.imageSourceWidth;
-        }
+            SetSlider();
+        } 
 
         private void Btn_Play_Click(object sender, EventArgs e)
         {
             Wmp_1.Ctlcontrols.stop();
+            if (isActiveTrack)
+            {
+                threadTrack.Interrupt();
+                threadTrack.Abort();
+                isActiveTrack = false;
+            }
+
             Img_DeskTop.Visible = true;
             monitor = (Device)Cmb_Monitor.SelectedItem;
             camName = Cmb_Cam.Text.Trim();
@@ -145,7 +155,12 @@ namespace JJCastDemo
         {
             Wmp_1.Ctlcontrols.stop();
             Wmp_1.Visible = false;
-
+            if (isActiveTrack)
+            {
+                threadTrack.Interrupt();
+                threadTrack.Abort();
+                isActiveTrack = false;
+            }
             if (activeThread)
             {
                 if (threadCam != null)
@@ -163,8 +178,6 @@ namespace JJCastDemo
             }
             Img_video.Image = null;
             Img_DeskTop.Image = null;
-
-
         }
 
         private void SetFfmpegPath()
@@ -195,6 +208,24 @@ namespace JJCastDemo
             
             Cmb_Monitor.DataSource = new BindingSource(monitorlist,null);
             Cmb_Monitor.DisplayMember = "name";
+        }
+
+        private void SetSlider()
+        {
+            VideoStream vs = new VideoStream();
+            int timeCnt = vs.AVFormatTest(Txt_URL.Text);
+            //_ = vs.AVFormatTest3(Txt_URL.Text);
+            //Wmp_1.Ctlcontrols.currentItem.
+            selectionRangeSlider1.Max = timeCnt;
+            selectionRangeSlider1.SelectedMax = timeCnt;
+            selectionRangeSlider1.Value = timeCnt/2;
+            threadStartTrack = new ThreadStart(UpdateTrackThreadProc);
+            threadTrack = new Thread(threadStartTrack);
+            if (threadTrack.ThreadState == System.Threading.ThreadState.Unstarted)
+            {
+                threadTrack.Start();
+                isActiveTrack = true;
+            }
         }
 
         #region RecordTest Method
@@ -325,6 +356,18 @@ namespace JJCastDemo
             
         }
 
+        private void UpdateTrackThreadProc()
+        {
+            while (isActiveTrack)
+            {
+                selectionRangeSlider1.Value = Convert.ToInt32(Wmp_1.Ctlcontrols.currentPosition) * 1000;
+            }
+        }
+        private void UpdateTrack()
+        {
+            selectionRangeSlider1.Value = Convert.ToInt32(Wmp_1.Ctlcontrols.currentPosition) * 1000;
+        }
+
         #endregion
 
         private void Btn_Chromakey_Click(object sender, EventArgs e)
@@ -363,6 +406,20 @@ namespace JJCastDemo
         {
             return;
             isCapturingMoves = false;
+        }
+
+        private void Btn_Pause_Click(object sender, EventArgs e)
+        {
+            if (Wmp_1.playState == WMPLib.WMPPlayState.wmppsPaused)
+                Wmp_1.Ctlcontrols.play();
+            else if (Wmp_1.playState == WMPLib.WMPPlayState.wmppsPlaying)
+                Wmp_1.Ctlcontrols.pause();
+        }
+
+        private void selectionRangeSlider1_ValueChanged(object sender, EventArgs e)
+        {
+            //if (Wmp_1.playState == WMPLib.WMPPlayState.wmppsPlaying)
+                //Wmp_1.Ctlcontrols.currentPosition = Convert.ToDouble(selectionRangeSlider1.Value) / 1000;
         }
     }
 }
