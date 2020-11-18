@@ -43,8 +43,10 @@ namespace JJCastDemo
         private static byte colorG = 0;
         private static byte colorB = 0;
         private static bool isCapturingMoves = false;
+        private static bool isVideoMoving = false;
         private static string camName = string.Empty;
         private static Point startPoint = new System.Drawing.Point();
+        private static int startValue = 0;
 
 
         public MainForm()
@@ -358,14 +360,22 @@ namespace JJCastDemo
 
         private void UpdateTrackThreadProc()
         {
-            while (isActiveTrack)
+            try
             {
-                selectionRangeSlider1.Value = Convert.ToInt32(Wmp_1.Ctlcontrols.currentPosition) * 1000;
+                while (isActiveTrack)
+                {
+                    this.BeginInvoke(new MethodInvoker(UpdateTrack));
+                    System.Threading.Thread.Sleep(1);
+                }
+            }
+            catch(Exception e)
+            {
+                Debug.WriteLine(e.Message);
             }
         }
         private void UpdateTrack()
         {
-            selectionRangeSlider1.Value = Convert.ToInt32(Wmp_1.Ctlcontrols.currentPosition) * 1000;
+            if (!isVideoMoving) selectionRangeSlider1.Value = Convert.ToInt32(Wmp_1.Ctlcontrols.currentPosition * 1000);
         }
 
         #endregion
@@ -420,6 +430,27 @@ namespace JJCastDemo
         {
             //if (Wmp_1.playState == WMPLib.WMPPlayState.wmppsPlaying)
                 //Wmp_1.Ctlcontrols.currentPosition = Convert.ToDouble(selectionRangeSlider1.Value) / 1000;
+        }
+
+        private void selectionRangeSlider1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!isVideoMoving) return;
+        }
+
+        private void selectionRangeSlider1_MouseDown(object sender, MouseEventArgs e)
+        {
+            isVideoMoving = true;
+            startValue = selectionRangeSlider1.Value;
+        }
+
+        private void selectionRangeSlider1_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (isVideoMoving)
+            {
+                if (startValue != selectionRangeSlider1.Value) Wmp_1.Ctlcontrols.currentPosition = Convert.ToDouble(selectionRangeSlider1.Value) / 1000;
+                isVideoMoving = false;
+            }
+            
         }
     }
 }
