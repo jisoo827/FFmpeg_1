@@ -63,7 +63,6 @@ namespace JJCastDemo
             InitControl();
 
             FFmpegBinariesHelper.RegisterFFmpegBinaries();
-
             Wmp_1.uiMode = "none";
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.stop();
@@ -71,6 +70,7 @@ namespace JJCastDemo
             VideoStream vs = new VideoStream();
             _ = vs.AVFormatTest3(Txt_URL.Text);
             isCapturingMoves = false;
+            Txt_URL.Text = @"C:\Users\jisu827\chromakey_output.mp4";
 
         }
 
@@ -451,6 +451,19 @@ namespace JJCastDemo
                 isVideoMoving = false;
             }
             
+        }
+
+        private void selectionRangeSlider1_SelectionChanged(object sender, EventArgs e)
+        {
+            int minX = (int)((double)selectionRangeSlider1.Size.Width  * ((double)selectionRangeSlider1.SelectedMin / (double)selectionRangeSlider1.Max));
+            Lbl_Min.Location = new Point(selectionRangeSlider1.Location.X + minX - 5, 538);
+            Lbl_Min.Text = selectionRangeSlider1.SelectedMin.ToString();
+            int maxX = (int)((double)selectionRangeSlider1.Size.Width * ((double)selectionRangeSlider1.SelectedMax / (double)selectionRangeSlider1.Max));
+            Lbl_Max.Location = new Point(selectionRangeSlider1.Location.X + maxX - 5, 538);
+            Lbl_Max.Text = (selectionRangeSlider1.SelectedMax / 1000).ToString("hh:mm:ss");
+            TimeSpan ts = TimeSpan.FromSeconds((double)selectionRangeSlider1.SelectedMax / 1000);
+            Lbl_Max.Text = ts.ToString();
+            //Lbl_Max.Text = DateTime.ParseExact(string.Format("{0:F3}",(double)selectionRangeSlider1.SelectedMax / 1000) , "ss.fff", null).ToString();
         }
     }
 }
