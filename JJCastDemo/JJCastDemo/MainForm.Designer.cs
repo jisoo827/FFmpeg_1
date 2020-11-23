@@ -35,6 +35,7 @@
             this.Cmb_Mic = new System.Windows.Forms.ComboBox();
             this.Btn_Record = new System.Windows.Forms.Button();
             this.Wmp_1 = new AxWMPLib.AxWindowsMediaPlayer();
+            this.selectionRangeSlider1 = new JJCastDemo.SelectionRangeSlider();
             this.Btn_RecordStop = new System.Windows.Forms.Button();
             this.Btn_Merge = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -62,7 +63,6 @@
             this.Lbl_Min = new System.Windows.Forms.Label();
             this.Btn_Cut = new System.Windows.Forms.Button();
             this.Lbl_Max = new System.Windows.Forms.Label();
-            this.selectionRangeSlider1 = new JJCastDemo.SelectionRangeSlider();
             ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).BeginInit();
             this.Wmp_1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -129,6 +129,25 @@
             this.Wmp_1.Size = new System.Drawing.Size(683, 399);
             this.Wmp_1.TabIndex = 6;
             this.Wmp_1.Visible = false;
+            // 
+            // selectionRangeSlider1
+            // 
+            this.selectionRangeSlider1.BackColor = System.Drawing.Color.Transparent;
+            this.selectionRangeSlider1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.selectionRangeSlider1.Location = new System.Drawing.Point(0, 373);
+            this.selectionRangeSlider1.Max = 100;
+            this.selectionRangeSlider1.Min = 0;
+            this.selectionRangeSlider1.Name = "selectionRangeSlider1";
+            this.selectionRangeSlider1.SelectedMax = 100;
+            this.selectionRangeSlider1.SelectedMin = 0;
+            this.selectionRangeSlider1.Size = new System.Drawing.Size(683, 26);
+            this.selectionRangeSlider1.TabIndex = 16;
+            this.selectionRangeSlider1.Value = 50;
+            this.selectionRangeSlider1.SelectionChanged += new System.EventHandler(this.selectionRangeSlider1_SelectionChanged);
+            this.selectionRangeSlider1.ValueChanged += new System.EventHandler(this.selectionRangeSlider1_ValueChanged);
+            this.selectionRangeSlider1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.selectionRangeSlider1_MouseDown);
+            this.selectionRangeSlider1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.selectionRangeSlider1_MouseMove);
+            this.selectionRangeSlider1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.selectionRangeSlider1_MouseUp);
             // 
             // Btn_RecordStop
             // 
@@ -393,7 +412,7 @@
             this.Btn_Cut.Name = "Btn_Cut";
             this.Btn_Cut.Size = new System.Drawing.Size(75, 23);
             this.Btn_Cut.TabIndex = 19;
-            this.Btn_Cut.Text = "일시정지";
+            this.Btn_Cut.Text = "자르기";
             this.Btn_Cut.UseVisualStyleBackColor = true;
             // 
             // Lbl_Max
@@ -405,25 +424,6 @@
             this.Lbl_Max.Size = new System.Drawing.Size(38, 12);
             this.Lbl_Max.TabIndex = 20;
             this.Lbl_Max.Text = "label7";
-            // 
-            // selectionRangeSlider1
-            // 
-            this.selectionRangeSlider1.BackColor = System.Drawing.Color.Transparent;
-            this.selectionRangeSlider1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.selectionRangeSlider1.Location = new System.Drawing.Point(0, 373);
-            this.selectionRangeSlider1.Max = 100;
-            this.selectionRangeSlider1.Min = 0;
-            this.selectionRangeSlider1.Name = "selectionRangeSlider1";
-            this.selectionRangeSlider1.SelectedMax = 100;
-            this.selectionRangeSlider1.SelectedMin = 0;
-            this.selectionRangeSlider1.Size = new System.Drawing.Size(683, 26);
-            this.selectionRangeSlider1.TabIndex = 16;
-            this.selectionRangeSlider1.Value = 50;
-            this.selectionRangeSlider1.SelectionChanged += new System.EventHandler(this.selectionRangeSlider1_SelectionChanged);
-            this.selectionRangeSlider1.ValueChanged += new System.EventHandler(this.selectionRangeSlider1_ValueChanged);
-            this.selectionRangeSlider1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.selectionRangeSlider1_MouseDown);
-            this.selectionRangeSlider1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.selectionRangeSlider1_MouseMove);
-            this.selectionRangeSlider1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.selectionRangeSlider1_MouseUp);
             // 
             // MainForm
             // 
