@@ -150,8 +150,12 @@ namespace JJCastDemo.FFmpeg
 
         public int Cut(string url, string start, string end, string max)
         {
-            if(CommandExcute(ffmpegStatement.CutVideoStmt(url,"0", start, 1), new Process(), false, true) == 1)
-                return CommandExcute(ffmpegStatement.CutVideoStmt(url,end, max, 2), new Process(), false, true);
+            Global.WriteLog("앞부분 자르기");
+            if (CommandExcute(ffmpegStatement.CutVideoStmt(url, "0", start, 1), new Process(), false, true) == 1)
+            {
+                Global.WriteLog("뒷부분 자르기");
+                return CommandExcute(ffmpegStatement.CutVideoStmt(url, end, max, 2), new Process(), false, true);
+            }
             else return -1;
         }
 

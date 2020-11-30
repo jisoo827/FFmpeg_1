@@ -98,9 +98,9 @@ namespace JJCastDemo
                 Rdb_RightBottomOut.Checked ? "RIGHTBOTTOMOUT" : Rdb_DiagonalOut.Checked ? "DIAGONALOUT" : "DIAGONALIN";
             Global.WriteLog("오버레이(캠 리사이즈 + 오버레이) 시작");
             dControl.OverLay(rgbHex, rdbCheck, ((Device)Cmb_Monitor.SelectedItem).size);
-            Global.WriteLog("인트로 이어붙이기 시작");
-            if (dControl.ConcatVideo("title_01_minecraft.mp4", "cut.mp4","result.mp4") == 1) Txt_URL.Text = Application.StartupPath + "\\result.mp4";
-            Global.WriteLog("합성 종료");
+            //Global.WriteLog("인트로 이어붙이기 시작");
+            //if (dControl.ConcatVideo("title_01_minecraft.mp4", "cut.mp4","result.mp4") == 1) Txt_URL.Text = Application.StartupPath + "\\result.mp4";
+            //Global.WriteLog("합성 종료");
         }
 
         private void Btn_Cut_Click(object sender, EventArgs e)
@@ -111,8 +111,12 @@ namespace JJCastDemo
             double end = (double)selectionRangeSlider1.SelectedMax / 1000;
             double max = selectionRangeSlider1.Max / 1000;
             string url = Txt_URL.Text;
+            Global.WriteLog("자르기 시작");
             dControl.Cut(url,start.ToString(), end.ToString(), max.ToString());
+            Global.WriteLog("자르기 종료");
+            Global.WriteLog("자른 영상끼리 이어붙이기");
             if (dControl.ConcatVideo("output_cut1.mp4", "output_cut2.mp4", "cut.mp4") == 1) Txt_URL.Text = Application.StartupPath + "\\cut.mp4";
+            Global.WriteLog("자른 영상끼리 이어붙이기 종료");
         }
 
         private void Btn_MergePlay_Click(object sender, EventArgs e)
