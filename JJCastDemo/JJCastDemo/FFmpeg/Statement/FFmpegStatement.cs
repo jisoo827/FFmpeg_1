@@ -53,15 +53,21 @@ namespace JJCastDemo.FFmpeg.Statement
         /// 비디오 이어붙히기
         /// </summary>
         /// <returns></returns>
-        public string ConcatVideoStmt(string front, string back)
+        public string ConcatVideoStmt(string front, string back, string result)
         {
-            stmt = "ffmpeg -y -i output_overlay.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts back.ts &&  ffmpeg -y -i title_01_minecraft.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts front.ts && ffmpeg -y -i \"concat:front.ts|back.ts\" -c copy -bsf:a aac_adtstoasc result.mp4 && exit";
+            stmt = "ffmpeg -y -i " + back + " -c copy -bsf:v h264_mp4toannexb -f mpegts back.ts &&  ffmpeg -y -i " + front + " -c copy -bsf:v h264_mp4toannexb -f mpegts front.ts && ffmpeg -y -i \"concat:front.ts|back.ts\" -c copy -bsf:a aac_adtstoasc " + result + " && exit";
             return stmt;
         }
 
         public string OverlayVideoStmt(string pad, string crop, string overlay, string rgbHex, string size = "320:240")
         {
             stmt = "ffmpeg -y -i cam.mp4 -vf scale=" + size  + " -preset ultrafast -tune zerolatency -crf 18 cam_resize.mp4 && ffmpeg -y -i base.mp4 -i cam_resize.mp4 -filter_complex \"[0:v]pad = " + pad + ": color = white[a];[1:v]setpts = PTS - 0.1 / TB[b];" + crop + "chromakey = 0x" + rgbHex + " : 0.1 : 0.1[ckout];[a][ckout]overlay = " + overlay + ":enable = gte(t\\, 0):eof_action = pass,format = yuv420p[out]\" -map \"[out]\" -map 0:a? -c:v libx264 -preset ultrafast -tune zerolatency -crf 18 -c:a copy  output_overlay.mp4 && exit";
+            return stmt;
+        }
+
+        public string CutVideoStmt(string url, string start, string end, int seq)
+        {
+            stmt = "ffmpeg -y -i " + url + " -ss " + start + " -to " + end + " -vcodec copy -acodec copy output_cut" + seq.ToString() + ".mp4 && exit";
             return stmt;
         }
 

@@ -70,7 +70,7 @@ namespace JJCastDemo
             VideoStream vs = new VideoStream();
             _ = vs.AVFormatTest3(Txt_URL.Text);
             isCapturingMoves = false;
-            Txt_URL.Text = @"C:\Users\jisu827\chromakey_output.mp4";
+            Txt_URL.Text = @"C:\Users\jisu827\output_overlay.mp4";
 
         }
 
@@ -99,8 +99,20 @@ namespace JJCastDemo
             Global.WriteLog("오버레이(캠 리사이즈 + 오버레이) 시작");
             dControl.OverLay(rgbHex, rdbCheck, ((Device)Cmb_Monitor.SelectedItem).size);
             Global.WriteLog("인트로 이어붙이기 시작");
-            if (dControl.ConcatVideo() == 1) Txt_URL.Text = Application.StartupPath + "\\result.mp4";
+            if (dControl.ConcatVideo("title_01_minecraft.mp4", "cut.mp4","result.mp4") == 1) Txt_URL.Text = Application.StartupPath + "\\result.mp4";
             Global.WriteLog("합성 종료");
+        }
+
+        private void Btn_Cut_Click(object sender, EventArgs e)
+        {
+            if (Wmp_1.playState == WMPLib.WMPPlayState.wmppsPlaying)
+                Wmp_1.Ctlcontrols.pause();
+            double start = (double)selectionRangeSlider1.SelectedMin / 1000;
+            double end = (double)selectionRangeSlider1.SelectedMax / 1000;
+            double max = selectionRangeSlider1.Max / 1000;
+            string url = Txt_URL.Text;
+            dControl.Cut(url,start.ToString(), end.ToString(), max.ToString());
+            if (dControl.ConcatVideo("output_cut1.mp4", "output_cut2.mp4", "cut.mp4") == 1) Txt_URL.Text = Application.StartupPath + "\\cut.mp4";
         }
 
         private void Btn_MergePlay_Click(object sender, EventArgs e)
@@ -465,6 +477,14 @@ namespace JJCastDemo
             ts = TimeSpan.FromSeconds((double)selectionRangeSlider1.SelectedMax / 1000);
             Lbl_Max.Text = ts.ToString("hh\\:mm\\:ss\\.fff");
             //Lbl_Max.Text = DateTime.ParseExact(string.Format("{0:F3}",(double)selectionRangeSlider1.SelectedMax / 1000) , "ss.fff", null).ToString();
+        }
+
+        private void MainForm_SizeChanged(object sender, EventArgs e)
+        {
+            int minX = (int)((double)selectionRangeSlider1.Size.Width * ((double)selectionRangeSlider1.SelectedMin / (double)selectionRangeSlider1.Max));
+            Lbl_Min.Location = new Point(selectionRangeSlider1.Location.X + minX - 5, 538);
+            int maxX = (int)((double)selectionRangeSlider1.Size.Width * ((double)selectionRangeSlider1.SelectedMax / (double)selectionRangeSlider1.Max));
+            Lbl_Max.Location = new Point(selectionRangeSlider1.Location.X + maxX - 5, 538);
         }
     }
 }

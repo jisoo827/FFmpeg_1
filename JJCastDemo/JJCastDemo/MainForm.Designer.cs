@@ -414,6 +414,7 @@
             this.Btn_Cut.TabIndex = 19;
             this.Btn_Cut.Text = "자르기";
             this.Btn_Cut.UseVisualStyleBackColor = true;
+            this.Btn_Cut.Click += new System.EventHandler(this.Btn_Cut_Click);
             // 
             // Lbl_Max
             // 
@@ -458,6 +459,7 @@
             this.Text = "JJCastDemo";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.SizeChanged += new System.EventHandler(this.MainForm_SizeChanged);
             ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).EndInit();
             this.Wmp_1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);

@@ -105,9 +105,9 @@ namespace JJCastDemo.FFmpeg
             return 1;
         }
 
-        public int ConcatVideo()
+        public int ConcatVideo(string front, string back, string result)
         {
-            return CommandExcute(ffmpegStatement.ConcatVideoStmt("title_01_minecraft.mp4", "output_overLay.mp4"), new Process(), false, true);
+            return CommandExcute(ffmpegStatement.ConcatVideoStmt(front, back, result), new Process(), false, true);
         }
 
         public int OverLay(string rgbHex, string rdbCheck, Size monitorSize)
@@ -146,6 +146,13 @@ namespace JJCastDemo.FFmpeg
                     break;
             }
             return CommandExcute(ffmpegStatement.OverlayVideoStmt(pad, crop, overlay, rgbHex, size), new Process(), false, true);
+        }
+
+        public int Cut(string url, string start, string end, string max)
+        {
+            if(CommandExcute(ffmpegStatement.CutVideoStmt(url,"0", start, 1), new Process(), false, true) == 1)
+                return CommandExcute(ffmpegStatement.CutVideoStmt(url,end, max, 2), new Process(), false, true);
+            else return -1;
         }
 
         public int StopRecord()
