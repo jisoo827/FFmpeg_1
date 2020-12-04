@@ -172,4 +172,10 @@ namespace JJCastDemo
         enum MovingMode { MovingValue, MovingMin, MovingMax }
         MovingMode movingMode;
     }
+
+    public class SelectArea
+    {
+        public double selectedMin;
+        public double selectedMax;
+    }
 }
