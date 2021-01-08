@@ -159,6 +159,19 @@ namespace JJCastDemo.FFmpeg
             else return -1;
         }
 
+        public int Split(string url, List<string> split)
+        {
+            string part = string.Empty;
+            //between(t,21.159,36.887)+between(t,41,187)+between(t,618.887,1237.241)
+
+            for(int i = 0; i < split.Count; i++)
+            {
+                part += "+between(t," + split[i] + "," + split[i + 1] + ")";
+                i++;
+            }
+            return CommandExcute(ffmpegStatement.SplitVideoStmt(url, part.Substring(1)), new Process(), false, true);
+        }
+
         public int StopRecord()
         {
             if (AudioRecorderProcess_ID != 0)

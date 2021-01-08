@@ -35,7 +35,6 @@
             this.Cmb_Mic = new System.Windows.Forms.ComboBox();
             this.Btn_Record = new System.Windows.Forms.Button();
             this.Wmp_1 = new AxWMPLib.AxWindowsMediaPlayer();
-            this.selectionRangeSlider1 = new JJCastDemo.SelectionRangeSlider();
             this.Btn_RecordStop = new System.Windows.Forms.Button();
             this.Btn_Merge = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -63,6 +62,14 @@
             this.Lbl_Min = new System.Windows.Forms.Label();
             this.Btn_Cut = new System.Windows.Forms.Button();
             this.Lbl_Max = new System.Windows.Forms.Label();
+            this.txt_S1 = new System.Windows.Forms.TextBox();
+            this.txt_E1 = new System.Windows.Forms.TextBox();
+            this.txt_S2 = new System.Windows.Forms.TextBox();
+            this.txt_E2 = new System.Windows.Forms.TextBox();
+            this.txt_S3 = new System.Windows.Forms.TextBox();
+            this.txt_E3 = new System.Windows.Forms.TextBox();
+            this.btn_Split = new System.Windows.Forms.Button();
+            this.selectionRangeSlider1 = new JJCastDemo.SelectionRangeSlider();
             ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).BeginInit();
             this.Wmp_1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -130,25 +137,6 @@
             this.Wmp_1.TabIndex = 6;
             this.Wmp_1.Visible = false;
             // 
-            // selectionRangeSlider1
-            // 
-            this.selectionRangeSlider1.BackColor = System.Drawing.Color.Transparent;
-            this.selectionRangeSlider1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.selectionRangeSlider1.Location = new System.Drawing.Point(0, 373);
-            this.selectionRangeSlider1.Max = 100;
-            this.selectionRangeSlider1.Min = 0;
-            this.selectionRangeSlider1.Name = "selectionRangeSlider1";
-            this.selectionRangeSlider1.SelectedMax = 100;
-            this.selectionRangeSlider1.SelectedMin = 0;
-            this.selectionRangeSlider1.Size = new System.Drawing.Size(683, 26);
-            this.selectionRangeSlider1.TabIndex = 16;
-            this.selectionRangeSlider1.Value = 50;
-            this.selectionRangeSlider1.SelectionChanged += new System.EventHandler(this.selectionRangeSlider1_SelectionChanged);
-            this.selectionRangeSlider1.ValueChanged += new System.EventHandler(this.selectionRangeSlider1_ValueChanged);
-            this.selectionRangeSlider1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.selectionRangeSlider1_MouseDown);
-            this.selectionRangeSlider1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.selectionRangeSlider1_MouseMove);
-            this.selectionRangeSlider1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.selectionRangeSlider1_MouseUp);
-            // 
             // Btn_RecordStop
             // 
             this.Btn_RecordStop.Location = new System.Drawing.Point(407, 66);
@@ -174,6 +162,13 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.txt_E3);
+            this.groupBox1.Controls.Add(this.btn_Split);
+            this.groupBox1.Controls.Add(this.txt_E2);
+            this.groupBox1.Controls.Add(this.txt_S3);
+            this.groupBox1.Controls.Add(this.txt_S2);
+            this.groupBox1.Controls.Add(this.txt_E1);
+            this.groupBox1.Controls.Add(this.txt_S1);
             this.groupBox1.Controls.Add(this.Img_video);
             this.groupBox1.Controls.Add(this.Wmp_1);
             this.groupBox1.Location = new System.Drawing.Point(12, 157);
@@ -426,6 +421,83 @@
             this.Lbl_Max.TabIndex = 20;
             this.Lbl_Max.Text = "label7";
             // 
+            // txt_S1
+            // 
+            this.txt_S1.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.txt_S1.Location = new System.Drawing.Point(771, 17);
+            this.txt_S1.Name = "txt_S1";
+            this.txt_S1.Size = new System.Drawing.Size(98, 21);
+            this.txt_S1.TabIndex = 11;
+            // 
+            // txt_E1
+            // 
+            this.txt_E1.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.txt_E1.Location = new System.Drawing.Point(875, 17);
+            this.txt_E1.Name = "txt_E1";
+            this.txt_E1.Size = new System.Drawing.Size(98, 21);
+            this.txt_E1.TabIndex = 12;
+            // 
+            // txt_S2
+            // 
+            this.txt_S2.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.txt_S2.Location = new System.Drawing.Point(771, 44);
+            this.txt_S2.Name = "txt_S2";
+            this.txt_S2.Size = new System.Drawing.Size(98, 21);
+            this.txt_S2.TabIndex = 13;
+            // 
+            // txt_E2
+            // 
+            this.txt_E2.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.txt_E2.Location = new System.Drawing.Point(875, 44);
+            this.txt_E2.Name = "txt_E2";
+            this.txt_E2.Size = new System.Drawing.Size(98, 21);
+            this.txt_E2.TabIndex = 14;
+            // 
+            // txt_S3
+            // 
+            this.txt_S3.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.txt_S3.Location = new System.Drawing.Point(771, 71);
+            this.txt_S3.Name = "txt_S3";
+            this.txt_S3.Size = new System.Drawing.Size(98, 21);
+            this.txt_S3.TabIndex = 15;
+            // 
+            // txt_E3
+            // 
+            this.txt_E3.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.txt_E3.Location = new System.Drawing.Point(875, 71);
+            this.txt_E3.Name = "txt_E3";
+            this.txt_E3.Size = new System.Drawing.Size(98, 21);
+            this.txt_E3.TabIndex = 16;
+            // 
+            // btn_Split
+            // 
+            this.btn_Split.Location = new System.Drawing.Point(692, 15);
+            this.btn_Split.Name = "btn_Split";
+            this.btn_Split.Size = new System.Drawing.Size(75, 23);
+            this.btn_Split.TabIndex = 19;
+            this.btn_Split.Text = "자르기";
+            this.btn_Split.UseVisualStyleBackColor = true;
+            this.btn_Split.Click += new System.EventHandler(this.btn_Split_Click);
+            // 
+            // selectionRangeSlider1
+            // 
+            this.selectionRangeSlider1.BackColor = System.Drawing.Color.Transparent;
+            this.selectionRangeSlider1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.selectionRangeSlider1.Location = new System.Drawing.Point(0, 373);
+            this.selectionRangeSlider1.Max = 100;
+            this.selectionRangeSlider1.Min = 0;
+            this.selectionRangeSlider1.Name = "selectionRangeSlider1";
+            this.selectionRangeSlider1.SelectedMax = 100;
+            this.selectionRangeSlider1.SelectedMin = 0;
+            this.selectionRangeSlider1.Size = new System.Drawing.Size(683, 26);
+            this.selectionRangeSlider1.TabIndex = 16;
+            this.selectionRangeSlider1.Value = 50;
+            this.selectionRangeSlider1.SelectionChanged += new System.EventHandler(this.selectionRangeSlider1_SelectionChanged);
+            this.selectionRangeSlider1.ValueChanged += new System.EventHandler(this.selectionRangeSlider1_ValueChanged);
+            this.selectionRangeSlider1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.selectionRangeSlider1_MouseDown);
+            this.selectionRangeSlider1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.selectionRangeSlider1_MouseMove);
+            this.selectionRangeSlider1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.selectionRangeSlider1_MouseUp);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -463,6 +535,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).EndInit();
             this.Wmp_1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Img_video)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -508,5 +581,12 @@
         private System.Windows.Forms.Label Lbl_Min;
         private System.Windows.Forms.Button Btn_Cut;
         private System.Windows.Forms.Label Lbl_Max;
+        private System.Windows.Forms.TextBox txt_E3;
+        private System.Windows.Forms.TextBox txt_E2;
+        private System.Windows.Forms.TextBox txt_S3;
+        private System.Windows.Forms.TextBox txt_S2;
+        private System.Windows.Forms.TextBox txt_E1;
+        private System.Windows.Forms.TextBox txt_S1;
+        private System.Windows.Forms.Button btn_Split;
     }
 }
