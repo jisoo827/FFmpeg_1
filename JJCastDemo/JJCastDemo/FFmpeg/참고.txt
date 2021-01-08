@@ -11,6 +11,7 @@ ffmpeg -y -i base.mp4 -i cam_320.mp4 -filter_complex "[0:v]pad=iw+160:ih+120:col
 ffmpeg -y -i chromakey_output.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts back.ts &&  ffmpeg -y -i title_01_minecraft.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts front.ts && ffmpeg -y -i "concat:front.ts|back.ts" -c copy -bsf:a aac_adtstoasc result.mp4
 자르기
 ffmpeg -y -i result.mp4 -vf "select='between(t,5.159,9.887)+between(t,41,187)',setpts=N/FRAME_RATE/TB" -af "aselect='between(t,5,9)+between(t,41,187)',asetpts=N/SR/TB" cut31.mp4
+ffmpeg -y -i output_overlay.mp4 -vf "select='between(t,21.159,36.887)+between(t,41,187)+between(t,618.887,1237.241)',setpts=N/FRAME_RATE/TB" -af "aselect='between(t,21.159,36.887)+between(t,41,187)+between(t,618.887,1237.241)',asetpts=N/SR/TB" -preset ultrafast -tune zerolatency -crf 18 cut6.mp4
 ffmpeg -y -i result.mp4 -filter_complex "[0:v]split=2[copy1][copy2],[copy1]trim=5.159:1620.887,setpts=PTS-STARTPTS[part1],[copy2]trim=:187,setpts=PTS-STARTPTS[part2],[part1][part2]concat=n=2[out]" -map "[out]" -c:v libx264 -preset ultrafast -tune zerolatency -crf 18 -c:a copy cut6.mp4
 
 FFFDFF
