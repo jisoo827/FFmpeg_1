@@ -2,7 +2,7 @@
 화면녹화
 [최신]ffmpeg -y -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 1 -offset_x 159 -offset_y 173 -s hd720 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p "base.mp4" -f dshow -i audio="마이크(2- USB Microphone)"
 웹캠녹화
-ffmpeg -y -f dshow -i video="ABKO APC930 QHD WEBCAM" -rtbufsize 100M -framerate 45 -video_size 298x144  -c:v libx264 -r 45 -preset ultrafast -tune zerolatency -crf 28 -pix_fmt yuv420p -c:a aac -strict -2 -ac 2 -b:a 128k "cam.mp4"
+ffmpeg -y -f dshow -i video="ABKO APC930 QHD WEBCAM" -rtbufsize 100M -framerate 30 -video_size 298x144  -c:v libx264 -r 45 -preset ultrafast -tune zerolatency -crf 28 -pix_fmt yuv420p -c:a aac -strict -2 -ac 2 -b:a 128k "cam.mp4"
 캠화면 축소
 ffmpeg -y -i greenscreensample.mp4 -vf scale=480:300 greenscreensample_480.mp4
 크로마키 & 오버레이

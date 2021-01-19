@@ -10,9 +10,11 @@ using JJCastDemo.FFmpeg.Decoder;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using JJCastDemo.Common;
+
 
 namespace JJCastDemo
 {
@@ -33,7 +35,7 @@ namespace JJCastDemo
         ThreadStart threadStartDesktop;
         Thread threadTrack;
         ThreadStart threadStartTrack;
-        Device monitor;
+        Devices monitor;
 
         private static bool activeThread = false;      //thread 활성화 유무
         private static bool isActiveTrack = false;      //thread 활성화 유무
@@ -43,11 +45,19 @@ namespace JJCastDemo
         private static byte colorG = 0;
         private static byte colorB = 0;
         private static bool isCapturingMoves = false;
-        private static bool isVideoMoving = false;
+        private static bool isVideoTowing = false;
+        private static bool isVideoTowed = false;
         private static string camName = string.Empty;
         private static Point startPoint = new System.Drawing.Point();
         private static int startValue = 0;
+        private static bool isCut = false;
+        private static double skipStart = 0;
+        private static double skipEnd = 0;
+        private static double skipTime = 0;
+        private static int cutListIndex = 0;
+        private static List<int> cutList = new List<int>();
 
+        public static List<int> CutList { get => cutList; set => cutList = value; }
 
         public MainForm()
         {
@@ -70,7 +80,7 @@ namespace JJCastDemo
             VideoStream vs = new VideoStream();
             _ = vs.AVFormatTest3(Txt_URL.Text);
             isCapturingMoves = false;
-            Txt_URL.Text = @"C:\Users\jisu827\output_overlay.mp4";
+            Txt_URL.Text = @"C:\Users\jisu827\AllOfMe.mp4";
 
         }
 
@@ -82,7 +92,7 @@ namespace JJCastDemo
         private void Btn_Record_Click(object sender, EventArgs e)
         {
             Global.WriteLog("녹화 시작");
-            dControl.PartialRecord(Cmb_Mic.Text.Trim(), (Device)Cmb_Monitor.SelectedItem, Cmb_Cam.Text.Trim());
+            dControl.PartialRecord(Cmb_Mic.Text.Trim(), (Devices)Cmb_Monitor.SelectedItem, Cmb_Cam.Text.Trim());
         }
 
         private void Btn_RecordStop_Click(object sender, EventArgs e)
@@ -97,7 +107,7 @@ namespace JJCastDemo
             string rdbCheck = Rdb_RightOut.Checked ? "RIGHTOUT" : Rdb_RightIn.Checked ? "RIGHTIN" : Rdb_RightBottomIn.Checked ? "RIGHTBOTTOMIN" :
                 Rdb_RightBottomOut.Checked ? "RIGHTBOTTOMOUT" : Rdb_DiagonalOut.Checked ? "DIAGONALOUT" : "DIAGONALIN";
             Global.WriteLog("오버레이(캠 리사이즈 + 오버레이) 시작");
-            dControl.OverLay(rgbHex, rdbCheck, ((Device)Cmb_Monitor.SelectedItem).size);
+            dControl.OverLay(rgbHex, rdbCheck, ((Devices)Cmb_Monitor.SelectedItem).Size);
             //Global.WriteLog("인트로 이어붙이기 시작");
             //if (dControl.ConcatVideo("title_01_minecraft.mp4", "cut.mp4","result.mp4") == 1) Txt_URL.Text = Application.StartupPath + "\\result.mp4";
             //Global.WriteLog("합성 종료");
@@ -107,16 +117,100 @@ namespace JJCastDemo
         {
             if (Wmp_1.playState == WMPLib.WMPPlayState.wmppsPlaying)
                 Wmp_1.Ctlcontrols.pause();
-            double start = (double)selectionRangeSlider1.SelectedMin / 1000;
-            double end = (double)selectionRangeSlider1.SelectedMax / 1000;
-            double max = selectionRangeSlider1.Max / 1000;
+            int timeAdd = 0;
+            bool isAdd = true;
+            // 2,3 1,3 => 2,3 1,4
+            for(int i = 0; i < CutList.Count; i+=2)
+            {
+                if (TimeSlider.SelectedMin >= CutList[i])
+                {
+                    timeAdd = CutList[i + 1] - CutList[i];
+                    
+                }
+                else if (TimeSlider.SelectedMin < CutList[i] && TimeSlider.SelectedMax > CutList[i])
+                {
+                    int timeskip = 0;
+                    int cutCnt = 0;
+                    for(int j = i; j < cutList.Count; j+=2)
+                    {
+                        if (TimeSlider.SelectedMin + timeskip <= CutList[j] && TimeSlider.SelectedMax + timeskip >= CutList[j])
+                        {
+                            timeskip += CutList[j + 1] - CutList[j];
+                            cutCnt++;
+                        }
+                        else
+                            break;
+                    }
+                    while(cutCnt > 1)
+                    {
+                        CutList.RemoveAt(i + 1 + ((cutCnt - 1) * 2));
+                        CutList.RemoveAt(i + ((cutCnt - 1) * 2));
+                        cutCnt--;
+                    }
+                    CutList[i] = TimeSlider.SelectedMin + timeAdd;
+                    CutList[i + 1] = TimeSlider.SelectedMax + timeskip + timeAdd;
+                    isAdd = false;
+                    break;
+                }
+            }
+
+            if (isAdd)
+            {
+                CutList.Add(TimeSlider.SelectedMin + timeAdd);
+                CutList.Add(TimeSlider.SelectedMax + timeAdd);
+            }
+
+            TimeSlider.Max -= (TimeSlider.SelectedMax - TimeSlider.SelectedMin);
+            TimeSlider.SelectedMax = TimeSlider.Max;
+            TimeSlider.SelectedMin = 0;
+            TimeSlider.Value = TimeSlider.Max / 2;
+            isCut = true;
+        }
+
+        private void Btn_CutPlay_Click(object sender, EventArgs e)
+        {
+            if (Txt_URL.Text.Trim().Length <= 0) return;
+            Img_DeskTop.Visible = false;
+            if (CutList.Count > 0)
+            {
+                skipTime = 0;
+                skipStart = CutList[0];
+                skipEnd = CutList[1];
+                cutListIndex = 2;
+                isCut = true;
+            }
+            Wmp_1.Visible = true;
+            Wmp_1.URL = Txt_URL.Text;
+            Wmp_1.Ctlcontrols.play();
+
+            threadStartTrack = new ThreadStart(UpdateTrackThreadProc);
+            threadTrack = new Thread(threadStartTrack);
+            if (threadTrack.ThreadState == System.Threading.ThreadState.Unstarted)
+            {
+                threadTrack.Start();
+                isActiveTrack = true;
+            }
+        }
+
+        private void Btn_Split_Click(object sender, EventArgs e)
+        {
+            if (Wmp_1.playState == WMPLib.WMPPlayState.wmppsPlaying)
+                Wmp_1.Ctlcontrols.pause();
+            List<string> split = new List<string>();
+            foreach(int time in cutList)
+            {
+                split.Add(TimeSpan.FromSeconds((double)time / 1000).ToString("hh\\:mm\\:ss\\.fff"));
+            }
+
             string url = Txt_URL.Text;
-            Global.WriteLog("자르기 시작");
-            dControl.Cut(url, start.ToString(), end.ToString(), max.ToString());
-            Global.WriteLog("자르기 종료");
-            Global.WriteLog("자른 영상끼리 이어붙이기");
-            if (dControl.ConcatVideo("output_cut1.mp4", "output_cut2.mp4", "cut.mp4") == 1) Txt_URL.Text = Application.StartupPath + "\\cut.mp4";
-            Global.WriteLog("자른 영상끼리 이어붙이기 종료");
+            if (split.Count <= 0 || split.Count % 2 == 1)
+            {
+                MessageBox.Show("자르기 실패");
+                return;
+            }
+            Global.WriteLog("스플릿+컨캣 시작");
+            dControl.Split(url, split);
+            Global.WriteLog("스플릿+컨캣 종료");
         }
 
         private void Btn_MergePlay_Click(object sender, EventArgs e)
@@ -124,9 +218,41 @@ namespace JJCastDemo
             if (Txt_URL.Text.Trim().Length <= 0) return;
             Img_DeskTop.Visible = false;
             Wmp_1.Visible = true;
+
+            skipTime = 0;
+            isCut = false;
+            cutList.Clear();
+
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.play();
-            SetSlider();
+
+            VideoStream vs = new VideoStream();
+            int timeCnt = vs.AVFormatTest(Txt_URL.Text);
+
+            TimeSlider.Max = timeCnt;
+            TimeSlider.SelectedMax = timeCnt;
+            TimeSlider.Value = timeCnt / 2;
+
+            threadStartTrack = new ThreadStart(UpdateTrackThreadProc);
+            threadTrack = new Thread(threadStartTrack);
+            if (threadTrack.ThreadState == System.Threading.ThreadState.Unstarted)
+            {
+                threadTrack.Start();
+                isActiveTrack = true;
+            }
+        }
+
+        private void Btn_Chromakey_Click(object sender, EventArgs e)
+        {
+            ColorDialog cd = new ColorDialog();
+            if (cd.ShowDialog() == DialogResult.OK)
+            {
+                Btn_Chromakey.BackColor = cd.Color;
+                rgbHex = string.Format("{0:X2}{1:X2}{2:X2}", cd.Color.R, cd.Color.G, cd.Color.B);
+                colorR = cd.Color.R;
+                colorG = cd.Color.G;
+                colorB = cd.Color.B;
+            }
         }
 
         private void Btn_Play_Click(object sender, EventArgs e)
@@ -140,7 +266,7 @@ namespace JJCastDemo
             }
 
             Img_DeskTop.Visible = true;
-            monitor = (Device)Cmb_Monitor.SelectedItem;
+            monitor = (Devices)Cmb_Monitor.SelectedItem;
             camName = Cmb_Cam.Text.Trim();
             //비디오 프레임 디코딩 thread 생성
             if (!activeThread)
@@ -209,42 +335,25 @@ namespace JJCastDemo
 
         private void InitControl()
         {
-            List<Device> devicelist = dControl.GetDeviceList();
-            List<Device> monitorlist = new List<Device>();
-            foreach (Device dv in devicelist)
+            List<Devices> devicelist = dControl.GetDeviceList();
+            List<Devices> monitorlist = new List<Devices>();
+            foreach (Devices dv in devicelist)
             {
-                if (dv.device == "audio") Cmb_Mic.Items.Add(dv.name);
-                else if (dv.device == "video") Cmb_Cam.Items.Add(dv.name);
+                if (dv.Device == "audio") Cmb_Mic.Items.Add(dv.Name);
+                else if (dv.Device == "video") Cmb_Cam.Items.Add(dv.Name);
             }
             if (Cmb_Cam.Items.Count > 0) Cmb_Cam.SelectedIndex = 0;
             if (Cmb_Mic.Items.Count > 0) Cmb_Mic.SelectedIndex = 0;
             Screen[] screenlist = Screen.AllScreens;
             foreach (Screen screen in screenlist)
             {
-                monitorlist.Add(new Device { device = "monitor", name = screen.DeviceName.Substring(screen.DeviceName.IndexOf(".\\") + 2), size = screen.Bounds.Size, point = screen.Bounds.Location });
+                monitorlist.Add(new Devices { Device = "monitor", Name = screen.DeviceName.Substring(screen.DeviceName.IndexOf(".\\") + 2), Size = screen.Bounds.Size, Point = screen.Bounds.Location });
             }
 
             Cmb_Monitor.DataSource = new BindingSource(monitorlist, null);
             Cmb_Monitor.DisplayMember = "name";
         }
 
-        private void SetSlider()
-        {
-            VideoStream vs = new VideoStream();
-            int timeCnt = vs.AVFormatTest(Txt_URL.Text);
-            //_ = vs.AVFormatTest3(Txt_URL.Text);
-            //Wmp_1.Ctlcontrols.currentItem.
-            selectionRangeSlider1.Max = timeCnt;
-            selectionRangeSlider1.SelectedMax = timeCnt;
-            selectionRangeSlider1.Value = timeCnt / 2;
-            threadStartTrack = new ThreadStart(UpdateTrackThreadProc);
-            threadTrack = new Thread(threadStartTrack);
-            if (threadTrack.ThreadState == System.Threading.ThreadState.Unstarted)
-            {
-                threadTrack.Start();
-                isActiveTrack = true;
-            }
-        }
 
         #region RecordTest Method
         private unsafe void DecodeAllFramesToImages()
@@ -349,9 +458,9 @@ namespace JJCastDemo
             {
                 while (activeThread)
                 {
-                    Bitmap bitmap = new Bitmap(monitor.size.Width, monitor.size.Height);
+                    Bitmap bitmap = new Bitmap(monitor.Size.Width, monitor.Size.Height);
                     Graphics graphics = Graphics.FromImage(bitmap);
-                    graphics.CopyFromScreen(monitor.point.X, monitor.point.Y, 0, 0, monitor.size);
+                    graphics.CopyFromScreen(monitor.Point.X, monitor.Point.Y, 0, 0, monitor.Size);
 
                     Img_DeskTop.Image = bitmap;
                     graphics.Dispose();
@@ -391,23 +500,25 @@ namespace JJCastDemo
         }
         private void UpdateTrack()
         {
-            if (!isVideoMoving) selectionRangeSlider1.Value = Convert.ToInt32(Wmp_1.Ctlcontrols.currentPosition * 1000);
+            if(isCut)
+            {
+                if (Wmp_1.Ctlcontrols.currentPosition * 1000 >= skipStart)
+                {
+                    if (!isVideoTowed) Wmp_1.Ctlcontrols.currentPosition = skipEnd / 1000;
+                    skipTime += skipEnd - skipStart;
+                    if (cutList.Count > cutListIndex)
+                    {
+                        skipStart = CutList[cutListIndex++];
+                        skipEnd = CutList[cutListIndex++];
+                    }
+                    else isCut = false;
+                }
+            }
+            isVideoTowed = false;
+            if (!isVideoTowing) TimeSlider.Value = Convert.ToInt32((Wmp_1.Ctlcontrols.currentPosition * 1000) - skipTime);
         }
 
         #endregion
-
-        private void Btn_Chromakey_Click(object sender, EventArgs e)
-        {
-            ColorDialog cd = new ColorDialog();
-            if (cd.ShowDialog() == DialogResult.OK)
-            {
-                Btn_Chromakey.BackColor = cd.Color;
-                rgbHex = string.Format("{0:X2}{1:X2}{2:X2}", cd.Color.R, cd.Color.G, cd.Color.B);
-                colorR = cd.Color.R;
-                colorG = cd.Color.G;
-                colorB = cd.Color.B;
-            }
-        }
 
         private void Img_video_MouseDown(object sender, MouseEventArgs e)
         {
@@ -442,76 +553,86 @@ namespace JJCastDemo
                 Wmp_1.Ctlcontrols.pause();
         }
 
-        private void selectionRangeSlider1_ValueChanged(object sender, EventArgs e)
+        private void TimeSlider_ValueChanged(object sender, EventArgs e)
         {
             //if (Wmp_1.playState == WMPLib.WMPPlayState.wmppsPlaying)
-            //Wmp_1.Ctlcontrols.currentPosition = Convert.ToDouble(selectionRangeSlider1.Value) / 1000;
+            //Wmp_1.Ctlcontrols.currentPosition = Convert.ToDouble(timeSlider.Value) / 1000;
+
+            // if(timeSlider.Value == )
+            int currentX = (int)((double)TimeSlider.Size.Width * ((double)TimeSlider.Value / (double)TimeSlider.Max));
+            Lbl_Current.Location = new Point(TimeSlider.Location.X + currentX - 5, 538);
+            TimeSpan ts = TimeSpan.FromSeconds((double)TimeSlider.Value / 1000);
+            Lbl_Current.Text = ts.ToString("hh\\:mm\\:ss\\.fff");
         }
 
-        private void selectionRangeSlider1_MouseMove(object sender, MouseEventArgs e)
+        private void TimeSlider_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!isVideoMoving) return;
+            if (!isVideoTowing) return;
         }
 
-        private void selectionRangeSlider1_MouseDown(object sender, MouseEventArgs e)
+        private void TimeSlider_MouseDown(object sender, MouseEventArgs e)
         {
-            isVideoMoving = true;
-            startValue = selectionRangeSlider1.Value;
+            isVideoTowing = true;
+            startValue = TimeSlider.Value;
         }
 
-        private void selectionRangeSlider1_MouseUp(object sender, MouseEventArgs e)
+        private void TimeSlider_MouseUp(object sender, MouseEventArgs e)
         {
-            if (isVideoMoving)
+            if (isVideoTowing)
             {
-                if (startValue != selectionRangeSlider1.Value) Wmp_1.Ctlcontrols.currentPosition = Convert.ToDouble(selectionRangeSlider1.Value) / 1000;
-                isVideoMoving = false;
+                if (startValue != TimeSlider.Value)
+                {
+                    skipTime = 0;
+                    isCut = false;
+                    if (cutList.Count > 0)
+                    {
+                        skipStart = CutList[0];
+                        skipEnd = CutList[1];
+                        cutListIndex = 2;
+                        isCut = true;
+                        for (int i = 0; i < CutList.Count; i += 2)
+                        {
+                            if (TimeSlider.Value + skipTime >= CutList[i])
+                            {
+                                skipTime += skipEnd - skipStart;
+                                if (cutList.Count > cutListIndex)
+                                {
+                                    skipStart = CutList[cutListIndex++];
+                                    skipEnd = CutList[cutListIndex++];
+                                }
+                                else
+                                    isCut = false;
+                            }
+                        }
+                    }
+                    Wmp_1.Ctlcontrols.currentPosition = Convert.ToDouble(TimeSlider.Value + skipTime) / 1000;
+
+                    isVideoTowed = true;
+                }
+                isVideoTowing = false;
             }
 
         }
 
-        private void selectionRangeSlider1_SelectionChanged(object sender, EventArgs e)
+        private void TimeSlider_SelectionChanged(object sender, EventArgs e)
         {
-            TimeSpan ts = new TimeSpan();
-            int minX = (int)((double)selectionRangeSlider1.Size.Width * ((double)selectionRangeSlider1.SelectedMin / (double)selectionRangeSlider1.Max));
-            Lbl_Min.Location = new Point(selectionRangeSlider1.Location.X + minX - 5, 538);
-            ts = TimeSpan.FromSeconds((double)selectionRangeSlider1.SelectedMin / 1000);
+            int minX = (int)((double)TimeSlider.Size.Width * ((double)TimeSlider.SelectedMin / (double)TimeSlider.Max));
+            Lbl_Min.Location = new Point(TimeSlider.Location.X + minX - 5, 538);
+            TimeSpan ts = TimeSpan.FromSeconds((double)TimeSlider.SelectedMin / 1000);
             Lbl_Min.Text = ts.ToString("hh\\:mm\\:ss\\.fff");
-            int maxX = (int)((double)selectionRangeSlider1.Size.Width * ((double)selectionRangeSlider1.SelectedMax / (double)selectionRangeSlider1.Max));
-            Lbl_Max.Location = new Point(selectionRangeSlider1.Location.X + maxX - 5, 538);
-            ts = TimeSpan.FromSeconds((double)selectionRangeSlider1.SelectedMax / 1000);
+            int maxX = (int)((double)TimeSlider.Size.Width * ((double)TimeSlider.SelectedMax / (double)TimeSlider.Max));
+            Lbl_Max.Location = new Point(TimeSlider.Location.X + maxX - 5, 538);
+            ts = TimeSpan.FromSeconds((double)TimeSlider.SelectedMax / 1000);
             Lbl_Max.Text = ts.ToString("hh\\:mm\\:ss\\.fff");
-            //Lbl_Max.Text = DateTime.ParseExact(string.Format("{0:F3}",(double)selectionRangeSlider1.SelectedMax / 1000) , "ss.fff", null).ToString();
+            //Lbl_Max.Text = DateTime.ParseExact(string.Format("{0:F3}",(double)timeSlider.SelectedMax / 1000) , "ss.fff", null).ToString();
         }
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
         {
-            int minX = (int)((double)selectionRangeSlider1.Size.Width * ((double)selectionRangeSlider1.SelectedMin / (double)selectionRangeSlider1.Max));
-            Lbl_Min.Location = new Point(selectionRangeSlider1.Location.X + minX - 5, 538);
-            int maxX = (int)((double)selectionRangeSlider1.Size.Width * ((double)selectionRangeSlider1.SelectedMax / (double)selectionRangeSlider1.Max));
-            Lbl_Max.Location = new Point(selectionRangeSlider1.Location.X + maxX - 5, 538);
-        }
-
-        private void btn_Split_Click(object sender, EventArgs e)
-        {
-            if (Wmp_1.playState == WMPLib.WMPPlayState.wmppsPlaying)
-                Wmp_1.Ctlcontrols.pause();
-            List<string> split = new List<string>();
-            if (txt_S1.Text.Length > 0) split.Add(txt_S1.Text);
-            if (txt_E1.Text.Length > 0) split.Add(txt_E1.Text);
-            if (txt_S2.Text.Length > 0) split.Add(txt_S2.Text);
-            if (txt_E2.Text.Length > 0) split.Add(txt_E2.Text);
-            if (txt_S3.Text.Length > 0) split.Add(txt_S3.Text);
-            if (txt_E3.Text.Length > 0) split.Add(txt_E3.Text);
-
-            string url = Txt_URL.Text;
-            if (split.Count <= 0 || split.Count % 2 == 1)
-            {
-                MessageBox.Show("자르기 실패");
-                return;
-            }
-            Global.WriteLog("스플릿+컨캣 시작");
-            dControl.Split(url, split);
-            Global.WriteLog("스플릿+컨캣 종료");
+            int minX = (int)((double)TimeSlider.Size.Width * ((double)TimeSlider.SelectedMin / (double)TimeSlider.Max));
+            Lbl_Min.Location = new Point(TimeSlider.Location.X + minX - 5, 538);
+            int maxX = (int)((double)TimeSlider.Size.Width * ((double)TimeSlider.SelectedMax / (double)TimeSlider.Max));
+            Lbl_Max.Location = new Point(TimeSlider.Location.X + maxX - 5, 538);
         }
     }
 }

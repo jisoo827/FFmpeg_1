@@ -29,9 +29,9 @@ namespace JJCastDemo.FFmpeg
         }
 
         #region Event Method
-        public List<Device> GetDeviceList()
+        public List<Devices> GetDeviceList()
         {
-            List<Device> rtnList = new List<Device>();
+            List<Devices> rtnList = new List<Devices>();
             Process process = new Process();
 
             if (CommandExcute(ffmpegStatement.GetDeviceLisStmt(), process, true,false) == 1)
@@ -47,10 +47,10 @@ namespace JJCastDemo.FFmpeg
                         if (processOutput.IndexOf("DirectShow audio devices") > 0) device = "audio";
                         if (device.Trim().Length > 0 && (processOutput.IndexOf("\"") > 0) && (processOutput.IndexOf("Alternative name") < 0))
                         {
-                            Device dv = new Device
+                            Devices dv = new Devices
                             {
-                                device = device,
-                                name = processOutput.Substring(processOutput.IndexOf("\"") + 1, processOutput.Length - processOutput.IndexOf("\"") - 2)
+                                Device = device,
+                                Name = processOutput.Substring(processOutput.IndexOf("\"") + 1, processOutput.Length - processOutput.IndexOf("\"") - 2)
                             };
                             rtnList.Add(dv);
                         }
@@ -69,14 +69,14 @@ namespace JJCastDemo.FFmpeg
 
         }
 
-        public int PartialRecord(string mic, Device monitor, string cam)
+        public int PartialRecord(string mic, Devices monitor, string cam)
         {
             processDesk = new Process();
             processCam = new Process();
             
             try
             {
-                string offset = "-offset_x " + monitor.point.X.ToString() + " -offset_y " + monitor.point.Y.ToString() + " -video_size " + monitor.size.Width.ToString() + "X" + monitor.size.Height.ToString();
+                string offset = "-offset_x " + monitor.Point.X.ToString() + " -offset_y " + monitor.Point.Y.ToString() + " -video_size " + monitor.Size.Width.ToString() + "X" + monitor.Size.Height.ToString();
                 string argument = mic.Trim().Length == 0 ? ffmpegStatement.DesktopPartialRecordStmt(offset) : ffmpegStatement.DesktopPartialRecordStmt(offset, mic);
                 
                 if (cam.Trim().Length > 0)
@@ -112,11 +112,11 @@ namespace JJCastDemo.FFmpeg
 
         public int OverLay(string rgbHex, string rdbCheck, Size monitorSize)
         {
-            string pad = string.Empty;
             string crop = "[b]";
             string overlay = "(W - w):(H - h)";
             string size = "320:240";
             if (rgbHex.Trim().Length == 0) rgbHex = "00D800";
+            string pad;
             switch (rdbCheck)
             {
                 case "RIGHTOUT":
@@ -280,12 +280,12 @@ namespace JJCastDemo.FFmpeg
         }
         #endregion
     }
-    public class Device
+    public class Devices
     {
-        public string device { get; set; }
-        public string name { get; set; }
-        public Size size { get; set; }
-        public Point point { get; set; }
+        public string Device { get; set; }
+        public string Name { get; set; }
+        public Size Size { get; set; }
+        public Point Point { get; set; }
     }
 
 
