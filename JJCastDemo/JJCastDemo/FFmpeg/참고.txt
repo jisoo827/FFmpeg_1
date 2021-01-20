@@ -22,6 +22,10 @@ ffmpeg -y -i base_35m.mp4 -i cam_35m_320.mp4 -filter_complex "[1:v]setpts = PTS 
 
 컨버트 & 이어붙이기
 ffmpeg -y -i chromakey_output.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts back.ts &&  ffmpeg -y -i title_01_minecraft.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts front.ts && ffmpeg -y -i "concat:front.ts|back.ts" -c copy -bsf:a aac_adtstoasc result.mp4
+
+화면 이미지 추출
+ffmpeg -i AllOfMe.mp4 -r 0.11764 -f image2 output_%05d.jpg
+ffmpeg -ss 00:01:30 -i base_35m.mp4 -ss 00:03:00 -i base_35m.mp4 -ss 00:04:30 -i base_35m.mp4 -ss 00:06:00 -i base_35m.mp4 -map 0:v -frames:v 1 out001.jpg -map 1:v -frames:v 1 out002.jpg -map 2:v -frames:v 1 out003.jpg -map 3:v -frames:v 1 out004.jpg
 ﻿*******************************************************
 ffmpeg -y ⓐ -i ⓑ -acodec ⓒ -ab ⓓ -ar ⓔ -ac ⓕ -b:a ⓖ -vcodec ⓗ -level ⓘ -b:v ⓙ
 -r ⓚ -s ⓛ -threads ⓜ -strict experimental ⓝ ⓞ

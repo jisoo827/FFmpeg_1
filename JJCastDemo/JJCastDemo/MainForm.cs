@@ -223,15 +223,19 @@ namespace JJCastDemo
             isCut = false;
             cutList.Clear();
 
-            Wmp_1.URL = Txt_URL.Text;
-            Wmp_1.Ctlcontrols.play();
-
             VideoStream vs = new VideoStream();
             int timeCnt = vs.AVFormatTest(Txt_URL.Text);
 
             TimeSlider.Max = timeCnt;
             TimeSlider.SelectedMax = timeCnt;
             TimeSlider.Value = timeCnt / 2;
+
+            dControl.ExtractImage(Txt_URL.Text, timeCnt/1000);
+            TimeSlider.BackgroundImage = new Bitmap(Application.StartupPath + @"\output.jpg");
+            TimeSlider.BackgroundImageLayout = ImageLayout.Stretch;
+
+            Wmp_1.URL = Txt_URL.Text;
+            Wmp_1.Ctlcontrols.play();
 
             threadStartTrack = new ThreadStart(UpdateTrackThreadProc);
             threadTrack = new Thread(threadStartTrack);

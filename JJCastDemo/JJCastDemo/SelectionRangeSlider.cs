@@ -110,7 +110,7 @@ namespace JJCastDemo
         void SelectionRangeSlider_Paint(object sender, PaintEventArgs e)
         {
             //paint background in white
-            SolidBrush whiteBrush = new SolidBrush(Color.FromArgb(128,((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255))))));
+            SolidBrush whiteBrush = new SolidBrush(Color.FromArgb(1,((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255))))));
             e.Graphics.FillRectangle(whiteBrush, ClientRectangle);
             //paint selection range in blue
             Rectangle selectionRect = new Rectangle(

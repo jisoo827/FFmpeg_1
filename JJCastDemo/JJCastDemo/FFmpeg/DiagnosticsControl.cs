@@ -188,6 +188,23 @@ namespace JJCastDemo.FFmpeg
         }
         #endregion
 
+        public int ExtractImage(string url, int time)
+        {
+            //ffmpeg -ss 00:01:30 -i base_35m.mp4 -ss 00:03:00 -i base_35m.mp4 -ss 00:04:30 -i base_35m.mp4 -ss 00:06:00 -i base_35m.mp4 -map 0:v -frames:v 1 out001.jpg -map 1:v -frames:v 1 out002.jpg -map 2:v -frames:v 1 out003.jpg -map 3:v -frames:v 1 out004.jpg
+            string extract = "ffmpeg -y";
+            
+            for(int i = 0; i < 15; i++)
+            {
+                extract += " -ss " + ((time/15)*i + 1).ToString() + " -i " + url;
+            }
+            for (int i = 0; i < 15; i++)
+            {
+                extract += " -map " + i.ToString() + ":v -s 160:120 -frames:v 1 out" + i.ToString() + ".jpg";
+            }
+            extract += " && ffmpeg -y -i out%d.jpg -filter_complex scale=160:-1,tile=15x1 output.jpg && exit";
+            return CommandExcute(extract, new Process(), false, true);
+        }
+
         #region Command Method
 
         private static int CommandExcute(string argument, Process process, bool isReturnOuput = false, bool isExit = false)
