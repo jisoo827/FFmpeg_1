@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace JJCastDemo
+namespace JJCastDemo.UIControl
 {
     /// <summary>
     /// Very basic slider control with selection range.

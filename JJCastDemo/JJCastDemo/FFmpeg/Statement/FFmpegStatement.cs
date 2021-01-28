@@ -73,7 +73,7 @@ namespace JJCastDemo.FFmpeg.Statement
 
         public string SplitVideoStmt(string url, string part)
         {
-            stmt = "ffmpeg -y -i " + url + " -vf \"select = '" + part + "',setpts = N/FRAME_RATE/TB\" -af \"aselect = '" + part + "',asetpts = N/SR/TB\" -preset ultrafast -tune zerolatency -crf 18 output_cut.mp4 && exit";
+            stmt = "ffmpeg -y -i " + url + " -vf \"select='" + part + "',setpts = N/FRAME_RATE/TB\" -af \"aselect='" + part + "',asetpts=N/SR/TB\" -preset ultrafast -tune zerolatency -crf 18 output_cut.mp4 && exit";
             return stmt;
         }
     }

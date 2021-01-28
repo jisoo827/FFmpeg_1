@@ -1,4 +1,4 @@
-﻿namespace JJCastDemo
+﻿namespace JJCastDemo.UIControl
 {
     partial class SelectionRangeSlider
     {

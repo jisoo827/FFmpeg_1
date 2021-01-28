@@ -1,0 +1,25 @@
+ffmpeg -y -ss 1 -i C:\Users\jisu827\base_35m.mp4 -ss 143 -i C:\Users\jisu827\base_35m.mp4 -ss 285 -i C:\Users\jisu827\base_35m.mp4 -ss 427 -i C:\Users\jisu827\base_35m.mp4 -ss 569 -i C:\Users\jisu827\base_35m.mp4 -ss 711 -i C:\Users\jisu827\base_35m.mp4 -ss 853 -i C:\Users\jisu827\base_35m.mp4 -ss 995 -i C:\Users\jisu827\base_35m.mp4 -ss 1137 -i C:\Users\jisu827\base_35m.mp4 -ss 1279 -i C:\Users\jisu827\base_35m.mp4 -ss 1421 -i C:\Users\jisu827\base_35m.mp4 -ss 1563 -i C:\Users\jisu827\base_35m.mp4 -ss 1705 -i C:\Users\jisu827\base_35m.mp4 -ss 1847 -i C:\Users\jisu827\base_35m.mp4 -ss 1989 -i C:\Users\jisu827\base_35m.mp4 -map 0:v -s 160:120 -frames:v 1 out0.jpg -map 1:v -s 160:120 -frames:v 1 out1.jpg -map 2:v -s 160:120 -frames:v 1 out2.jpg -map 3:v -s 160:120 -frames:v 1 out3.jpg -map 4:v -s 160:120 -frames:v 1 out4.jpg -map 5:v -s 160:120 -frames:v 1 out5.jpg -map 6:v -s 160:120 -frames:v 1 out6.jpg -map 7:v -s 160:120 -frames:v 1 out7.jpg -map 8:v -s 160:120 -frames:v 1 out8.jpg -map 9:v -s 160:120 -frames:v 1 out9.jpg -map 10:v -s 160:120 -frames:v 1 out10.jpg -map 11:v -s 160:120 -frames:v 1 out11.jpg -map 12:v -s 160:120 -frames:v 1 out12.jpg -map 13:v -s 160:120 -frames:v 1 out13.jpg -map 14:v -s 160:120 -frames:v 1 out14.jpg
+
+ffmpeg -y -i out%d.jpg -filter_complex scale=160:-1,tile=15x1 output.jpg
+------------------------------------------------------------------------------*
+ffmpeg -i AllOfMe.mp4  -vf "select=eq(n\,15)" -vframes 1 out.png
+ffmpeg -i AllOfMe.mp4 -r 0.11764 -f image2 output_%05d.jpg
+ffmpeg -ss 00:01:30 -i base_35m.mp4 -ss 00:03:00 -i base_35m.mp4 -ss 00:04:30 -i base_35m.mp4 -ss 00:06:00 -i base_35m.mp4 -map 0:v -frames:v 1 out001.jpg -map 1:v -frames:v 1 out002.jpg -map 2:v -frames:v 1 out003.jpg -map 3:v -frames:v 1 out004.jpg
+ffmpeg -i base_35m.mp4 -r 0.00936 -f image2 output_%05d.jpg
+ffmpeg -i base_35m.mp4 -r 0.00468 -f image2 output_%05d.jpg
+ffmpeg -i AllOfMe.mp4 -r 0.11764 output_%03d.bmp
+ffmpeg -i base_35m.mp4 -r 0.00936 -s 320x240 output_%03d.jpg
+//ffmpeg -ss 00:00:00 -t 00:00:00.04 -i YOURMOVIE.MP4 -r 25.0 YOURIMAGE%4d.jpg
+//ffmpeg -ss 00:00:00 -t 00:30:00 -i base_35m.mp4 -r 0.00936 -s 320x240 -frames:v 2 output_%05d.jpg
+ffmpeg -ss 00:01:30 -i base_35m.mp4 -ss 00:03:00 -i base_35m.mp4 -ss 00:04:30 -i base_35m.mp4 -ss 00:06:00 -i base_35m.mp4 -map 0:v -frames:v 1 out001.jpg -map 1:v -frames:v 1 out002.jpg -map 2:v -frames:v 1 out003.jpg -map 3:v -frames:v 1 out004.jpg
+
+//ffmpeg -i base_35m.mp4 -filter:v "select='eq(t\,90)+eq(t\,180)+eq(t\,270)+eq(t\,360)'" -s 320:240 -vsync drop output_%05d.jpg
+ffmpeg -i base_35m.mp4 -filter:v "select='lt(prev_pts*TB\,90)*gte(pts*TB\,90)+lt(prev_pts*TB\,180)*gte(pts*TB\,180)+lt(prev_pts*TB\,270)*gte(pts*TB\,270)+lt(prev_pts*TB\,360)*gte(pts*TB\,360)+lt(prev_pts*TB\,450)*gte(pts*TB\,450)+lt(prev_pts*TB\,540)*gte(pts*TB\,540)+lt(prev_pts*TB\,630)*gte(pts*TB\,630)+lt(prev_pts*TB\,720)*gte(pts*TB\,720)+lt(prev_pts*TB\,810)*gte(pts*TB\,810)'" -vsync drop images-filename_%03d.jpg
+
+ffmpeg -i base_35m.mp4 -vsync 0 -vf "select='not(mod(n,3204))'" output_%05d.jpg
+ffmpeg -i AllOfMe.mp4 -vsync 0 -vf "select='not(mod(n,214))'" output_%05d.jpg
+
+select='eq(n\,1)+eq(n\,200)+eq(n\,400)+eq(n\,600)+eq(n\,800)+eq(n\,1000)' \
+       -vsync vfr -q:v 2
+
+ffmpeg -ss 1 -i C:\Users\jisu827\base_35m.mp4 -ss 143 -i C:\Users\jisu827\base_35m.mp4 -ss 285 -i C:\Users\jisu827\base_35m.mp4 -ss 427 -i C:\Users\jisu827\base_35m.mp4 -ss 569 -i C:\Users\jisu827\base_35m.mp4 -ss 711 -i C:\Users\jisu827\base_35m.mp4 -ss 853 -i C:\Users\jisu827\base_35m.mp4 -ss 995 -i C:\Users\jisu827\base_35m.mp4 -ss 1137 -i C:\Users\jisu827\base_35m.mp4 -ss 1279 -i C:\Users\jisu827\base_35m.mp4 -ss 1421 -i C:\Users\jisu827\base_35m.mp4 -ss 1563 -i C:\Users\jisu827\base_35m.mp4 -ss 1705 -i C:\Users\jisu827\base_35m.mp4 -ss 1847 -i C:\Users\jisu827\base_35m.mp4 -ss 1989 -i C:\Users\jisu827\base_35m.mp4 -map 0:v -frames:v 1 out0.jpg -map 1:v -frames:v 1 out1.jpg -map 2:v -frames:v 1 out2.jpg -map 3:v -frames:v 1 out3.jpg -map 4:v -frames:v 1 out4.jpg -map 5:v -frames:v 1 out5.jpg -map 6:v -frames:v 1 out6.jpg -map 7:v -frames:v 1 out7.jpg -map 8:v -frames:v 1 out8.jpg -map 9:v -frames:v 1 out9.jpg -map 10:v -frames:v 1 out10.jpg -map 11:v -frames:v 1 out11.jpg -map 12:v -frames:v 1 out12.jpg -map 13:v -frames:v 1 out13.jpg -map 14:v -frames:v 1 out14.jpg

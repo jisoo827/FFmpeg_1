@@ -56,6 +56,7 @@ namespace JJCastDemo
         private static double skipTime = 0;
         private static int cutListIndex = 0;
         private static List<int> cutList = new List<int>();
+        private static int playTime = 0;
 
         public static List<int> CutList { get => cutList; set => cutList = value; }
 
@@ -120,7 +121,8 @@ namespace JJCastDemo
             int timeAdd = 0;
             bool isAdd = true;
             // 2,3 1,3 => 2,3 1,4
-            for(int i = 0; i < CutList.Count; i+=2)
+            Global.WriteLog("자르기 추가");
+            for (int i = 0; i < CutList.Count; i+=2)
             {
                 if (TimeSlider.SelectedMin >= CutList[i])
                 {
@@ -160,11 +162,27 @@ namespace JJCastDemo
                 CutList.Add(TimeSlider.SelectedMax + timeAdd);
             }
 
+            Global.WriteLog("자르기 추가 완료, 타임슬라이더 갱신");
+
             TimeSlider.Max -= (TimeSlider.SelectedMax - TimeSlider.SelectedMin);
             TimeSlider.SelectedMax = TimeSlider.Max;
             TimeSlider.SelectedMin = 0;
             TimeSlider.Value = TimeSlider.Max / 2;
             isCut = true;
+
+            Image image = TimeSlider.BackgroundImage;
+            TimeSlider.BackgroundImage = null;
+            if (image != null) image.Dispose();
+
+            Global.FileDeleteForce(Application.StartupPath);
+
+            Global.WriteLog("타임슬라이더용 프레임 추출");
+            dControl.ExtractImage(Txt_URL.Text, playTime / 1000, cutList);
+            Global.WriteLog("타임슬라이더용 프레임 추출 완료");
+
+            TimeSlider.BackgroundImage = new Bitmap(Application.StartupPath + @"\output.jpg");
+            TimeSlider.BackgroundImageLayout = ImageLayout.Stretch;
+            Global.WriteLog("타임슬라이더 갱신 완료");
         }
 
         private void Btn_CutPlay_Click(object sender, EventArgs e)
@@ -179,6 +197,7 @@ namespace JJCastDemo
                 cutListIndex = 2;
                 isCut = true;
             }
+
             Wmp_1.Visible = true;
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.play();
@@ -194,13 +213,17 @@ namespace JJCastDemo
 
         private void Btn_Split_Click(object sender, EventArgs e)
         {
+            //8.608 30.415 62.62 93.608 115.707 143.812
             if (Wmp_1.playState == WMPLib.WMPPlayState.wmppsPlaying)
                 Wmp_1.Ctlcontrols.pause();
             List<string> split = new List<string>();
+            cutList.Sort();
+            split.Add("0");
             foreach(int time in cutList)
             {
-                split.Add(TimeSpan.FromSeconds((double)time / 1000).ToString("hh\\:mm\\:ss\\.fff"));
+                split.Add(((double)time / 1000).ToString());
             }
+            split.Add(((double)playTime / 1000).ToString());
 
             string url = Txt_URL.Text;
             if (split.Count <= 0 || split.Count % 2 == 1)
@@ -216,6 +239,7 @@ namespace JJCastDemo
         private void Btn_MergePlay_Click(object sender, EventArgs e)
         {
             if (Txt_URL.Text.Trim().Length <= 0) return;
+            Global.WriteLog("합성 영상 재생");
             Img_DeskTop.Visible = false;
             Wmp_1.Visible = true;
 
@@ -224,13 +248,23 @@ namespace JJCastDemo
             cutList.Clear();
 
             VideoStream vs = new VideoStream();
-            int timeCnt = vs.AVFormatTest(Txt_URL.Text);
+            playTime = vs.AVFormatTest(Txt_URL.Text);
 
-            TimeSlider.Max = timeCnt;
-            TimeSlider.SelectedMax = timeCnt;
-            TimeSlider.Value = timeCnt / 2;
+            //timeLabel1.Parent = Wmp_1;
 
-            dControl.ExtractImage(Txt_URL.Text, timeCnt/1000);
+            TimeSlider.Max = playTime;
+            TimeSlider.SelectedMax = playTime;
+            TimeSlider.Value = playTime / 2;
+
+            Image image = TimeSlider.BackgroundImage;
+            TimeSlider.BackgroundImage = null;
+            if (image != null) image.Dispose();
+            Global.FileDeleteForce(Application.StartupPath);
+
+            Global.WriteLog("타임슬라이더용 프레임 추출");
+            dControl.ExtractImage(Txt_URL.Text, playTime/1000, cutList);
+            Global.WriteLog("타임슬라이더용 프레임 추출 완료");
+
             TimeSlider.BackgroundImage = new Bitmap(Application.StartupPath + @"\output.jpg");
             TimeSlider.BackgroundImageLayout = ImageLayout.Stretch;
 
@@ -357,8 +391,6 @@ namespace JJCastDemo
             Cmb_Monitor.DataSource = new BindingSource(monitorlist, null);
             Cmb_Monitor.DisplayMember = "name";
         }
-
-
         #region RecordTest Method
         private unsafe void DecodeAllFramesToImages()
         {

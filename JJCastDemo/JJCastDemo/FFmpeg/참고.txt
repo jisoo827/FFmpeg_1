@@ -26,6 +26,9 @@ ffmpeg -y -i chromakey_output.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts back
 화면 이미지 추출
 ffmpeg -i AllOfMe.mp4 -r 0.11764 -f image2 output_%05d.jpg
 ffmpeg -ss 00:01:30 -i base_35m.mp4 -ss 00:03:00 -i base_35m.mp4 -ss 00:04:30 -i base_35m.mp4 -ss 00:06:00 -i base_35m.mp4 -map 0:v -frames:v 1 out001.jpg -map 1:v -frames:v 1 out002.jpg -map 2:v -frames:v 1 out003.jpg -map 3:v -frames:v 1 out004.jpg
+ffmpeg -y -ss 1 -i C:\Users\jisu827\base_35m.mp4 -ss 143 -i C:\Users\jisu827\base_35m.mp4 -ss 285 -i C:\Users\jisu827\base_35m.mp4 -ss 427 -i C:\Users\jisu827\base_35m.mp4 -ss 569 -i C:\Users\jisu827\base_35m.mp4 -ss 711 -i C:\Users\jisu827\base_35m.mp4 -ss 853 -i C:\Users\jisu827\base_35m.mp4 -ss 995 -i C:\Users\jisu827\base_35m.mp4 -ss 1137 -i C:\Users\jisu827\base_35m.mp4 -ss 1279 -i C:\Users\jisu827\base_35m.mp4 -ss 1421 -i C:\Users\jisu827\base_35m.mp4 -ss 1563 -i C:\Users\jisu827\base_35m.mp4 -ss 1705 -i C:\Users\jisu827\base_35m.mp4 -ss 1847 -i C:\Users\jisu827\base_35m.mp4 -ss 1989 -i C:\Users\jisu827\base_35m.mp4 -map 0:v -s 160:120 -frames:v 1 out0.jpg -map 1:v -s 160:120 -frames:v 1 out1.jpg -map 2:v -s 160:120 -frames:v 1 out2.jpg -map 3:v -s 160:120 -frames:v 1 out3.jpg -map 4:v -s 160:120 -frames:v 1 out4.jpg -map 5:v -s 160:120 -frames:v 1 out5.jpg -map 6:v -s 160:120 -frames:v 1 out6.jpg -map 7:v -s 160:120 -frames:v 1 out7.jpg -map 8:v -s 160:120 -frames:v 1 out8.jpg -map 9:v -s 160:120 -frames:v 1 out9.jpg -map 10:v -s 160:120 -frames:v 1 out10.jpg -map 11:v -s 160:120 -frames:v 1 out11.jpg -map 12:v -s 160:120 -frames:v 1 out12.jpg -map 13:v -s 160:120 -frames:v 1 out13.jpg -map 14:v -s 160:120 -frames:v 1 out14.jpg
+
+ffmpeg -y -i out%d.jpg -filter_complex scale=160:-1,tile=15x1 output.jpg
 ﻿*******************************************************
 ffmpeg -y ⓐ -i ⓑ -acodec ⓒ -ab ⓓ -ar ⓔ -ac ⓕ -b:a ⓖ -vcodec ⓗ -level ⓘ -b:v ⓙ
 -r ⓚ -s ⓛ -threads ⓜ -strict experimental ⓝ ⓞ

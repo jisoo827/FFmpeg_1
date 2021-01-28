@@ -188,20 +188,38 @@ namespace JJCastDemo.FFmpeg
         }
         #endregion
 
-        public int ExtractImage(string url, int time)
+        public int ExtractImage(string url, int time, List<int> cutList)
         {
             //ffmpeg -ss 00:01:30 -i base_35m.mp4 -ss 00:03:00 -i base_35m.mp4 -ss 00:04:30 -i base_35m.mp4 -ss 00:06:00 -i base_35m.mp4 -map 0:v -frames:v 1 out001.jpg -map 1:v -frames:v 1 out002.jpg -map 2:v -frames:v 1 out003.jpg -map 3:v -frames:v 1 out004.jpg
+            int cutIdx = 0;
+            int cutTime = time;
+            Queue<string> queue = new Queue<string>();
+            for (int i = 0; i < cutList.Count; i += 2)
+            {
+                cutTime -= (cutList[i + 1] - cutList[i]) / 1000;
+            }
+            cutTime /= 15;
+
+            for(int curTime = 0; curTime < time; curTime += cutTime)
+            {
+                if(cutIdx < cutList.Count && curTime > cutList[cutIdx] / 1000)
+                {
+                    curTime = curTime - (cutList[cutIdx]/1000) + (cutList[cutIdx + 1] / 1000);
+                    cutIdx += 2;
+                }
+                queue.Enqueue((curTime + 1).ToString());
+            }
+
+            int queCnt = queue.Count;
             string extract = "ffmpeg -y";
             
-            for(int i = 0; i < 15; i++)
-            {
-                extract += " -ss " + ((time/15)*i + 1).ToString() + " -i " + url;
-            }
-            for (int i = 0; i < 15; i++)
+            while(queue.Count > 0) extract += " -ss " + queue.Dequeue() + " -i " + url;
+
+            for (int i = 0; i < queCnt; i++)
             {
                 extract += " -map " + i.ToString() + ":v -s 160:120 -frames:v 1 out" + i.ToString() + ".jpg";
             }
-            extract += " && ffmpeg -y -i out%d.jpg -filter_complex scale=160:-1,tile=15x1 output.jpg && exit";
+            extract += " && ffmpeg -y -i out%d.jpg -filter_complex scale=160:-1,tile=" + queCnt.ToString() + "x1 output.jpg && exit";
             return CommandExcute(extract, new Process(), false, true);
         }
 

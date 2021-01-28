@@ -34,13 +34,11 @@
             this.Txt_URL = new System.Windows.Forms.TextBox();
             this.Cmb_Mic = new System.Windows.Forms.ComboBox();
             this.Btn_Record = new System.Windows.Forms.Button();
-            this.Wmp_1 = new AxWMPLib.AxWindowsMediaPlayer();
-            this.TimeSlider = new JJCastDemo.SelectionRangeSlider();
             this.Btn_RecordStop = new System.Windows.Forms.Button();
             this.Btn_Merge = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btn_Split = new System.Windows.Forms.Button();
             this.Img_video = new System.Windows.Forms.PictureBox();
+            this.btn_Split = new System.Windows.Forms.Button();
             this.Btn_MergePlay = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.Btn_Chromakey = new System.Windows.Forms.Button();
@@ -66,12 +64,14 @@
             this.Lbl_Max = new System.Windows.Forms.Label();
             this.Btn_CutPlay = new System.Windows.Forms.Button();
             this.Lbl_Current = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).BeginInit();
-            this.Wmp_1.SuspendLayout();
+            this.Wmp_1 = new AxWMPLib.AxWindowsMediaPlayer();
+            this.TimeSlider = new JJCastDemo.UIControl.SelectionRangeSlider();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Img_video)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Img_DeskTop)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).BeginInit();
+            this.Wmp_1.SuspendLayout();
             this.SuspendLayout();
             // 
             // Btn_Play
@@ -124,38 +124,6 @@
             this.Btn_Record.UseVisualStyleBackColor = true;
             this.Btn_Record.Click += new System.EventHandler(this.Btn_Record_Click);
             // 
-            // Wmp_1
-            // 
-            this.Wmp_1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.Wmp_1.Controls.Add(this.TimeSlider);
-            this.Wmp_1.Enabled = true;
-            this.Wmp_1.Location = new System.Drawing.Point(3, 17);
-            this.Wmp_1.Name = "Wmp_1";
-            this.Wmp_1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("Wmp_1.OcxState")));
-            this.Wmp_1.Size = new System.Drawing.Size(623, 399);
-            this.Wmp_1.TabIndex = 6;
-            this.Wmp_1.Visible = false;
-            // 
-            // TimeSlider
-            // 
-            this.TimeSlider.BackColor = System.Drawing.Color.Transparent;
-            this.TimeSlider.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.TimeSlider.Location = new System.Drawing.Point(0, 373);
-            this.TimeSlider.Max = 100;
-            this.TimeSlider.Min = 0;
-            this.TimeSlider.Name = "TimeSlider";
-            this.TimeSlider.SelectedMax = 100;
-            this.TimeSlider.SelectedMin = 0;
-            this.TimeSlider.Size = new System.Drawing.Size(623, 26);
-            this.TimeSlider.TabIndex = 16;
-            this.TimeSlider.Value = 50;
-            this.TimeSlider.SelectionChanged += new System.EventHandler(this.TimeSlider_SelectionChanged);
-            this.TimeSlider.ValueChanged += new System.EventHandler(this.TimeSlider_ValueChanged);
-            this.TimeSlider.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TimeSlider_MouseDown);
-            this.TimeSlider.MouseMove += new System.Windows.Forms.MouseEventHandler(this.TimeSlider_MouseMove);
-            this.TimeSlider.MouseUp += new System.Windows.Forms.MouseEventHandler(this.TimeSlider_MouseUp);
-            // 
             // Btn_RecordStop
             // 
             this.Btn_RecordStop.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -190,16 +158,6 @@
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             // 
-            // btn_Split
-            // 
-            this.btn_Split.Location = new System.Drawing.Point(631, 39);
-            this.btn_Split.Name = "btn_Split";
-            this.btn_Split.Size = new System.Drawing.Size(92, 23);
-            this.btn_Split.TabIndex = 19;
-            this.btn_Split.Text = "스플릿";
-            this.btn_Split.UseVisualStyleBackColor = true;
-            this.btn_Split.Click += new System.EventHandler(this.Btn_Split_Click);
-            // 
             // Img_video
             // 
             this.Img_video.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -214,6 +172,18 @@
             this.Img_video.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseDown);
             this.Img_video.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseMove);
             this.Img_video.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Img_video_MouseUp);
+            // 
+            // btn_Split
+            // 
+            this.btn_Split.BackColor = System.Drawing.Color.Transparent;
+            this.btn_Split.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.btn_Split.Location = new System.Drawing.Point(631, 39);
+            this.btn_Split.Name = "btn_Split";
+            this.btn_Split.Size = new System.Drawing.Size(92, 23);
+            this.btn_Split.TabIndex = 19;
+            this.btn_Split.Text = "스플릿";
+            this.btn_Split.UseVisualStyleBackColor = false;
+            this.btn_Split.Click += new System.EventHandler(this.Btn_Split_Click);
             // 
             // Btn_MergePlay
             // 
@@ -440,13 +410,14 @@
             // 
             // Btn_Cut
             // 
+            this.Btn_Cut.BackColor = System.Drawing.Color.Transparent;
             this.Btn_Cut.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Btn_Cut.Location = new System.Drawing.Point(538, 13);
             this.Btn_Cut.Name = "Btn_Cut";
             this.Btn_Cut.Size = new System.Drawing.Size(75, 23);
             this.Btn_Cut.TabIndex = 19;
             this.Btn_Cut.Text = "자르기";
-            this.Btn_Cut.UseVisualStyleBackColor = true;
+            this.Btn_Cut.UseVisualStyleBackColor = false;
             this.Btn_Cut.Click += new System.EventHandler(this.Btn_Cut_Click);
             // 
             // Lbl_Max
@@ -462,13 +433,14 @@
             // 
             // Btn_CutPlay
             // 
+            this.Btn_CutPlay.BackColor = System.Drawing.Color.Transparent;
             this.Btn_CutPlay.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Btn_CutPlay.Location = new System.Drawing.Point(619, 13);
             this.Btn_CutPlay.Name = "Btn_CutPlay";
             this.Btn_CutPlay.Size = new System.Drawing.Size(104, 23);
             this.Btn_CutPlay.TabIndex = 21;
             this.Btn_CutPlay.Text = "자른영상재생";
-            this.Btn_CutPlay.UseVisualStyleBackColor = true;
+            this.Btn_CutPlay.UseVisualStyleBackColor = false;
             this.Btn_CutPlay.Click += new System.EventHandler(this.Btn_CutPlay_Click);
             // 
             // Lbl_Current
@@ -483,11 +455,44 @@
             this.Lbl_Current.TabIndex = 22;
             this.Lbl_Current.Text = "Lbl_Current";
             // 
+            // Wmp_1
+            // 
+            this.Wmp_1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.Wmp_1.Controls.Add(this.TimeSlider);
+            this.Wmp_1.Enabled = true;
+            this.Wmp_1.Location = new System.Drawing.Point(3, 17);
+            this.Wmp_1.Name = "Wmp_1";
+            this.Wmp_1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("Wmp_1.OcxState")));
+            this.Wmp_1.Size = new System.Drawing.Size(623, 399);
+            this.Wmp_1.TabIndex = 6;
+            this.Wmp_1.Visible = false;
+            // 
+            // TimeSlider
+            // 
+            this.TimeSlider.BackColor = System.Drawing.Color.Transparent;
+            this.TimeSlider.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.TimeSlider.Location = new System.Drawing.Point(0, 364);
+            this.TimeSlider.Max = 100;
+            this.TimeSlider.Min = 0;
+            this.TimeSlider.Name = "TimeSlider";
+            this.TimeSlider.SelectedMax = 100;
+            this.TimeSlider.SelectedMin = 0;
+            this.TimeSlider.Size = new System.Drawing.Size(623, 35);
+            this.TimeSlider.TabIndex = 16;
+            this.TimeSlider.Value = 50;
+            this.TimeSlider.SelectionChanged += new System.EventHandler(this.TimeSlider_SelectionChanged);
+            this.TimeSlider.ValueChanged += new System.EventHandler(this.TimeSlider_ValueChanged);
+            this.TimeSlider.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TimeSlider_MouseDown);
+            this.TimeSlider.MouseMove += new System.Windows.Forms.MouseEventHandler(this.TimeSlider_MouseMove);
+            this.TimeSlider.MouseUp += new System.Windows.Forms.MouseEventHandler(this.TimeSlider_MouseUp);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 585);
+            this.BackColor = System.Drawing.SystemColors.Control;
+            this.ClientSize = new System.Drawing.Size(784, 607);
             this.Controls.Add(this.btn_Split);
             this.Controls.Add(this.Lbl_Current);
             this.Controls.Add(this.Lbl_Min);
@@ -520,13 +525,13 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.SizeChanged += new System.EventHandler(this.MainForm_SizeChanged);
-            ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).EndInit();
-            this.Wmp_1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.Img_video)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Img_DeskTop)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Wmp_1)).EndInit();
+            this.Wmp_1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -563,7 +568,7 @@
         private System.Windows.Forms.RadioButton Rdb_DiagonalIn;
         private System.Windows.Forms.RadioButton Rdb_RightOut;
         private System.Windows.Forms.Label label5;
-        private SelectionRangeSlider TimeSlider;
+        private UIControl.SelectionRangeSlider TimeSlider;
         private System.Windows.Forms.Button Btn_Pause;
         private System.Windows.Forms.Label Lbl_Min;
         private System.Windows.Forms.Button Btn_Cut;
