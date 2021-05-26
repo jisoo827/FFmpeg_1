@@ -78,5 +78,11 @@ namespace JJCastDemo.Common
             return DateTime.Now;
         }
 
+        public static string GetIniValue(string lpAppName, string lpKeyName, int nSize)
+        {
+            StringBuilder rtnVal = new StringBuilder();
+            IniControl.GetPrivateProfileString(lpAppName, lpKeyName, string.Empty, rtnVal, nSize, Application.StartupPath + @"\Vimeo.ini");
+            return rtnVal.ToString();
+        }
     }
 }

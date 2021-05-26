@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using FFmpeg.AutoGen;
 using System.Drawing;
-using System.IO;
 using JJCastDemo.FFmpeg;
 using JJCastDemo.FFmpeg.Decoder;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.ComponentModel;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using JJCastDemo.Common;
+using JJCastDemo.Vimeo;
 
 
 namespace JJCastDemo
@@ -83,6 +80,21 @@ namespace JJCastDemo
             isCapturingMoves = false;
             Txt_URL.Text = @"C:\Users\jisu827\AllOfMe.mp4";
 
+            UploadTests upload = new UploadTests();
+            AccountTests accountTests = new AccountTests();
+            AuthorizationClientAsyncTests authorization = new AuthorizationClientAsyncTests();
+            VideoTests videoTests = new VideoTests();
+
+            //var authorizationTest = authorization.ShouldCorrectlyGetUnauthenticatedToken();
+            //authorizationTest = authorization.VerifyAuthenticatedAccess();
+            //var test = accountTests.ShouldCorrectlyGetAccountInformation();
+            //test = accountTests.ShouldCorrectlyGetUserInformation();
+            //test = upload.ShouldCorrectlyGenerateNewUploadTicket();
+            //var test = upload.ShouldCorrectlyUploadFileByPath();
+            //test = videoTests.ShouldCorrectlyGetUserAlbumVideosByUserId();
+            //test = videoTests.ShouldMoveVideoToFolder();
+
+            //test = upload.ShouldCorretlyUploadFileByPullLink();
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
