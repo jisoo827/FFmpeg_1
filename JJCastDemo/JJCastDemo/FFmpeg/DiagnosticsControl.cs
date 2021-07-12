@@ -192,7 +192,7 @@ namespace JJCastDemo.FFmpeg
         {
             //ffmpeg -ss 00:01:30 -i base_35m.mp4 -ss 00:03:00 -i base_35m.mp4 -ss 00:04:30 -i base_35m.mp4 -ss 00:06:00 -i base_35m.mp4 -map 0:v -frames:v 1 out001.jpg -map 1:v -frames:v 1 out002.jpg -map 2:v -frames:v 1 out003.jpg -map 3:v -frames:v 1 out004.jpg
             int cutIdx = 0;
-            int cutTime = time;
+            double cutTime = time;
             Queue<string> queue = new Queue<string>();
             for (int i = 0; i < cutList.Count; i += 2)
             {
@@ -200,7 +200,7 @@ namespace JJCastDemo.FFmpeg
             }
             cutTime /= 15;
 
-            for(int curTime = 0; curTime < time; curTime += cutTime)
+            for(double curTime = 0; curTime < time; curTime += cutTime)
             {
                 if(cutIdx < cutList.Count && curTime > cutList[cutIdx] / 1000)
                 {

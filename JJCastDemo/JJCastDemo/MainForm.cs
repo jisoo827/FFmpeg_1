@@ -27,11 +27,8 @@ namespace JJCastDemo
         private static extern bool PostMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
 
         Thread threadCam;
-        ThreadStart threadStartCam;
         Thread threadDesktop;
-        ThreadStart threadStartDesktop;
         Thread threadTrack;
-        ThreadStart threadStartTrack;
         Devices monitor;
 
         private static bool activeThread = false;      //thread 활성화 유무
@@ -71,7 +68,7 @@ namespace JJCastDemo
             InitControl();
 
             FFmpegBinariesHelper.RegisterFFmpegBinaries();
-            Wmp_1.uiMode = "none";
+            //Wmp_1.uiMode = "none";
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.stop();
 
@@ -214,8 +211,7 @@ namespace JJCastDemo
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.play();
 
-            threadStartTrack = new ThreadStart(UpdateTrackThreadProc);
-            threadTrack = new Thread(threadStartTrack);
+            threadTrack = new Thread(new ThreadStart(UpdateTrackThreadProc));
             if (threadTrack.ThreadState == System.Threading.ThreadState.Unstarted)
             {
                 threadTrack.Start();
@@ -283,8 +279,7 @@ namespace JJCastDemo
             Wmp_1.URL = Txt_URL.Text;
             Wmp_1.Ctlcontrols.play();
 
-            threadStartTrack = new ThreadStart(UpdateTrackThreadProc);
-            threadTrack = new Thread(threadStartTrack);
+            threadTrack = new Thread(new ThreadStart(UpdateTrackThreadProc));
             if (threadTrack.ThreadState == System.Threading.ThreadState.Unstarted)
             {
                 threadTrack.Start();
@@ -310,8 +305,10 @@ namespace JJCastDemo
             Wmp_1.Ctlcontrols.stop();
             if (isActiveTrack)
             {
-                threadTrack.Interrupt();
-                threadTrack.Abort();
+                isActiveTrack = false;
+                threadTrack.Join();
+                //threadTrack.Interrupt();
+                //threadTrack.Abort();
                 isActiveTrack = false;
             }
 
@@ -324,15 +321,13 @@ namespace JJCastDemo
                 label5.Text = "";
                 if (Cmb_Cam.Text.Trim().Length > 0)
                 {
-                    threadStartCam = new ThreadStart(DecodeAllFramesToImages);
-                    threadCam = new Thread(threadStartCam);
+                    threadCam = new Thread(new ThreadStart(DecodeAllFramesToImages));
                     if (threadCam.ThreadState == System.Threading.ThreadState.Unstarted)
                     {
                         threadCam.Start();
                     }
                 }
-                threadStartDesktop = new ThreadStart(ScreenCapture);
-                threadDesktop = new Thread(threadStartDesktop);
+                threadDesktop = new Thread(new ThreadStart(ScreenCapture));
                 if (threadDesktop.ThreadState == System.Threading.ThreadState.Unstarted)
                 {
                     threadDesktop.Start();
@@ -351,21 +346,26 @@ namespace JJCastDemo
             Wmp_1.Visible = false;
             if (isActiveTrack)
             {
-                threadTrack.Interrupt();
-                threadTrack.Abort();
                 isActiveTrack = false;
+                threadTrack.Join();
+                //threadTrack.Interrupt();
+                //threadTrack.Abort();
+                //isActiveTrack = false;
             }
             if (activeThread)
             {
+                activeThread = false;
                 if (threadCam != null)
                 {
-                    threadCam.Interrupt();
-                    threadCam.Abort();
+                    threadCam.Join();
+                    //threadCam.Interrupt();
+                    //threadCam.Abort();
                 }
                 if (threadDesktop != null)
                 {
-                    threadDesktop.Interrupt();
-                    threadDesktop.Abort();
+                    threadDesktop.Join();
+                    //threadDesktop.Interrupt();
+                    //threadDesktop.Abort();
                 }
                 activeThread = false;
                 label5.Text = "";
@@ -595,7 +595,7 @@ namespace JJCastDemo
 
         private void Btn_Pause_Click(object sender, EventArgs e)
         {
-            if (Wmp_1.playState == WMPLib.WMPPlayState.wmppsPaused)
+            if (Wmp_1.playState == WMPLib.WMPPlayState.wmppsPaused || Wmp_1.playState == WMPLib.WMPPlayState.wmppsReady)
                 Wmp_1.Ctlcontrols.play();
             else if (Wmp_1.playState == WMPLib.WMPPlayState.wmppsPlaying)
                 Wmp_1.Ctlcontrols.pause();
